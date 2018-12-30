@@ -1,0 +1,59 @@
+version: 2
+jobs:
+  build:
+    working_directory: /app
+    docker:
+      - image: docker:18.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache \
+              py-pip \
+              bash
+            pip install \
+              urllib3==1.22 \
+              awsebcli
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build -t deephire/nodeapi:$CIRCLE_BUILD_NUM .
+      - run:
+          name: Run Docker Image
+          command: |
+            docker run -d --name deepy -p 3000:3000  -e APP_ID=$APP_ID -e PORT=$PORT -e LOG_LEVEL=$LOG_LEVEL -e REQUEST_LIMIT=$REQUEST_LIMIT -e SESSION_SECRET=$SESSION_SECRET -e NODE_ENV=$NODE_ENV -e EMAIL_NAME=$EMAIL_NAME -e EMAIL_PASS=$EMAIL_PASS -e MONGO_NAME=$MONGO_NAME -e MONGO_PASS=$MONGO_PASS -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e DOCKER_USER=$DOCKER_USER -e DOCKER_PASS=$DOCKER_PASS -e DOCKER_EMAIL=$DOCKER_EMAIL -e SWAGGER_API_SPEC=$SWAGGER_API_SPEC "deephire/nodeapi:$CIRCLE_BUILD_NUM"; sleep 10
+      # - run:
+      #     name: Run tests
+      #     command: |
+      #       docker exec deepy curl --retry 10 --retry-delay 5 -v http://localhost:3000/ping
+      - run:
+          name: Login to DockerHub
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+      - deploy:
+          name: Push application Docker Production
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker push "deephire/nodeapi:$CIRCLE_BUILD_NUM"
+              # updates variable BUILD_NUM with CIRCLE_BUILD env variable
+              sed -i'' -e "s;%BUILD_NUM%;$CIRCLE_BUILD_NUM;g" ./.deploy/prod/Dockerrun.aws.json
+              bash ./.deploy/setup-eb.sh
+              # goes into folder where Dockerrun.aws.json and .elasticbeanstalk config for
+              # prodelopment is stored 
+              cd .deploy/prod && eb deploy -l $CIRCLE_BUILD_NUM
+            fi
+      - deploy:
+          name: Push application Docker Development
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+              docker push "deephire/nodeapi:$CIRCLE_BUILD_NUM"
+              # updates variable BUILD_NUM with CIRCLE_BUILD env variable
+              sed -i'' -e "s;%BUILD_NUM%;$CIRCLE_BUILD_NUM;g" ./.deploy/dev/Dockerrun.aws.json
+              bash ./.deploy/setup-eb.sh
+              # goes into folder where Dockerrun.aws.json and .elasticbeanstalk config for
+              # development is stored 
+              cd .deploy/dev && eb deploy -l $CIRCLE_BUILD_NUM
+            fi

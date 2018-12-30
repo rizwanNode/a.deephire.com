@@ -1,0 +1,223 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: DeepHireNodeAPI
+  description: Automate the recruiting process with one-way video interviews
+basePath: /v1
+tags:
+  - name: Examples
+    description: Simple example endpoints
+  - name: Specification
+    description: The swagger API specification
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+definitions:
+  ExampleBody:
+    type: object
+    title: example
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        example: no_stress
+  EmailBody:
+    type: object
+    title: email
+    required:
+      - recipients
+      - subject
+      - message
+    properties:
+      recipients:
+        ArrayOfStr:
+          type: array
+          example: ["russell@deephire.com"]
+      subject:
+        type: string
+        example: testing
+      message:
+        type: string
+        example: hey there
+  CompanyBody:
+    type: object
+    title: company
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        example: russell@deephire.com
+      name:
+        type: string
+        example: Forge
+      logo:
+        type: string
+        example: https://www.kiwiclubny.org/wordpress1/wp-content/uploads/2012/08/dub.logo_.url_.blk_1.jpg
+
+paths:
+  /examples:
+    get:
+      tags:
+        - Examples
+      description: Fetch all examples
+      responses:
+        200:
+          description: Returns all examples
+    post:
+      tags:
+        - Examples
+      description: Create a new example
+      parameters:
+        - name: example
+          in: body
+          description: an example
+          required: true
+          schema:
+            $ref: "#/definitions/ExampleBody"
+      responses:
+        200:
+          description: Returns all examples
+
+  /examples/{id}:
+    get:
+      tags:
+        - Examples
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the example to retrieve
+          type: integer
+      responses:
+        200:
+          description: Return the example with the specified id
+        404:
+          description: Example not found
+
+  /interviews:
+    get:
+      tags:
+        - Interviews
+      description: Fetch all interviews
+      responses:
+        200:
+          description: Returns all interviews
+
+  /interviews/{id}:
+    delete:
+      tags:
+        - Interviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The object id of the interview to delete
+          type: string
+      responses:
+        204:
+          description: The interview with the specified ID was successfully deleted
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Interview with given ID did not exist
+
+  /candidates:
+    get:
+      tags:
+        - Candidates
+      description: Fetch all Candidate Interviews
+      responses:
+        200:
+          description: Returns all candidate interviews
+
+  /candidates/{userId}/{interviewId}:
+    delete:
+      tags:
+        - Candidates
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The users auth0 ID
+          type: string
+        - name: interviewId
+          in: path
+          required: true
+          description: The ID of the interview
+          type: string
+      responses:
+        204:
+          description: The candidate interviews with the specified ID was successfully deleted
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Candidate Interview with given IDs did not exist
+
+  /emails:
+    post:
+      tags:
+        - Emails
+      parameters:
+        - in: body
+          name: body
+          description: "Send emails from russell@deephire.com"
+          required: true
+          schema:
+            $ref: "#/definitions/EmailBody"
+      responses:
+        201:
+          description: Email sent
+        500:
+          description: Error!
+
+  /companies:
+    get:
+      tags:
+        - Companies
+      description: Fetch all Company Data
+      responses:
+        200:
+          description: Returns all company Data
+    post:
+      tags:
+        - Companies
+      parameters:
+        - in: body
+          name: body
+          description: "Add Company Name or Logo"
+          required: true
+          schema:
+            $ref: "#/definitions/CompanyBody"
+      responses:
+        201:
+          description: Info Added
+        500:
+          description: Error!
+
+  /companies/{email}:
+    get:
+      tags:
+        - Companies
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: The email of the company to retrieve
+          type: string
+      responses:
+        200:
+          description: Return the company with the associated email
+        404:
+          description: A Company with that email is not found
+  /spec:
+    get:
+      tags:
+        - Specification
+      responses:
+        200:
+          description: Return the API specification

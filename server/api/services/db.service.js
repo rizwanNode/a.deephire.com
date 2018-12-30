@@ -1,0 +1,85 @@
+const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectID;
+
+class Database {
+  constructor() {
+    const uri = `mongodb://${process.env.MONGO_NAME}:${process.env.MONGO_PASS}@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
+    this.client = new MongoClient(uri, { useNewUrlParser: true });
+  }
+
+  all(col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.find({}).toArray((err, result) => {
+          if (err) throw err;
+          resolve(result);
+        });
+      });
+    });
+  }
+
+  byEmail(email, col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.findOne({ email }, (err, result) => {
+          if (err) throw err;
+          resolve(result);
+        });
+      });
+    });
+  }
+
+  updateByEmail(data, col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.updateOne({ email: data.email }, { $set: data }, { upsert: true }, (err, result) => {
+          if (err) throw err;
+          // console.log(result);
+          console.log(result.result.n);
+          if (result.result.n) resolve(201);
+          else resolve(400);
+        });
+      });
+    });
+  }
+
+  delete(id, col) {
+    if (!ObjectId.isValid(id)) {
+      return Promise.resolve(400);
+    }
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        const objectId = new ObjectId(id);
+        collection.deleteOne({ _id: objectId }).then(result => {
+          if (result.deletedCount) resolve(204);
+          else resolve(404);
+        });
+      });
+    });
+  }
+
+  deleteCandidate(userId, interviewId, col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection
+          .deleteMany({ user_id: userId, company_id: interviewId })
+          .then(result => {
+            if (result.deletedCount) resolve(204);
+            else resolve(404);
+          });
+      });
+    });
+  }
+}
+
+export default new Database();
