@@ -34,9 +34,11 @@ definitions:
       - message
     properties:
       recipients:
-        ArrayOfStr:
-          type: array
-          example: ["russell@deephire.com"]
+        # ArrayOfStr:
+        type: array
+        items:
+          type: string
+        example: ["russell@deephire.com"]
       subject:
         type: string
         example: testing
