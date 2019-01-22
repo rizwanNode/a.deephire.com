@@ -3,7 +3,9 @@ const ObjectId = require('mongodb').ObjectID;
 
 class Database {
   constructor() {
-    const uri = `mongodb://${process.env.MONGO_NAME}:${process.env.MONGO_PASS}@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
+    const uri = `mongodb://${process.env.MONGO_NAME}:${
+      process.env.MONGO_PASS
+    }@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
     this.client = new MongoClient(uri, { useNewUrlParser: true });
   }
 
@@ -33,18 +35,56 @@ class Database {
     });
   }
 
+  byUserId(id, col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.findOne({ userId: id }).then(result => {
+          resolve(result);
+        });
+      });
+    });
+  }
+
+  put(data, col) {
+    const { userId } = data;
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.updateOne(
+          { userId },
+          { $set: data },
+          { upsert: true },
+          (err, result) => {
+            if (err) throw err;
+            console.log(result);
+            if (result) resolve(200);
+            else resolve(400);
+          },
+        );
+      });
+    });
+  }
+
   updateByEmail(data, col) {
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection.updateOne({ email: data.email }, { $set: data }, { upsert: true }, (err, result) => {
-          if (err) throw err;
-          // console.log(result);
-          console.log(result.result.n);
-          if (result.result.n) resolve(201);
-          else resolve(400);
-        });
+        collection.updateOne(
+          { email: data.email },
+          { $set: data },
+          { upsert: true },
+          (err, result) => {
+            if (err) throw err;
+            // console.log(result);
+            console.log(result.result.n);
+            if (result.result.n) resolve(201);
+            else resolve(400);
+          },
+        );
       });
     });
   }

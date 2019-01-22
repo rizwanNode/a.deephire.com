@@ -60,6 +60,24 @@ definitions:
       logo:
         type: string
         example: https://www.kiwiclubny.org/wordpress1/wp-content/uploads/2012/08/dub.logo_.url_.blk_1.jpg
+  CandidateBody:
+    type: object
+    title: candidate
+    required:
+      - userId
+    properties:
+      userId:
+        type: string
+        example: testUserId99
+      youtubeUrls:
+        type: array
+        items:
+          type: string
+        example:
+          [
+            "https://www.youTube.com/watch?v=QSmXvcrtTpM",
+            "https://www.youTube.com/watch?v=emTHLFKcSWQ",
+          ]
 
 paths:
   /examples:
@@ -136,6 +154,38 @@ paths:
       responses:
         200:
           description: Returns all candidate interviews
+    put:
+      tags:
+        - Candidates
+      description: Create/Update Candidate Data
+      parameters:
+        - in: body
+          name: body
+          description: an example
+          required: true
+          schema:
+            $ref: "#/definitions/CandidateBody"
+      responses:
+        200:
+          description: Created or Updated Resource
+
+  /candidates/{userId}:
+    get:
+      tags:
+        - Candidates
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The users auth0 ID
+          type: string
+      responses:
+        200:
+          description: Fetched the candidates info
+        400:
+          description: Malformed ID
+        404:
+          description: Candidate with given ID did not exist
 
   /candidates/{userId}/{interviewId}:
     delete:
