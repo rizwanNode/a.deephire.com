@@ -59,7 +59,6 @@ class Database {
           { upsert: true },
           (err, result) => {
             if (err) throw err;
-            console.log(result);
             if (result) resolve(200);
             else resolve(400);
           },
@@ -79,8 +78,6 @@ class Database {
           { upsert: true },
           (err, result) => {
             if (err) throw err;
-            // console.log(result);
-            console.log(result.result.n);
             if (result.result.n) resolve(201);
             else resolve(400);
           },
