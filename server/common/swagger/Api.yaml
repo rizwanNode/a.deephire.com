@@ -82,6 +82,12 @@ definitions:
 paths:
   /examples:
     get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
       tags:
         - Examples
       description: Fetch all examples
@@ -93,6 +99,11 @@ paths:
         - Examples
       description: Create a new example
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: example
           in: body
           description: an example
@@ -104,10 +115,15 @@ paths:
           description: Returns all examples
 
   /examples/{id}:
-    get:
+    get:     
       tags:
         - Examples
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: id
           in: path
           required: true
@@ -121,6 +137,12 @@ paths:
 
   /interviews:
     get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
       tags:
         - Interviews
       description: Fetch all interviews
@@ -133,6 +155,11 @@ paths:
       tags:
         - Interviews
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: id
           in: path
           required: true
@@ -148,17 +175,28 @@ paths:
 
   /candidates:
     get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
       tags:
         - Candidates
       description: Fetch all Candidate Interviews
       responses:
         200:
           description: Returns all candidate interviews
-    put:
+    put:      
       tags:
         - Candidates
       description: Create/Update Candidate Data
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - in: body
           name: body
           description: an example
@@ -174,6 +212,11 @@ paths:
       tags:
         - Candidates
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: userId
           in: path
           required: true
@@ -192,6 +235,11 @@ paths:
       tags:
         - Candidates
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: userId
           in: path
           required: true
@@ -215,6 +263,11 @@ paths:
       tags:
         - Emails
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - in: body
           name: body
           description: "Send emails from russell@deephire.com"
@@ -229,6 +282,12 @@ paths:
 
   /companies:
     get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
       tags:
         - Companies
       description: Fetch all Company Data
@@ -239,6 +298,11 @@ paths:
       tags:
         - Companies
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - in: body
           name: body
           description: "Add Company Name or Logo"
@@ -256,6 +320,11 @@ paths:
       tags:
         - Companies
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: email
           in: path
           required: true
