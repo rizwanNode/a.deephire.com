@@ -93,11 +93,6 @@ paths:
         - Examples
       description: Create a new example
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
         - name: example
           in: body
           description: an example
@@ -105,11 +100,11 @@ paths:
           schema:
             $ref: "#/definitions/ExampleBody"
       responses:
-        200:
-          description: Returns all examples
+        201:
+          description: Example Created
 
   /examples/{id}:
-    get:     
+    get:
       tags:
         - Examples
       parameters:
@@ -176,7 +171,7 @@ paths:
       responses:
         200:
           description: Returns all candidate interviews
-    put:      
+    put:
       tags:
         - Candidates
       description: Create/Update Candidate Data
