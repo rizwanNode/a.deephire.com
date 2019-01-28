@@ -82,12 +82,6 @@ definitions:
 paths:
   /examples:
     get:
-      parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
       tags:
         - Examples
       description: Fetch all examples
@@ -119,11 +113,6 @@ paths:
       tags:
         - Examples
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
         - name: id
           in: path
           required: true
@@ -212,11 +201,6 @@ paths:
       tags:
         - Candidates
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
         - name: userId
           in: path
           required: true
