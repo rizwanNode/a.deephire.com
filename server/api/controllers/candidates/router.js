@@ -1,7 +1,7 @@
 import * as express from 'express';
 
 import controller from './controller';
-import checkJwt from '../../../checkJwt';
+import { checkJwt } from '../../../common/auth';
 
 export default express
   .Router()

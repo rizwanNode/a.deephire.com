@@ -1,7 +1,12 @@
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
+import { AuthenticationClient } from 'auth0';
 
-const checkJwt = jwt({
+const auth0 = new AuthenticationClient({
+  domain: 'login.deephire.com',
+  clientId: 'jhzGFZHTv8ehpGskVKxZr_jXOAvKg7DU',
+});
+export const checkJwt = jwt({
   // Dynamically provide a signing key
   // based on the kid in the header and
   // the signing keys provided by the JWKS endpoint.
@@ -9,7 +14,7 @@ const checkJwt = jwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: 'https://deephire2.auth0.com/.well-known/jwks.json',
+    jwksUri: 'https://login.deephire.com/.well-known/jwks.json',
   }),
 
   // Validate the audience and the issuer.
@@ -18,4 +23,9 @@ const checkJwt = jwt({
   algorithms: ['RS256'],
 });
 
-export default checkJwt;
+export const getEmail = accessToken => {
+  auth0.getProfile(accessToken, (err, userInfo) => {
+    const { email } = userInfo;
+    return email;
+  });
+};

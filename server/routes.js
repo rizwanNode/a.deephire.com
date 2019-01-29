@@ -4,7 +4,7 @@ import candidatesRouter from './api/controllers/candidates/router';
 import emailsRouter from './api/controllers/emails/router';
 import companiesRouter from './api/controllers/companies/router';
 
-import checkJwt from './checkJwt';
+import { checkJwt } from './common/auth';
 
 export default function routes(app) {
   app.use('/v1/examples', examplesRouter);
