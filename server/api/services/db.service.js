@@ -22,12 +22,12 @@ class Database {
     });
   }
 
-  byEmail(email, col) {
+  byParam(search, col) {
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection.findOne({ email }, (err, result) => {
+        collection.find({ search }).toArray((err, result) => {
           if (err) throw err;
           resolve(result);
         });
@@ -35,17 +35,6 @@ class Database {
     });
   }
 
-  byUserId(id, col) {
-    return new Promise(resolve => {
-      this.client.connect(err => {
-        if (err) throw err;
-        const collection = this.client.db('content').collection(col);
-        collection.findOne({ userId: id }).then(result => {
-          resolve(result);
-        });
-      });
-    });
-  }
 
   put(data, col) {
     const { userId } = data;
