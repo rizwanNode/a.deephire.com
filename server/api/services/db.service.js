@@ -22,12 +22,19 @@ class Database {
     });
   }
 
-  byParam(search, col) {
+  /* eslint-disable no-param-reassign */
+  byParam(search, col, id = false) {
+    if (id) {
+      if (!ObjectId.isValid(search)) {
+        return Promise.resolve(400);
+      }
+      search = { _id: new ObjectId(search) };
+    }
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection.find({ search }).toArray((err, result) => {
+        collection.find(search).toArray((err, result) => {
           if (err) throw err;
           resolve(result);
         });
@@ -35,23 +42,17 @@ class Database {
     });
   }
 
-
   put(data, col) {
     const { userId } = data;
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection.updateOne(
-          { userId },
-          { $set: data },
-          { upsert: true },
-          (err, result) => {
-            if (err) throw err;
-            if (result) resolve(200);
-            else resolve(400);
-          },
-        );
+        collection.updateOne({ userId }, { $set: data }, { upsert: true }, (err, result) => {
+          if (err) throw err;
+          if (result) resolve(200);
+          else resolve(400);
+        });
       });
     });
   }
@@ -97,12 +98,10 @@ class Database {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection
-          .deleteMany({ user_id: userId, company_id: interviewId })
-          .then(result => {
-            if (result.deletedCount) resolve(204);
-            else resolve(404);
-          });
+        collection.deleteMany({ user_id: userId, company_id: interviewId }).then(result => {
+          if (result.deletedCount) resolve(204);
+          else resolve(404);
+        });
       });
     });
   }

@@ -1,9 +1,9 @@
 import * as express from 'express';
 import controller from './controller';
-import { checkJwt } from '../../../common/auth';
 
 export default express
   .Router()
-  .get('/', checkJwt, controller.all)
+  .get('/', controller.all)
   .post('/', controller.update)
-  .get('/:id', controller.byParam);
+  .get('/:id', controller.byId);
+

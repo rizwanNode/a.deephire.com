@@ -2,19 +2,25 @@ import l from '../../common/logger';
 import db from './db.service';
 
 class ShortlistService {
-  all(email) {
-    l.info(`${this.constructor.name}.all(${email}`);
-    return db.byParam(email, 'companies');
+  all(createdBy) {
+    l.info(`${this.constructor.name}.all(${createdBy}`);
+    const search = { created_by: createdBy };
+    return db.byParam(search, 'shortlists');
   }
 
   update(data) {
     l.info(`${this.constructor.name}.update(${data})`);
-    return db.updateByEmail(data, 'companies');
+    return db.updateByEmail(data, 'shortlists');
   }
 
-  byId(id) {
-    l.info(`${this.constructor.name}.byId(${id})`);
-    return db.byParam(id, 'companies');
+  create(data) {
+    l.info(`${this.constructor.name}.create(${data})`);
+  }
+
+  byParam(id) {
+    l.info(`${this.constructor.name}.byParam(${id})`);
+
+    return db.byParam(id, 'shortlists', true);
   }
 }
 
