@@ -7,8 +7,9 @@ export class Controller {
     emailPromise.then(email => ShortlistService.all(email).then(r => res.json(r)));
   }
 
-  update(req, res) {
-    ShortlistService.update(req.body).then(r => res.status(r).end());
+  create(req, res) {
+    const emailPromise = getEmail(req.headers.authorization.split(' ')[1]);
+    emailPromise.then(email => ShortlistService.create(req.body, email).then(r => res.status(r).end()));
   }
 
   byParam(req, res) {

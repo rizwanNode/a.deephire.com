@@ -8,13 +8,11 @@ class ShortlistService {
     return db.byParam(search, 'shortlists');
   }
 
-  update(data) {
-    l.info(`${this.constructor.name}.update(${data})`);
-    return db.updateByEmail(data, 'shortlists');
-  }
 
-  create(data) {
-    l.info(`${this.constructor.name}.create(${data})`);
+  create(data, email) {
+    l.info(`${this.constructor.name}.create(${data},${email})`);
+    const shortList = { ...data, createdBy: email };
+    return db.create(shortList, 'shortlists');
   }
 
   byParam(id) {

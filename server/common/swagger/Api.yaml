@@ -78,6 +78,19 @@ definitions:
             "https://www.youTube.com/watch?v=QSmXvcrtTpM",
             "https://www.youTube.com/watch?v=emTHLFKcSWQ",
           ]
+  ShortlistBody:
+    type: object
+    title: shortlist
+
+    properties:
+      userId:
+        type: string
+        example: uselessdata
+      youtubeUrls:
+        type: array
+        items:
+          type: string
+        example: ["ar1", "ar3"]
 
 paths:
   /examples:
@@ -137,12 +150,17 @@ paths:
       tags:
         - Shortlists
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - in: body
           name: body
-          description: create/update shortlist data
+          description: Create a new shortlist
           required: true
           schema:
-            $ref: "#/definitions/CompanyBody"
+            $ref: "#/definitions/ShortlistBody"
       responses:
         201:
           description: Resource created or updated

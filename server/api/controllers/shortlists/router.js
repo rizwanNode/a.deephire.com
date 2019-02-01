@@ -5,5 +5,5 @@ import { checkJwt } from '../../../common/auth';
 export default express
   .Router()
   .get('/', checkJwt, controller.all)
-  .post('/', controller.update)
+  .post('/', checkJwt, controller.create)
   .get('/:id', controller.byParam);

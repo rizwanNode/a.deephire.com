@@ -57,6 +57,19 @@ class Database {
     });
   }
 
+  create(data, col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.insertOne(data, (err, result) => {
+          if (err) throw err;
+          if (result) resolve(204);
+        });
+      });
+    });
+  }
+
   updateByEmail(data, col) {
     return new Promise(resolve => {
       this.client.connect(err => {
