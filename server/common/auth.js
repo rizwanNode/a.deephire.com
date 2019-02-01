@@ -24,10 +24,8 @@ export const checkJwt = jwt({
 });
 
 export async function getEmail(accessToken) {
-  return new Promise(resolve =>
-    auth0.getProfile(accessToken, (err, userInfo) => {
-      const { email } = userInfo;
-      return resolve(email);
-    }),
-  );
+  auth0.getProfile(accessToken);
+  const { email } = await auth0.getProfile(accessToken);
+  return email;
 }
+
