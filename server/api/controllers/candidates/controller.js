@@ -5,8 +5,8 @@ export class Controller {
     CandidatesService.all().then(r => res.json(r));
   }
 
-  byId(req, res) {
-    CandidatesService.byId(req.params.userId).then(r => {
+  byParam(req, res) {
+    CandidatesService.byParam(req.params.userId).then(r => {
       if (r) res.json(r);
       else res.status(200).end();
     });

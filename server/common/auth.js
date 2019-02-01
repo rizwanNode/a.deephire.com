@@ -23,9 +23,9 @@ export const checkJwt = jwt({
   algorithms: ['RS256'],
 });
 
-export const getEmail = accessToken => {
-  auth0.getProfile(accessToken, (err, userInfo) => {
-    const { email } = userInfo;
-    return email;
-  });
-};
+export async function getEmail(accessToken) {
+  auth0.getProfile(accessToken);
+  const { email } = await auth0.getProfile(accessToken);
+  return email;
+}
+

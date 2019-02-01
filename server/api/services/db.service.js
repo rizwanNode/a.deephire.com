@@ -22,25 +22,20 @@ class Database {
     });
   }
 
-  byEmail(email, col) {
+  /* eslint-disable no-param-reassign */
+  byParam(search, col, id = false) {
+    if (id) {
+      if (!ObjectId.isValid(search)) {
+        return Promise.resolve(400);
+      }
+      search = { _id: new ObjectId(search) };
+    }
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection.findOne({ email }, (err, result) => {
+        collection.find(search).toArray((err, result) => {
           if (err) throw err;
-          resolve(result);
-        });
-      });
-    });
-  }
-
-  byUserId(id, col) {
-    return new Promise(resolve => {
-      this.client.connect(err => {
-        if (err) throw err;
-        const collection = this.client.db('content').collection(col);
-        collection.findOne({ userId: id }).then(result => {
           resolve(result);
         });
       });
@@ -53,16 +48,26 @@ class Database {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection.updateOne(
-          { userId },
-          { $set: data },
-          { upsert: true },
-          (err, result) => {
-            if (err) throw err;
-            if (result) resolve(200);
-            else resolve(400);
-          },
-        );
+        collection.updateOne({ userId }, { $set: data }, { upsert: true }, (err, result) => {
+          if (err) throw err;
+          if (result) resolve(200);
+          else resolve(400);
+        });
+      });
+    });
+  }
+
+  insert(data, col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.insertOne(data, (err, result) => {
+          if (err) throw err;
+          if (result) {
+            resolve({ ...data, _id: result.insertedId });
+          }
+        });
       });
     });
   }
@@ -108,12 +113,10 @@ class Database {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection
-          .deleteMany({ user_id: userId, company_id: interviewId })
-          .then(result => {
-            if (result.deletedCount) resolve(204);
-            else resolve(404);
-          });
+        collection.deleteMany({ user_id: userId, company_id: interviewId }).then(result => {
+          if (result.deletedCount) resolve(204);
+          else resolve(404);
+        });
       });
     });
   }

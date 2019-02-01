@@ -8,12 +8,12 @@ class ExamplesService {
     return db.all();
   }
 
-  byId(id) {
-    l.info(`${this.constructor.name}.byId(${id})`);
-    return db.byId(id);
+  byParam(id) {
+    l.info(`${this.constructor.name}.byParam(${id})`);
+    return db.byParam(id);
   }
 
-  create(name) {
+  insert(name) {
     return db.insert(name);
   }
 }

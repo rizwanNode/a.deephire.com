@@ -7,8 +7,8 @@ export class Controller {
   update(req, res) {
     CompaniesService.update(req.body).then(r => res.status(r).end());
   }
-  byEmail(req, res) {
-    CompaniesService.byEmail(req.params.email).then(r => {
+  byParam(req, res) {
+    CompaniesService.byParam(req.params.email).then(r => {
       if (r) res.json(r);
       else res.status(500).end();
     });
