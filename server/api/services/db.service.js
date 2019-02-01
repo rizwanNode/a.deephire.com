@@ -57,14 +57,16 @@ class Database {
     });
   }
 
-  create(data, col) {
+  insert(data, col) {
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
         collection.insertOne(data, (err, result) => {
           if (err) throw err;
-          if (result) resolve(204);
+          if (result) {
+            resolve({ ...data, _id: result.insertedId });
+          }
         });
       });
     });

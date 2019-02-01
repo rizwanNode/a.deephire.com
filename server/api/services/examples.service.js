@@ -13,7 +13,7 @@ class ExamplesService {
     return db.byParam(id);
   }
 
-  create(name) {
+  insert(name) {
     return db.insert(name);
   }
 }

@@ -12,8 +12,8 @@ export class Controller {
     });
   }
 
-  create(req, res) {
-    ExamplesService.create(req.body.name).then(r =>
+  insert(req, res) {
+    ExamplesService.insert(req.body.name).then(r =>
       res
         .status(201)
         .location(`<%= apiRoot %>/examples/${r.id}`)

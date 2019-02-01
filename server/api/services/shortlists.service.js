@@ -9,10 +9,10 @@ class ShortlistService {
   }
 
 
-  create(data, email) {
-    l.info(`${this.constructor.name}.create(${data},${email})`);
+  insert(data, email) {
+    l.info(`${this.constructor.name}.insert(${data},${email})`);
     const shortList = { ...data, createdBy: email };
-    return db.create(shortList, 'shortlists');
+    return db.insert(shortList, 'shortlists');
   }
 
   byParam(id) {
