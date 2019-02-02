@@ -1,4 +1,4 @@
-// import { ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import db from './db.service';
 
@@ -12,9 +12,9 @@ class VideoService {
   async insert(data, email) {
     l.info(`${this.constructor.name}.insert(${data},${email})`);
     const { userId, interviewId } = data;
-    const search = { userId, interviewId };
-
-    return db.createUpdateVideo(search, data, 'videos_tests');
+    const search = { userId, interviewId: ObjectId(interviewId) };
+    const updateData = { ...data, ...search };
+    return db.createUpdateVideo(search, updateData, 'videos_tests');
   }
 
   byParam(id) {
@@ -25,7 +25,6 @@ class VideoService {
 }
 
 export default new VideoService();
-
 
 // we want a lookup based on the interviewId
 // see if something with that interviewId and userId already exists

@@ -100,16 +100,26 @@ definitions:
     properties:
       userId:
         type: string
-        example: auth0 | 119
+        example: facebook|1948444908830936
+      candidateEmail:
+        type: string
+        example: russell@test.com
+      interviewId:
+        type: string
+        example: 5c4c8d0b7cebba000854883d
+      userName:
+        type: string
+        example: Russell Ratcliffe
       responses:
-        type: array
-        items:
-          type: string
-        example:
-          [
-            "https://www.youTube.com/watch?v=QSmXvcrtTpM",
-            "https://www.youTube.com/watch?v=emTHLFKcSWQ",
-          ]
+        type: object
+        title: responses
+        properties:
+          question:
+            type: string
+            example: whats your name?
+          response:
+            type: string
+            example: https://video.com
 
 paths:
   /examples:
