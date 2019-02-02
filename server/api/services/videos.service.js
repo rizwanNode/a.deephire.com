@@ -5,7 +5,7 @@ import db from './db.service';
 class VideoService {
   all(email) {
     l.info(`${this.constructor.name}.all(${email}`);
-    return db.getInterviews(email, 'videos_test');
+    return db.getInterviews(email, 'videos');
   }
 
   async insert(data, email) {
@@ -13,13 +13,13 @@ class VideoService {
     const { userId, interviewId } = data;
     const search = { userId, interviewId: ObjectId(interviewId) };
     const updateData = { ...data, ...search };
-    return db.createUpdateVideo(search, updateData, 'videos_tests');
+    return db.createUpdateVideo(search, updateData, 'videos');
   }
 
   byParam(id) {
     l.info(`${this.constructor.name}.byParam(${id})`);
 
-    return db.byParam(id, 'videos_test', true);
+    return db.byParam(id, 'videos', true);
   }
 }
 
