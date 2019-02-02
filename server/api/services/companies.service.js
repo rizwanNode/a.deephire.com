@@ -12,9 +12,10 @@ class CandidatesService {
     return db.updateByEmail(data, 'companies');
   }
 
-  byEmail(email) {
-    l.info(`${this.constructor.name}.byEmail(${email})`);
-    return db.byEmail(email, 'companies');
+  byParam(email) {
+    l.info(`${this.constructor.name}.byParam(${email})`);
+    const search = { email };
+    return db.byParam(search, 'companies');
   }
 }
 

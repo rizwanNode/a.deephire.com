@@ -6,9 +6,10 @@ class CandidatesService {
     l.info(`${this.constructor.name}.all()`);
     return db.all('candidate_video_responses');
   }
-  byId(id) {
-    l.info(`${this.constructor.name}.byId(${id})`);
-    return db.byUserId(id, 'candidates');
+  byParam(userId) {
+    l.info(`${this.constructor.name}.byParam(${userId})`);
+    const search = { userId };
+    return db.byParam(search, 'candidates');
   }
 
   put(data) {

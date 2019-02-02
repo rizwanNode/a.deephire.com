@@ -5,5 +5,5 @@ export default express
   .Router()
   .get('/', controller.all)
   .post('/', controller.update)
-  .get('/:email', controller.byEmail);
+  .get('/:email', controller.byParam);
 
