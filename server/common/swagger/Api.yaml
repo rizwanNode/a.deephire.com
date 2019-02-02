@@ -92,6 +92,25 @@ definitions:
           type: string
         example: ["ar1", "ar3"]
 
+  VideoBody:
+    type: object
+    title: video
+    required:
+      - userId
+    properties:
+      userId:
+        type: string
+        example: auth0 | 119
+      responses:
+        type: array
+        items:
+          type: string
+        example:
+          [
+            "https://www.youTube.com/watch?v=QSmXvcrtTpM",
+            "https://www.youTube.com/watch?v=emTHLFKcSWQ",
+          ]
+
 paths:
   /examples:
     get:
@@ -184,6 +203,45 @@ paths:
           description: Malformed ID, the ID has to be a 12 character string
         404:
           description: Shortlist with given ID did not exist
+
+  /videos:
+    get:
+      tags:
+        - Videos
+      description: Fetch all video interviews
+      responses:
+        200:
+          description: Returns all video interviews
+    post:
+      tags:
+        - Videos
+      description: Create or Update a Video
+      parameters:
+        - name: video
+          in: body
+          description: a video
+          required: true
+          schema:
+            $ref: "#/definitions/VideoBody"
+      responses:
+        201:
+          description: Video Created
+
+  /videos/{id}:
+    get:
+      tags:
+        - Videos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the example to retrieve
+          type: integer
+      responses:
+        200:
+          description: Return the example with the specified id
+        404:
+          description: Example not found
 
   /interviews:
     get:

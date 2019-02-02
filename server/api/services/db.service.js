@@ -120,6 +120,22 @@ class Database {
       });
     });
   }
+
+  createUpdateVideo(search, data, col) {
+    const { responses } = data;
+    delete data.responses;
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.update(search, { $push: { responses }, $setOnInsert: data }, { upsert: true }, (err, result) => {
+          if (err) throw err;
+          if (result.result.n) resolve(201);
+          else resolve(400);
+        });
+      });
+    });
+  }
 }
 
 export default new Database();

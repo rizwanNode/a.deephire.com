@@ -4,6 +4,7 @@ import candidatesRouter from './api/controllers/candidates/router';
 import emailsRouter from './api/controllers/emails/router';
 import companiesRouter from './api/controllers/companies/router';
 import shortlistsRouter from './api/controllers/shortlists/router';
+import videosRouter from './api/controllers/videos/router';
 
 import { checkJwt } from './common/auth';
 
@@ -14,4 +15,5 @@ export default function routes(app) {
   app.use('/v1/emails', checkJwt, emailsRouter);
   app.use('/v1/companies', checkJwt, companiesRouter);
   app.use('/v1/shortlists', shortlistsRouter);
+  app.use('/v1/videos', videosRouter);
 }
