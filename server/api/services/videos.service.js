@@ -3,10 +3,9 @@ import l from '../../common/logger';
 import db from './db.service';
 
 class VideoService {
-  all(createdBy) {
-    l.info(`${this.constructor.name}.all(${createdBy}`);
-    const search = { created_by: createdBy };
-    return db.byParam(search, 'videos_test');
+  all(email) {
+    l.info(`${this.constructor.name}.all(${email}`);
+    return db.getInterviews(email, 'videos_test');
   }
 
   async insert(data, email) {

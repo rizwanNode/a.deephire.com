@@ -216,6 +216,12 @@ paths:
 
   /videos:
     get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
       tags:
         - Videos
       description: Fetch all video interviews
