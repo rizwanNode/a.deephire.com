@@ -28,4 +28,5 @@ class ShortlistService {
   }
 }
 
+
 export default new ShortlistService();

@@ -92,6 +92,35 @@ definitions:
           type: string
         example: ["ar1", "ar3"]
 
+  VideoBody:
+    type: object
+    title: video
+    required:
+      - userId
+    properties:
+      userId:
+        type: string
+        example: facebook|1948444908830936
+      candidateEmail:
+        type: string
+        example: russell@test.com
+      interviewId:
+        type: string
+        example: 5c4c8d0b7cebba000854883d
+      userName:
+        type: string
+        example: Russell Ratcliffe
+      responses:
+        type: object
+        title: responses
+        properties:
+          question:
+            type: string
+            example: whats your name?
+          response:
+            type: string
+            example: https://video.com
+
 paths:
   /examples:
     get:
@@ -184,6 +213,51 @@ paths:
           description: Malformed ID, the ID has to be a 12 character string
         404:
           description: Shortlist with given ID did not exist
+
+  /videos:
+    get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      tags:
+        - Videos
+      description: Fetch all video interviews
+      responses:
+        200:
+          description: Returns all video interviews
+    post:
+      tags:
+        - Videos
+      description: Create or Update a Video
+      parameters:
+        - name: video
+          in: body
+          description: a video
+          required: true
+          schema:
+            $ref: "#/definitions/VideoBody"
+      responses:
+        201:
+          description: Video Created
+
+  /videos/{id}:
+    get:
+      tags:
+        - Videos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the example to retrieve
+          type: integer
+      responses:
+        200:
+          description: Return the example with the specified id
+        404:
+          description: Example not found
 
   /interviews:
     get:

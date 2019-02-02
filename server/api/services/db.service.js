@@ -120,6 +120,36 @@ class Database {
       });
     });
   }
-}
 
+  createUpdateVideo(search, data, col) {
+    const { responses } = data;
+    delete data.responses;
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.update(search, { $push: { responses }, $setOnInsert: data }, { upsert: true }, (err, result) => {
+          if (err) throw err;
+          if (result.result.n) resolve(201);
+          else resolve(400);
+        });
+      });
+    });
+  }
+
+
+  async getInterviews(email, col) {
+    return new Promise(resolve => {
+      this.client.connect(err => {
+        if (err) throw err;
+        const collection = this.client.db('content').collection(col);
+        collection.aggregate([{ $match: { email } }, { $lookup: { from: col, localField: '_id', foreignField: 'interviewId', as: 'interview' } }, { $unwind: { path: '$interview' } }, { $project: { _id: false, interview: true } }]).toArray((err, result) => {
+          if (err) throw err;
+          if (result) resolve(result);
+        });
+      });
+    });
+  }
+}
 export default new Database();
+// [{ $match: { email: 'russell@deephire.com' } }, { $lookup: { from: 'videos_test', localField: '_id', foreignField: 'interviewId', as: 'interview' } }, { $unwind: { path: '$interview' } }, { $project: { _id: false, interview: true } }];
