@@ -7,7 +7,7 @@ class ShortlistService {
   all(createdBy) {
     l.info(`${this.constructor.name}.all(${createdBy}`);
     const search = { created_by: createdBy };
-    return db.byParam(search, 'shortlists_test');
+    return db.byParam(search, 'shortlists');
   }
 
   async insert(data, email) {
@@ -18,13 +18,13 @@ class ShortlistService {
     const shortUrl = await shortenLink(longUrl, `${email}'s shortList for ${data.email}`);
 
     const shortList = { ...data, createdBy: email, _id: objId, shortUrl };
-    return db.insert(shortList, 'shortlists_test');
+    return db.insert(shortList, 'shortlists');
   }
 
   byParam(id) {
     l.info(`${this.constructor.name}.byParam(${id})`);
 
-    return db.byParam(id, 'shortlists_test', true);
+    return db.byParam(id, 'shortlists', true);
   }
 }
 

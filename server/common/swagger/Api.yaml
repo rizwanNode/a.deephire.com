@@ -252,7 +252,7 @@ paths:
           in: path
           required: true
           description: The id of the example to retrieve
-          type: integer
+          type: string
       responses:
         200:
           description: Return the example with the specified id

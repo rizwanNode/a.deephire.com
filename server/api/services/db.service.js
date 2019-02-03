@@ -152,4 +152,3 @@ class Database {
   }
 }
 export default new Database();
-// [{ $match: { email: 'russell@deephire.com' } }, { $lookup: { from: 'videos_test', localField: '_id', foreignField: 'interviewId', as: 'interview' } }, { $unwind: { path: '$interview' } }, { $project: { _id: false, interview: true } }];
