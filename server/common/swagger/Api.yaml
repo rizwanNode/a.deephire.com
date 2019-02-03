@@ -81,7 +81,6 @@ definitions:
   ShortlistBody:
     type: object
     title: shortlist
-
     properties:
       userId:
         type: string
@@ -91,7 +90,6 @@ definitions:
         items:
           type: string
         example: ["ar1", "ar3"]
-
   VideoBody:
     type: object
     title: video
@@ -107,6 +105,9 @@ definitions:
       interviewId:
         type: string
         example: 5c4c8d0b7cebba000854883d
+      interviewName:
+        type: string
+        example: Russell's Test Interview
       userName:
         type: string
         example: Russell Ratcliffe
@@ -119,7 +120,7 @@ definitions:
             example: whats your name?
           response:
             type: string
-            example: https://video.com
+            example: https://www.youtube.com/watch?v=5pX3mwnAvyo
 
 paths:
   /examples:
