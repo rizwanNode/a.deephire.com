@@ -8,8 +8,8 @@ class VideoService {
     return db.getInterviews(email, 'videos');
   }
 
-  async insert(data, email) {
-    l.info(`${this.constructor.name}.insert(${data},${email})`);
+  insert(data) {
+    l.info(`${this.constructor.name}.insert(${data})`);
     const { userId, interviewId } = data;
     const search = { userId, interviewId: ObjectId(interviewId) };
     const updateData = { ...data, ...search };

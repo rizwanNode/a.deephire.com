@@ -7,12 +7,12 @@ export class Controller {
     VideoService.all(email).then(r => res.json(r));
   }
 
-  async insert(req, res) {
+  insert(req, res) {
     // add auth for this endpoint, requires sending login from app
     VideoService.insert(req.body).then(r => res.status(r).end());
   }
 
-  async byParam(req, res) {
+  byParam(req, res) {
     VideoService.byParam(req.params.id).then(r => {
       if (r) res.json(r);
       else res.status(500).end();

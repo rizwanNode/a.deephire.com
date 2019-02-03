@@ -1,6 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectID;
 
+const timestamp = () => new Date().toString();
 class Database {
   constructor() {
     const uri = `mongodb://${process.env.MONGO_NAME}:${
@@ -58,6 +59,7 @@ class Database {
   }
 
   insert(data, col) {
+    data.timestamp = timestamp;
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
@@ -122,31 +124,52 @@ class Database {
   }
 
   createUpdateVideo(search, data, col) {
+    data.timestamp = timestamp();
+    console.log(timestamp(), data);
     const { responses } = data;
     delete data.responses;
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection(col);
-        collection.update(search, { $push: { responses }, $setOnInsert: data }, { upsert: true }, (err, result) => {
-          if (err) throw err;
-          if (result.result.n) resolve(201);
-          else resolve(400);
-        });
+        collection.update(
+          search,
+          { $push: { responses }, $setOnInsert: data },
+          { upsert: true },
+          (err, result) => {
+            if (err) throw err;
+            if (result.result.n) resolve(201);
+            else resolve(400);
+          },
+        );
       });
     });
   }
-
 
   async getInterviews(email, col) {
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
         const collection = this.client.db('content').collection('interviews');
-        collection.aggregate([{ $match: { email } }, { $lookup: { from: col, localField: '_id', foreignField: 'interviewId', as: 'interview' } }, { $unwind: { path: '$interview' } }, { $project: { _id: false, interview: true } }]).toArray((err, result) => {
-          if (err) throw err;
-          if (result) resolve(result);
-        });
+        collection
+          .aggregate([
+            { $match: { email } },
+            {
+              $lookup: {
+                from: col,
+                localField: '_id',
+                foreignField: 'interviewId',
+                as: 'interview',
+              },
+            },
+            { $unwind: { path: '$interview' } },
+            { $project: { _id: false, interview: true } },
+          ])
+          .toArray((err, result) => {
+            if (err) throw err;
+            const interviews = result.map(r => r.interview);
+            if (result) resolve(interviews);
+          });
       });
     });
   }
