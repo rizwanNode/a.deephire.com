@@ -21,6 +21,11 @@ class VideoService {
 
     return db.byParam(id, 'videos', true);
   }
+
+  delete(id) {
+    l.info(`${this.constructor.name}.delete(${id})`);
+    return db.delete(id, 'videos');
+  }
 }
 
 export default new VideoService();

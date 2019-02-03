@@ -6,4 +6,5 @@ export default express
   .Router()
   .get('/', checkJwt, controller.all)
   .post('/', controller.insert)
-  .get('/:id', controller.byParam);
+  .get('/:id', controller.byParam)
+  .delete('/:id', checkJwt, controller.delete);

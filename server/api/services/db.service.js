@@ -10,18 +10,6 @@ class Database {
     this.client = new MongoClient(uri, { useNewUrlParser: true });
   }
 
-  all(col) {
-    return new Promise(resolve => {
-      this.client.connect(err => {
-        if (err) throw err;
-        const collection = this.client.db('content').collection(col);
-        collection.find({}).toArray((err, result) => {
-          if (err) throw err;
-          resolve(result);
-        });
-      });
-    });
-  }
 
   /* eslint-disable no-param-reassign */
   byParam(search, col, id = false) {
@@ -37,7 +25,7 @@ class Database {
         const collection = this.client.db('content').collection(col);
         collection.find(search).toArray((err, result) => {
           if (err) throw err;
-          resolve(result);
+          resolve(result.reverse());
         });
       });
     });
@@ -94,6 +82,8 @@ class Database {
   }
 
   delete(id, col) {
+    console.log(timestamp());
+
     if (!ObjectId.isValid(id)) {
       return Promise.resolve(400);
     }
@@ -110,22 +100,8 @@ class Database {
     });
   }
 
-  deleteCandidate(userId, interviewId, col) {
-    return new Promise(resolve => {
-      this.client.connect(err => {
-        if (err) throw err;
-        const collection = this.client.db('content').collection(col);
-        collection.deleteMany({ user_id: userId, company_id: interviewId }).then(result => {
-          if (result.deletedCount) resolve(204);
-          else resolve(404);
-        });
-      });
-    });
-  }
-
   createUpdateVideo(search, data, col) {
     data.timestamp = timestamp();
-    console.log(timestamp(), data);
     const { responses } = data;
     delete data.responses;
     return new Promise(resolve => {

@@ -18,5 +18,11 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  delete(req, res) {
+    VideoService.delete(req.params.id).then(r => {
+      res.status(r).end();
+    });
+  }
 }
 export default new Controller();
