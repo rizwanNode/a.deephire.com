@@ -142,7 +142,7 @@ class Database {
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
-        const collection = this.client.db('content').collection(col);
+        const collection = this.client.db('content').collection('interviews');
         collection.aggregate([{ $match: { email } }, { $lookup: { from: col, localField: '_id', foreignField: 'interviewId', as: 'interview' } }, { $unwind: { path: '$interview' } }, { $project: { _id: false, interview: true } }]).toArray((err, result) => {
           if (err) throw err;
           if (result) resolve(result);
