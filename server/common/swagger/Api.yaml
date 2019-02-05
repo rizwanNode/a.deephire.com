@@ -229,7 +229,7 @@ paths:
           description: an example
           required: true
           schema:
-            $ref: "#/definitions/CandidateBody"
+            $ref: "#/definitions/ShortlistBody"
       responses:
         200:
           description: Created or Updated Resource
