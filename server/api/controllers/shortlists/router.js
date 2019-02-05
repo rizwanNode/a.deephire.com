@@ -6,4 +6,6 @@ export default express
   .Router()
   .get('/', checkJwt, controller.all)
   .post('/', checkJwt, controller.insert)
-  .get('/:id', controller.byParam);
+  .get('/:id', controller.byParam)
+  .put('/:id', controller.put);
+

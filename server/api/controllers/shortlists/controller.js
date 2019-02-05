@@ -25,5 +25,12 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  put(req, res) {
+    ShortlistService.put(req.params.id, req.body).then(r => {
+      if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 }
 export default new Controller();
