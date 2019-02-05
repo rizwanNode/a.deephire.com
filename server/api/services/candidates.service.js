@@ -12,7 +12,7 @@ class CandidatesService {
     l.info(`${this.constructor.name}.put(${data})`);
     const { userId } = data;
     const search = { userId };
-    return db.put({ search }, 'candidates');
+    return db.put({ search }, 'candidates', data);
   }
 }
 
