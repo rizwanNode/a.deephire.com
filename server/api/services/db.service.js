@@ -40,7 +40,6 @@ export const byParam = async (search, col, id = false) => {
   });
 };
 
-
 export const put = async (search, col, data, id = false) => {
   const collection = mongoClient.db('content').collection(col);
 
@@ -80,16 +79,11 @@ export const updateByEmail = async (data, col) => {
   const collection = mongoClient.db('content').collection(col);
 
   return new Promise(resolve => {
-    collection.updateOne(
-      { email: data.email },
-      { $set: data },
-      { upsert: true },
-      (err, result) => {
-        if (err) throw err;
-        if (result.result.n) resolve(201);
-        else resolve(400);
-      },
-    );
+    collection.updateOne({ email: data.email }, { $set: data }, { upsert: true }, (err, result) => {
+      if (err) throw err;
+      if (result.result.n) resolve(201);
+      else resolve(400);
+    });
   });
 };
 
@@ -128,25 +122,26 @@ export const createUpdateVideo = async (search, data, col) => {
   });
 };
 
-export const getInterviews = async (email, col) => new Promise(resolve => {
-  const collection = mongoClient.db('content').collection(col);
-  collection
-    .aggregate([
-      { $match: { email } },
-      {
-        $lookup: {
-          from: col,
-          localField: '_id',
-          foreignField: 'interviewId',
-          as: 'interview',
+export const getInterviews = async (email, current, from) =>
+  new Promise(resolve => {
+    const collection = mongoClient.db('content').collection(current);
+    collection
+      .aggregate([
+        { $match: { email } },
+        {
+          $lookup: {
+            from,
+            localField: '_id',
+            foreignField: 'interviewId',
+            as: 'interview',
+          },
         },
-      },
-      { $unwind: { path: '$interview' } },
-      { $project: { _id: false, interview: true } },
-    ])
-    .toArray((err, result) => {
-      if (err) throw err;
-      const interviews = result.map(r => r.interview);
-      if (result) resolve(interviews);
-    });
-});
+        { $unwind: { path: '$interview' } },
+        { $project: { _id: false, interview: true } },
+      ])
+      .toArray((err, result) => {
+        if (err) throw err;
+        const interviews = result.map(r => r.interview);
+        if (result) resolve(interviews);
+      });
+  });

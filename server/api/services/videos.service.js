@@ -5,7 +5,7 @@ import { getInterviews, createUpdateVideo, byParam, deleteObject } from './db.se
 class VideoService {
   all(email) {
     l.info(`${this.constructor.name}.all(${email}`);
-    return getInterviews(email, 'videos');
+    return getInterviews(email, 'interviews', 'videos');
   }
 
   insert(data) {
