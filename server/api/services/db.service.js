@@ -31,11 +31,13 @@ class Database {
     });
   }
 
-  put(id, data, col) {
-    if (!ObjectId.isValid(id)) {
-      return Promise.resolve(400);
+  put(search, col, data, id = false) {
+    if (id) {
+      if (!ObjectId.isValid(search)) {
+        return Promise.resolve(400);
+      }
+      search = { _id: new ObjectId(search) };
     }
-    const search = { _id: new ObjectId(id) };
 
     return new Promise(resolve => {
       this.client.connect(err => {
@@ -45,7 +47,6 @@ class Database {
         collection.updateOne(search, { $set: data }, { upsert: true }, (err, result) => {
           if (err) throw err;
           if (result) {
-            console.log(result);
             resolve(200);
           } else resolve(400);
         });

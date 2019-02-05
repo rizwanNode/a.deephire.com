@@ -8,9 +8,9 @@ class CandidatesService {
     return db.byParam(search, 'candidates');
   }
 
-  put(data) {
-    l.info(`${this.constructor.name}.put(${data})`);
-    return db.put(data, 'candidates');
+  put(userId) {
+    l.info(`${this.constructor.name}.put(${userId})`);
+    return db.put({ userId }, 'candidates');
   }
 }
 

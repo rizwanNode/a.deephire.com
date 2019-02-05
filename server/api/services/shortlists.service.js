@@ -29,7 +29,7 @@ class ShortlistService {
 
   put(id, data) {
     l.info(`${this.constructor.name}.put(${id}, ${data})`);
-    return db.put(id, data, 'shortlists');
+    return db.put(id, 'shortlists', data, true);
   }
 }
 
