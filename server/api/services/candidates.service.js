@@ -8,12 +8,12 @@ class CandidatesService {
     return db.byParam(search, 'candidates');
   }
 
-  put(userId) {
-    l.info(`${this.constructor.name}.put(${userId})`);
-    return db.put({ userId }, 'candidates');
+  put(data) {
+    l.info(`${this.constructor.name}.put(${data})`);
+    const { userId } = data;
+    const search = { userId };
+    return db.put({ search }, 'candidates');
   }
 }
 
-
 export default new CandidatesService();
-
