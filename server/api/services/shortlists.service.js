@@ -28,6 +28,7 @@ class ShortlistService {
   }
 
   put(id, data) {
+    delete data._id;
     l.info(`${this.constructor.name}.put(${id}, ${data})`);
     return db.put(id, 'shortlists', data, true);
   }
