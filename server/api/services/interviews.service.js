@@ -1,16 +1,16 @@
 import l from '../../common/logger';
-import db from './db.service';
+import { all, deleteObject } from './db.service';
 
 
 class InterviewsService {
   all() {
     l.info(`${this.constructor.name}.all()`);
-    return db.all('interviews');
+    return all('interviews');
   }
 
   delete(id) {
     l.info(`${this.constructor.name}.delete(${id})`);
-    return db.delete(id, 'interviews');
+    return deleteObject(id, 'interviews');
   }
 }
 
