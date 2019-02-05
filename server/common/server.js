@@ -6,6 +6,7 @@ import * as os from 'os';
 import cookieParser from 'cookie-parser';
 import swaggerify from './swagger';
 import l from './logger';
+import { init } from '../api/services/db.service';
 
 const app = new Express();
 
@@ -22,6 +23,18 @@ export default class ExpressServer {
   router(routes) {
     swaggerify(app, routes);
     return this;
+  }
+
+  initDb() {
+    return new Promise((resolve, reject) => {
+      init().then(success => {
+        if (success) {
+          l.info('Database connected.');
+          resolve(this);
+        }
+        reject('There was a problem connecting to the database.');
+      });
+    });
   }
 
   listen(port = process.env.PORT) {

@@ -1,11 +1,11 @@
 import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
-import db from './db.service';
+import { getInterviews, createUpdateVideo, byParam, deleteObject } from './db.service';
 
 class VideoService {
   all(email) {
     l.info(`${this.constructor.name}.all(${email}`);
-    return db.getInterviews(email, 'videos');
+    return getInterviews(email, 'videos');
   }
 
   insert(data) {
@@ -13,18 +13,18 @@ class VideoService {
     const { userId, interviewId } = data;
     const search = { userId, interviewId: ObjectId(interviewId) };
     const updateData = { ...data, ...search };
-    return db.createUpdateVideo(search, updateData, 'videos');
+    return createUpdateVideo(search, updateData, 'videos');
   }
 
   byParam(id) {
     l.info(`${this.constructor.name}.byParam(${id})`);
 
-    return db.byParam(id, 'videos', true);
+    return byParam(id, 'videos', true);
   }
 
   delete(id) {
     l.info(`${this.constructor.name}.delete(${id})`);
-    return db.delete(id, 'videos');
+    return deleteObject(id, 'videos');
   }
 }
 
