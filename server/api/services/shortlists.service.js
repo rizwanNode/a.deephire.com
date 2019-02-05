@@ -13,7 +13,7 @@ class ShortlistService {
   async insert(data, email) {
     l.info(`${this.constructor.name}.insert(${data},${email})`);
     const objId = ObjectId();
-    const longUrl = `https://candidates.deephire.com/?shortlist=${objId.valueOf()}`;
+    const longUrl = `https://candidates.deephire.com/shortlist?shortlist=${objId.valueOf()}`;
 
     const shortUrl = await shortenLink(longUrl, `${email}'s shortList for ${data.email}`);
 
