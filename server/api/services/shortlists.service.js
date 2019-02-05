@@ -26,7 +26,11 @@ class ShortlistService {
 
     return db.byParam(id, 'shortlists', true);
   }
-}
 
+  put(id, data) {
+    l.info(`${this.constructor.name}.put(${id}, ${data})`);
+    return db.put(id, data, 'shortlists');
+  }
+}
 
 export default new ShortlistService();

@@ -31,16 +31,23 @@ class Database {
     });
   }
 
-  put(data, col) {
-    const { userId } = data;
+  put(id, data, col) {
+    if (!ObjectId.isValid(id)) {
+      return Promise.resolve(400);
+    }
+    const search = { _id: new ObjectId(id) };
+
     return new Promise(resolve => {
       this.client.connect(err => {
         if (err) throw err;
+
         const collection = this.client.db('content').collection(col);
-        collection.updateOne({ userId }, { $set: data }, { upsert: true }, (err, result) => {
+        collection.updateOne(search, { $set: data }, { upsert: true }, (err, result) => {
           if (err) throw err;
-          if (result) resolve(200);
-          else resolve(400);
+          if (result) {
+            console.log(result);
+            resolve(200);
+          } else resolve(400);
         });
       });
     });

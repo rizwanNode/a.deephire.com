@@ -214,6 +214,25 @@ paths:
           description: Malformed ID, the ID has to be a 12 character string
         404:
           description: Shortlist with given ID did not exist
+    put:
+      tags:
+        - Shortlists
+      description: Update Shortlist Data
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: an example
+          required: true
+          schema:
+            $ref: "#/definitions/CandidateBody"
+      responses:
+        200:
+          description: Created or Updated Resource
 
   /videos:
     get:
