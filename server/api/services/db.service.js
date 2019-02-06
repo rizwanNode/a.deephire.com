@@ -138,6 +138,11 @@ export const getInterviews = async (email, current, from) =>
         },
         { $unwind: { path: '$interview' } },
         { $project: { _id: false, interview: true } },
+        {
+          $sort: {
+            'interview.timestamp': -1,
+          },
+        },
       ])
       .toArray((err, result) => {
         if (err) throw err;

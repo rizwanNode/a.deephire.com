@@ -6,7 +6,7 @@ import shortenLink from '../../common/shortenLink';
 class ShortlistService {
   all(createdBy) {
     l.info(`${this.constructor.name}.all(${createdBy}`);
-    const search = { created_by: createdBy };
+    const search = { createdBy };
     return byParam(search, 'shortlists');
   }
 
