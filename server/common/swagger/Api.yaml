@@ -382,11 +382,11 @@ paths:
       tags:
         - Emails
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
+        # - name: authorization
+        #   in: header
+        #   description: Bearer <auth_token>
+        #   required: true
+        #   type: string
         - in: body
           name: body
           description: "Send emails from russell@deephire.com"
