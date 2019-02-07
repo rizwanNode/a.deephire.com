@@ -12,7 +12,7 @@ export default function routes(app) {
   app.use('/v1/examples', examplesRouter);
   app.use('/v1/interviews', checkJwt, interviewsRouter);
   app.use('/v1/candidates', candidatesRouter);
-  app.use('/v1/emails', checkJwt, emailsRouter);
+  app.use('/v1/emails', emailsRouter);
   app.use('/v1/companies', checkJwt, companiesRouter);
   app.use('/v1/shortlists', shortlistsRouter);
   app.use('/v1/videos', videosRouter);
