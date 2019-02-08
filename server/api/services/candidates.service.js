@@ -5,14 +5,15 @@ class CandidatesService {
   byParam(userId) {
     l.info(`${this.constructor.name}.byParam(${userId})`);
     const search = { userId };
-    return byParam(search, 'candidates');
+    return byParam(search, 'candidates').then(r => r[0]);
   }
 
-  put(data) {
-    l.info(`${this.constructor.name}.put(${data})`);
-    const { userId } = data;
+  put(userId, data) {
+    l.info(`${this.constructor.name}.put(${userId},${data})`);
     const search = { userId };
-    return put({ search }, 'candidates', data);
+    /* eslint-disable no-param-reassign */
+    data.userId = userId;
+    return put(search, 'candidates', data);
   }
 }
 

@@ -63,12 +63,8 @@ definitions:
   CandidateBody:
     type: object
     title: candidate
-    required:
-      - userId
+
     properties:
-      userId:
-        type: string
-        example: testUserId99
       youtubeUrls:
         type: array
         items:
@@ -338,27 +334,6 @@ paths:
         404:
           description: Interview with given ID did not exist
 
-  /candidates:
-    put:
-      tags:
-        - Candidates
-      description: Create/Update Candidate Data
-      parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
-        - in: body
-          name: body
-          description: an example
-          required: true
-          schema:
-            $ref: "#/definitions/CandidateBody"
-      responses:
-        200:
-          description: Created or Updated Resource
-
   /candidates/{userId}:
     get:
       tags:
@@ -376,6 +351,30 @@ paths:
           description: Malformed ID
         404:
           description: Candidate with given ID did not exist
+    put:
+      tags:
+        - Candidates
+      description: Create/Update Candidate Data
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: userId
+          in: path
+          required: true
+          description: The users auth0 ID
+          type: string
+        - in: body
+          name: body
+          description: an example
+          required: true
+          schema:
+            $ref: "#/definitions/CandidateBody"
+      responses:
+        200:
+          description: Created or Updated Resource
 
   /emails:
     post:

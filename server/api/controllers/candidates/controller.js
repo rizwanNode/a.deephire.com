@@ -10,7 +10,7 @@ export class Controller {
 
 
   put(req, res) {
-    CandidatesService.put(req.body).then(r => res.json(r));
+    CandidatesService.put(req.params.userId, req.body).then(r => res.json(r));
   }
 }
 export default new Controller();

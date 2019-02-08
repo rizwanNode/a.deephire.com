@@ -4,9 +4,9 @@
   "description": "Automate the recruiting process with one-way video interviews",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "prod": "node dist/index.js",
     "compile": "babel server --out-dir dist --delete-dir-on-start --source-maps inline --copy-files",
-    "dev": "nodemon server --exec babel-node --config .nodemonrc.json | pino-pretty",
+    "start": "nodemon server --exec babel-node --config .nodemonrc.json | pino-pretty",
     "dev:debug": "nodemon server --exec babel-node --config .nodemonrc.json --inspect | pino-pretty",
     "test": "mocha --compilers js:@babel/register --exit",
     "test:debug": "mocha --compilers js:@babel/register --inspect-brk --exit",
