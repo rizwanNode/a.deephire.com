@@ -61,6 +61,22 @@ export const put = async (search, col, data, id = false) => {
   });
 };
 
+// export const putCandidateFile = async (search, col, file, id = false) => {
+//   const collection = mongoClient.db('content').collection(col);
+
+//   if (id) {
+//     l.info('update candidate files');
+//     if (!ObjectId.isValid(search)) {
+//       return Promise.resolve(400);
+//     }
+//     search = { _id: new ObjectId(search) };
+//   }
+
+//   return new Promise(resolve => {
+//     collection.updateOne(search, {$set: })
+//   })
+// };
+
 export const insert = async (data, col) => {
   const collection = mongoClient.db('content').collection(col);
 
