@@ -1,7 +1,7 @@
 import VideoService from '../../services/videos.service';
 
 export class Controller {
-  async all(req, res) {
+  all(req, res) {
     VideoService.all(res.locals.email).then(r => res.json(r));
   }
 

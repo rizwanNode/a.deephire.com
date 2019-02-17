@@ -1,7 +1,7 @@
 import InterviewsService from '../../services/interviews.service';
 
 export class Controller {
-  async all(req, res) {
+  all(req, res) {
     InterviewsService.all(res.locals.email).then(r => res.json(r));
   }
 
