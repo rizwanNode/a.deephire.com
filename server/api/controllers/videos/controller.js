@@ -1,10 +1,8 @@
 import VideoService from '../../services/videos.service';
-import { getEmail } from '../../../common/auth';
 
 export class Controller {
   async all(req, res) {
-    const email = await getEmail(req.headers.authorization.split(' ')[1]);
-    VideoService.all(email).then(r => res.json(r));
+    VideoService.all(res.locals.email).then(r => res.json(r));
   }
 
   insert(req, res) {

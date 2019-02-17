@@ -10,32 +10,34 @@ const auth0 = new AuthenticationClient({
   domain: 'login.deephire.com',
   clientId: 'jhzGFZHTv8ehpGskVKxZr_jXOAvKg7DU',
 });
-export const checkJwt = jwt({
-  // Dynamically provide a signing key
-  // based on the kid in the header and
-  // the signing keys provided by the JWKS endpoint.
+
+const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
     jwksUri: 'https://login.deephire.com/.well-known/jwks.json',
   }),
-
-  // Validate the audience and the issuer.
   audience: 'http://a.deephire.com',
   issuer: 'https://login.deephire.com/',
   algorithms: ['RS256'],
 });
 
-export async function getEmail(accessToken) {
+
+async function getEmail(req, res, next) {
+  const accessToken = req.headers.authorization.split(' ')[1];
   const value = myCache.get(accessToken);
   if (value === undefined) {
     auth0.getProfile(accessToken);
     const { email } = await auth0.getProfile(accessToken);
     myCache.set(accessToken, email);
     l.info(`set ${email} in cache`);
-    return email;
+    res.locals.email = email;
   }
   l.info(`got ${value} from cache`);
-  return value;
+  res.locals.email = value;
+  next();
 }
+
+const auth = [checkJwt, getEmail];
+export default auth;

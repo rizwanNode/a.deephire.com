@@ -1,10 +1,8 @@
 import InterviewsService from '../../services/interviews.service';
-import { getEmail } from '../../../common/auth';
 
 export class Controller {
   async all(req, res) {
-    const email = await getEmail(req.headers.authorization.split(' ')[1]);
-    InterviewsService.all(email).then(r => res.json(r));
+    InterviewsService.all(res.locals.email).then(r => res.json(r));
   }
 
   delete(req, res) {
