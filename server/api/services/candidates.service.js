@@ -1,7 +1,10 @@
 import AWS from 'aws-sdk';
 
+
 import l from '../../common/logger';
 import { byParam, put } from './db.service';
+
+const fs = require('fs');
 
 AWS.config.update({
   region: 'us-east-2',
@@ -31,20 +34,21 @@ class CandidatesService {
     return put(search, 'candidates', data);
   }
 
-  postDocuments(userId, objectKey, body) {
-    l.info(`${this.constructor.name}.put(${userId},${body})`);
+  async postDocuments(userId, objectKey, fileUri) {
+    l.info(`${this.constructor.name}.put(${userId},${fileUri})`);
 
-    console.log('Put documents body', body);
-
-    s3.putObject({ Body: body, Bucket: 'candidate.documents', Key: objectKey }, (err, data) => {
+    const data = await new Promise(((resolve, reject) => {
+      fs.readFile(fileUri, (err, data) => (err ? reject(err) : resolve(data)));
+    }));
+    s3.putObject({ Body: data, Bucket: 'candidate.documents', Key: objectKey }, (err, data) => {
       if (err) {
-        console.log('ERRORO ERRO REERRO', err);
-        return Promise.resolve(400);
+        return Promise.resolve(err);
       }
-      console.log('DATA DATA DATA', data);
-      return Promise.resolve(200);
+      l.info(`${this.constructor.name}.data(${data}`);
+
+      return Promise.resolve(data);
     });
-    return Promise.resolve(200);
+    return Promise.resolve(data);
   }
 }
 

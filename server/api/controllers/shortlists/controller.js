@@ -2,7 +2,6 @@ import ShortlistService from '../../services/shortlists.service';
 
 export class Controller {
   all(req, res) {
-    // console.log(req.locals.email);
     ShortlistService.all(res.locals.email).then(r => res.json(r));
   }
 

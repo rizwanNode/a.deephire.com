@@ -10,24 +10,15 @@ export class Controller {
 
 
   put(req, res) {
-    console.log('put candidate controller');
     CandidatesService.put(req.params.userId, req.body).then(r => res.json(r));
   }
 
-  // postDocuments(req, res) {
-  //   console.log('post documents controller');
-  //   CandidatesService.postDocuments(req.params.userId, req.body)
-  //     .then(r => res.json(r));
-  // }
-
   postDocuments(req, res) {
-    console.log('hit othe rpost document from action');
-    CandidatesService.postDocuments(req.params.userId, req.params.objectKey, req.body)
+    CandidatesService.postDocuments(req.params.userId, req.params.objectKey, req.files.upfile.path)
       .then(r => res.json(r));
   }
 
   deleteDocument(req, res) {
-    console.log('delete document controller');
     CandidatesService.deleteDocument(req.params.userId, req.body)
       .then(r => res.json(r));
   }
