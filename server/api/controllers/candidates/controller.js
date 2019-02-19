@@ -14,7 +14,7 @@ export class Controller {
   }
 
   postDocuments(req, res) {
-    CandidatesService.postDocuments(req.params.userId, req.params.objectKey, req.files.upfile.path)
+    CandidatesService.postDocuments(req.params.userId, req.params.objectKey, req.files)
       .then(r => res.json(r));
   }
 

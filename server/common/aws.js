@@ -15,7 +15,7 @@ const s3 = new AWS.S3({
 });
 
 
-const uploadS3 = async (fileUri, bucket, key) => {
+const uploadS3 = async (bucket, key, fileUri) => {
   const data = await new Promise(((resolve, reject) => {
     fs.readFile(fileUri, (err, data) => (err ? reject(err) : resolve(data)));
   })).catch(err => (err));

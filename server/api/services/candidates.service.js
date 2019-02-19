@@ -19,9 +19,13 @@ class CandidatesService {
   }
 
 
-  async postDocuments(userId, objectKey, fileUri) {
-    l.info(`${this.constructor.name}.put(${userId},${fileUri})`);
-    return uploadS3('candidate.documents', fileUri);
+  async postDocuments(userId, name, files) {
+    const { upfile } = files;
+    const { path, originalName } = upfile;
+    l.info(`${this.constructor.name}.put(${userId},${path})`);
+    const bucketName = 'deephire.data';
+    const key = `candidates/documents/${originalName}`;
+    return uploadS3(bucketName, key, path);
   }
 }
 
