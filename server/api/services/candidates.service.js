@@ -1,13 +1,16 @@
 import l from '../../common/logger';
-import { uploadS3 } from '../../common/aws';
+import { uploadS3, downloadS3 } from '../../common/aws';
 
 import { byParam, put } from './db.service';
+
+const collection = 'candidates';
+const bucket = 'deephire.data';
 
 class CandidatesService {
   byParam(userId) {
     l.info(`${this.constructor.name}.byParam(${userId})`);
     const search = { userId };
-    return byParam(search, 'candidates').then(r => r[0]);
+    return byParam(search, collection).then(r => r[0]);
   }
 
   put(userId, data) {
@@ -15,17 +18,22 @@ class CandidatesService {
     const search = { userId };
     /* eslint-disable no-param-reassign */
     data.userId = userId;
-    return put(search, 'candidates', data);
+    return put(search, collection, data);
   }
 
+
+  async getDocuments(userId, num) {
+    const search = { userId };
+    const key = await byParam(search, collection).then(r => r[0].documents[num]).catch(err => err);
+    downloadS3(bucket, key);
+  }
 
   postDocuments(userId, name, files) {
     const { upfile } = files;
     const { path, originalName } = upfile;
     l.info(`${this.constructor.name}.put(${userId},${path})`);
-    const bucketName = 'deephire.data';
     const key = `candidates/documents/${originalName}`;
-    return uploadS3(bucketName, key, path);
+    return uploadS3(bucket, key, path);
   }
 }
 

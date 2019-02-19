@@ -13,6 +13,11 @@ export class Controller {
     CandidatesService.put(req.params.userId, req.body).then(r => res.json(r));
   }
 
+  getDocuments(req, res) {
+    CandidatesService.getDocuments(req.params.userId, req.params.num)
+      .then(r => res.json(r));
+  }
+
   postDocuments(req, res) {
     CandidatesService.postDocuments(req.params.userId, req.params.objectKey, req.files)
       .then(r => res.json(r));

@@ -25,10 +25,10 @@ export const uploadS3 = async (bucket, key, fileUri) => {
   }).catch(err => err);
 };
 
-export const downloadS3 = () => {
+export const downloadS3 = (bucket, key) => {
   const params = {
-    Bucket: 'deephire.data',
-    Key: 'testing',
+    Bucket: bucket,
+    Key: key,
   };
 
   return new Promise((resolve, reject) => {
