@@ -17,10 +17,5 @@ export class Controller {
     CandidatesService.postDocuments(req.params.userId, req.params.objectKey, req.files)
       .then(r => res.json(r));
   }
-
-  deleteDocument(req, res) {
-    CandidatesService.deleteDocument(req.params.userId, req.body)
-      .then(r => res.json(r));
-  }
 }
 export default new Controller();

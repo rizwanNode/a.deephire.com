@@ -8,6 +8,5 @@ export default express
   .Router()
   .get('/:userId/', controller.byParam)
   .post('/:userId/documents/:objectKey', auth, controller.postDocuments)
-  .put('/:userId', auth, controller.put)
-  .delete('/:userId/documents', auth, controller.deleteDocument);
+  .put('/:userId', auth, controller.put);
 

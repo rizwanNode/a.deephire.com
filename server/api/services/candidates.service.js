@@ -1,5 +1,5 @@
 import l from '../../common/logger';
-import uploadS3 from '../../common/aws';
+import { uploadS3 } from '../../common/aws';
 
 import { byParam, put } from './db.service';
 
@@ -19,7 +19,7 @@ class CandidatesService {
   }
 
 
-  async postDocuments(userId, name, files) {
+  postDocuments(userId, name, files) {
     const { upfile } = files;
     const { path, originalName } = upfile;
     l.info(`${this.constructor.name}.put(${userId},${path})`);

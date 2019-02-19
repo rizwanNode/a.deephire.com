@@ -15,14 +15,25 @@ const s3 = new AWS.S3({
 });
 
 
-const uploadS3 = async (bucket, key, fileUri) => {
+export const uploadS3 = async (bucket, key, fileUri) => {
   const data = await new Promise(((resolve, reject) => {
     fs.readFile(fileUri, (err, data) => (err ? reject(err) : resolve(data)));
-  })).catch(err => (err));
+  })).catch(err => err);
   return new Promise((resolve, reject) => {
     s3.putObject({ Body: data, Bucket: bucket, Key: key }, (err, data) =>
       (err ? reject(err) : resolve(data)));
-  }).catch(err => (err));
+  }).catch(err => err);
 };
 
-export default uploadS3;
+export const downloadS3 = () => {
+  const params = {
+    Bucket: 'deephire.data',
+    Key: 'testing',
+  };
+
+  return new Promise((resolve, reject) => {
+    s3.getObject(params, (err, data) =>
+      (err ? reject(err) : resolve(data)));
+  }).catch(err => err);
+};
+
