@@ -440,10 +440,10 @@ paths:
       responses:
         200:
           description: Created file on S3
-    delete:
+    get:
       tags:
         - Candidates
-      description: Delete candidate document from s3
+      description: Get candidate document from s3
       parameters:
         - name: authorization
           in: header
@@ -455,13 +455,14 @@ paths:
           required: true
           description: The users auth0 ID
           type: string
-        - in: body
-          name: body
-          description: Document ID to delete
+        - name: objectKey
+          in: path
           required: true
+          description: objectKey - why??
+
       responses:
         200:
-          description: Created file on S3
+          description: Got file from S3
 
   /emails:
     post:
