@@ -24,8 +24,8 @@ class CandidatesService {
 
   async getDocuments(userId, num) {
     const search = { userId };
-    const key = await byParam(search, collection).then(r => r[0].documents[num]).catch(err => err);
-    downloadS3(bucket, key);
+    const key = await byParam(search, collection).then(r => r[0].files[num]).catch(err => err);
+    return downloadS3(bucket, key);
   }
 
   postDocuments(userId, name, files) {
