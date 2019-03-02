@@ -183,13 +183,13 @@ definitions:
           - answerTime
         properties:
           retakesAllowed:
-            type: int
+            type: number
             example: 8
           prepTime:
-            type: int
+            type: number
             example: 45
           answerTime:
-            type: int
+            type: number
             example: 90
 
 paths:
@@ -389,6 +389,11 @@ paths:
         - Interviews
       description: Create an Interview
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: interview
           in: body
           description: a new interview
