@@ -10,14 +10,14 @@ class ShortlistService {
     return byParam(search, 'shortlists');
   }
 
-  async insert(data, email) {
-    l.info(`${this.constructor.name}.insert(${data},${email})`);
+  async insert(data, createdBy) {
+    l.info(`${this.constructor.name}.insert(${data},${createdBy})`);
     const objId = ObjectId();
     const longUrl = `https://candidates.deephire.com/shortlist?shortlist=${objId.valueOf()}`;
 
-    const shortUrl = await shortenLink(longUrl, `${email}'s shortList for ${data.email}`);
+    const shortUrl = await shortenLink(longUrl, `${createdBy}'s shortList for ${data.email}`);
 
-    const shortList = { ...data, createdBy: email, _id: objId, shortUrl };
+    const shortList = { ...data, createdBy, _id: objId, shortUrl };
     return insert(shortList, 'shortlists');
   }
 
