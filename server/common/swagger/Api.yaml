@@ -150,6 +150,47 @@ definitions:
           uid:
             type: string
             example: whats your name?
+  InterviewBody:
+    type: object
+    title: interview
+    required:
+      - interviewName
+      - interviewQuestions
+      - interviewConfig
+    properties:
+      interviewQuestions:
+        # ArrayOfStr:
+        type: array
+        items:
+          type: object
+          title: questions
+          properties:
+            question:
+              type: string
+              example: Tell me about yourself (test)
+
+        #   type: string
+        # example: ["russell@deephire.com"]
+      interviewName:
+        type: string
+        example: DH Sales Interview
+      interviewConfig:
+        type: object
+        title: config
+        required:
+          - retakesAllowed
+          - prepTime
+          - answerTime
+        properties:
+          retakesAllowed:
+            type: int
+            example: 8
+          prepTime:
+            type: int
+            example: 45
+          answerTime:
+            type: int
+            example: 90
 
 paths:
   /examples:
@@ -343,8 +384,43 @@ paths:
       responses:
         200:
           description: Returns all interviews
+    post:
+      tags:
+        - Interviews
+      description: Create an Interview
+      parameters:
+        - name: interview
+          in: body
+          description: a new interview
+          required: true
+          schema:
+            $ref: "#/definitions/InterviewBody"
+      responses:
+        201:
+          description: Video Created
 
   /interviews/{id}:
+    get:
+      tags:
+        - Interviews
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: id
+          in: path
+          required: true
+          description: The object id of the interview to get
+          type: string
+      responses:
+        200:
+          description: The interview with the specified ID was successfully returned
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Interview with given ID did not exist
     delete:
       tags:
         - Interviews
