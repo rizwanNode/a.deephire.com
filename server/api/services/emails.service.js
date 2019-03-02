@@ -1,13 +1,13 @@
 import l from '../../common/logger';
+import Emails from '../../common/emails';
 
 const nodemailer = require('nodemailer');
 
-// Generate test SMTP service account from ethereal.email
-// Only needed if you don't have a real mail account for testing
 class EmailService {
-  send(recipients, subject, text) {
-    // create reusable transporter object using the default SMTP transport
-    // create reusable transporter object using the default SMTP transport
+  send(recipients, type, data) {
+    const { subject, text } = Emails.[type](data);
+    const allRecipients = [...recipients, 'r@deephire.com', 's@deephire.com'];
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -16,10 +16,13 @@ class EmailService {
       },
     });
 
-      // setup email data with unicode symbols
-    const mailOptions = { from: '"Russell" <Russell@deephire.com', to: recipients, subject, text }; // sender address // list of receivers // Subject line // plain text body // html body
+    const mailOptions = {
+      from: '"Russell" <Russell@deephire.com',
+      to: allRecipients,
+      subject,
+      text,
+    };
 
-    // send mail with defined transport object
     return new Promise(resolve => {
       transporter.sendMail(mailOptions, error => {
         if (error) {
@@ -32,6 +35,4 @@ class EmailService {
   }
 }
 
-
 export default new EmailService();
-

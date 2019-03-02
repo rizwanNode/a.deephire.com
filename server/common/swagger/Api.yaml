@@ -30,8 +30,7 @@ definitions:
     title: email
     required:
       - recipients
-      - subject
-      - message
+      - type
     properties:
       recipients:
         # ArrayOfStr:
@@ -39,12 +38,16 @@ definitions:
         items:
           type: string
         example: ["russell@deephire.com"]
-      subject:
+      type:
         type: string
-        example: testing
-      message:
+        example: interviewCreated
+      interviewName:
         type: string
-        example: hey there
+        example: Russell's Test Interview
+      shortUrl:
+        type: string
+        example: https://deephire.com/test
+
   CompanyBody:
     type: object
     title: company
