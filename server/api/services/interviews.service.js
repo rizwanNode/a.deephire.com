@@ -8,7 +8,7 @@ class InterviewsService {
   all(createdBy) {
     l.info(`${this.constructor.name}.all(${createdBy})`);
     const search = { createdBy };
-    return byParam(search, 'interviews_test');
+    return byParam(search, 'interviews');
   }
 
   async insert(data, createdBy) {
@@ -22,7 +22,7 @@ class InterviewsService {
 
   byParam(id) {
     l.info(`${this.constructor.name}.byParam(${id})`);
-    return byParam(id, 'interviews_test', true);
+    return byParam(id, 'interviews', true);
   }
 
 

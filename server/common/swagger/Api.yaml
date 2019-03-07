@@ -412,11 +412,6 @@ paths:
       tags:
         - Interviews
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
         - name: id
           in: path
           required: true
