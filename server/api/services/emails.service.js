@@ -1,11 +1,11 @@
 import l from '../../common/logger';
-import Emails from '../../common/emails';
+import getMessage from '../../common/emails';
 
 const nodemailer = require('nodemailer');
 
 class EmailService {
   send(recipients, type, data) {
-    const { subject, text } = Emails.[type](data);
+    const { subject, text } = getMessage(type, data);
     const allRecipients = [...recipients, 'r@deephire.com', 's@deephire.com'];
 
     const transporter = nodemailer.createTransport({
