@@ -23,7 +23,6 @@ const checkJwt = jwt({
   algorithms: ['RS256'],
 });
 
-
 async function getEmail(req, res, next) {
   const accessToken = req.headers.authorization.split(' ')[1];
   const value = myCache.get(accessToken);
@@ -33,9 +32,11 @@ async function getEmail(req, res, next) {
     myCache.set(accessToken, email);
     l.info(`set ${email} in cache`);
     res.locals.email = email;
+  } else {
+    l.info(`got ${value} from cache`);
+
+    res.locals.email = value;
   }
-  l.info(`got ${value} from cache`);
-  res.locals.email = value;
   next();
 }
 
