@@ -30,8 +30,7 @@ definitions:
     title: email
     required:
       - recipients
-      - subject
-      - message
+      - type
     properties:
       recipients:
         # ArrayOfStr:
@@ -39,12 +38,16 @@ definitions:
         items:
           type: string
         example: ["russell@deephire.com"]
-      subject:
+      type:
         type: string
-        example: testing
-      message:
+        example: interviewCreated
+      interviewName:
         type: string
-        example: hey there
+        example: Russell's Test Interview
+      shortUrl:
+        type: string
+        example: https://deephire.com/test
+
   CompanyBody:
     type: object
     title: company
@@ -74,6 +77,8 @@ definitions:
             "https://www.youTube.com/watch?v=QSmXvcrtTpM",
             "https://www.youTube.com/watch?v=emTHLFKcSWQ",
           ]
+  CandidateFile:
+    type: steam
   ShortlistBody:
     type: object
     title: shortlist
@@ -117,6 +122,78 @@ definitions:
           response:
             type: string
             example: https://www.youtube.com/watch?v=5pX3mwnAvyo
+  TestBody:
+    type: object
+    title: video
+    properties:
+      objectKey:
+        type: string
+        example: email_filename
+      responses:
+        type: object
+        title: responses
+        properties:
+          uid:
+            type: string
+            example: whats your name?
+  DocumentBody:
+    type: object
+    title: document
+    required:
+      - file
+      - objectKey
+    properties:
+      objectKey:
+        type: string
+        example: russell@test.com
+      file:
+        type: object
+        title: responses
+        properties:
+          uid:
+            type: string
+            example: whats your name?
+  InterviewBody:
+    type: object
+    title: interview
+    required:
+      - interviewName
+      - interviewQuestions
+      - interviewConfig
+    properties:
+      interviewQuestions:
+        # ArrayOfStr:
+        type: array
+        items:
+          type: object
+          title: questions
+          properties:
+            question:
+              type: string
+              example: Tell me about yourself (test)
+
+        #   type: string
+        # example: ["russell@deephire.com"]
+      interviewName:
+        type: string
+        example: DH Sales Interview
+      interviewConfig:
+        type: object
+        title: config
+        required:
+          - retakesAllowed
+          - prepTime
+          - answerTime
+        properties:
+          retakesAllowed:
+            type: number
+            example: 8
+          prepTime:
+            type: number
+            example: 45
+          answerTime:
+            type: number
+            example: 90
 
 paths:
   /examples:
@@ -310,8 +387,43 @@ paths:
       responses:
         200:
           description: Returns all interviews
+    post:
+      tags:
+        - Interviews
+      description: Create an Interview
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: interview
+          in: body
+          description: a new interview
+          required: true
+          schema:
+            $ref: "#/definitions/InterviewBody"
+      responses:
+        201:
+          description: Video Created
 
   /interviews/{id}:
+    get:
+      tags:
+        - Interviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The object id of the interview to get
+          type: string
+      responses:
+        200:
+          description: The interview with the specified ID was successfully returned
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Interview with given ID did not exist
     delete:
       tags:
         - Interviews
@@ -375,6 +487,61 @@ paths:
       responses:
         200:
           description: Created or Updated Resource
+
+  /candidates/{userId}/documents/{objectKey}:
+    post:
+      tags:
+        - Candidates
+      description: Upload candidate documents to S3
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: userId
+          in: path
+          required: true
+          description: The users auth0 ID
+          type: string
+        - name: objectKey
+          in: path
+          required: true
+          description: objectKey - why??
+          type: string
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+
+      responses:
+        200:
+          description: Created file on S3
+    get:
+      tags:
+        - Candidates
+      description: Get candidate document from s3
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: userId
+          in: path
+          required: true
+          description: The users auth0 ID
+          type: string
+        - name: objectKey
+          in: path
+          required: true
+          description: objectKey - why??
+
+      responses:
+        200:
+          description: Got file from S3
 
   /emails:
     post:

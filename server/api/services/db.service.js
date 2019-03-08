@@ -64,7 +64,7 @@ export const put = async (search, col, data, id = false) => {
 export const insert = async (data, col) => {
   const collection = mongoClient.db('content').collection(col);
 
-  data.timestamp = timestamp;
+  data.timestamp = timestamp();
   return new Promise(resolve => {
     collection.insertOne(data, (err, result) => {
       if (err) throw err;
