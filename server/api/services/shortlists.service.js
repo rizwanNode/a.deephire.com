@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import { byParam, insert, put } from './db.service';
-import shortenLink from '../../common/shortenLink';
+import { shortenLink } from '../../common/rebrandly';
 
 class ShortlistService {
   all(createdBy) {

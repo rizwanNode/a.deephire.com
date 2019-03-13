@@ -30,6 +30,7 @@ export default class ExpressServer {
       init().then(success => {
         if (success) {
           l.info('Database connected.');
+
           resolve(this);
         }
         reject('There was a problem connecting to the database.');
@@ -38,7 +39,11 @@ export default class ExpressServer {
   }
 
   listen(port = process.env.PORT) {
-    const welcome = p => () => l.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname()} on port: ${p}}`);
+    const welcome = p => () =>
+      l.info(
+        `up and running in ${process.env.NODE_ENV ||
+          'development'} @: ${os.hostname()} on port: ${p}}`,
+      );
     http.createServer(app).listen(port, welcome(port));
     return app;
   }
