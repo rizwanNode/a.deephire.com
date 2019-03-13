@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import { deleteObject, byParam, insert } from './db.service';
-import shortenLink from '../../common/shortenLink';
+import { shortenLink } from '../../common/rebrandly';
 
 
 class InterviewsService {
