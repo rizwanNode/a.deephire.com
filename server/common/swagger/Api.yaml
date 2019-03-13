@@ -575,10 +575,10 @@ paths:
           type: string
       tags:
         - Companies
-      description: Fetch all Company Data
+      description: Fetch all companyData
       responses:
         200:
-          description: Returns all company Data
+          description: companyData fetched successfully
     post:
       tags:
         - Companies
@@ -605,11 +605,6 @@ paths:
       tags:
         - Companies
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
         - name: email
           in: path
           required: true
@@ -617,9 +612,9 @@ paths:
           type: string
       responses:
         200:
-          description: Return the company with the associated email
+          description: Return the company with the associated recruiter email
         404:
-          description: A Company with that email is not found
+          description: A company with that recruiter email is not found
   /spec:
     get:
       tags:
@@ -627,3 +622,33 @@ paths:
       responses:
         200:
           description: Return the API specification
+  # /companies/{userId}/documents/{objectKey}:
+  #   post:
+  #     tags:
+  #       - Candidates
+  #     description: Upload candidate documents to S3
+  #     consumes:
+  #       - multipart/form-data
+  #     parameters:
+  #       - name: authorization
+  #         in: header
+  #         description: Bearer <auth_token>
+  #         required: true
+  #         type: string
+  #       - name: userId
+  #         in: path
+  #         required: true
+  #         description: The users auth0 ID
+  #         type: string
+  #       - name: objectKey
+  #         in: path
+  #         required: true
+  #         description: objectKey - why??
+  #         type: string
+  #       - in: formData
+  #         name: upfile
+  #         type: file
+  #         description: The file to upload.
+  #     responses:
+  #       200:
+  #         description: Created file on S3
