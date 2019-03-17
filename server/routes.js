@@ -5,6 +5,7 @@ import emailsRouter from './api/controllers/emails/router';
 import companiesRouter from './api/controllers/companies/router';
 import shortlistsRouter from './api/controllers/shortlists/router';
 import videosRouter from './api/controllers/videos/router';
+import filesRouter from './api/controllers/files/router';
 
 // import auth from './common/auth';
 
@@ -16,4 +17,5 @@ export default function routes(app) {
   app.use('/v1/companies', companiesRouter);
   app.use('/v1/shortlists', shortlistsRouter);
   app.use('/v1/videos', videosRouter);
+  app.use('/v1/files', filesRouter);
 }

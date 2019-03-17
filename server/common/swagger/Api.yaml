@@ -77,8 +77,6 @@ definitions:
             "https://www.youTube.com/watch?v=QSmXvcrtTpM",
             "https://www.youTube.com/watch?v=emTHLFKcSWQ",
           ]
-  CandidateFile:
-    type: steam
   ShortlistBody:
     type: object
     title: shortlist
@@ -622,6 +620,28 @@ paths:
       responses:
         200:
           description: Return the API specification
+
+  /files/{key}:
+    post:
+      tags:
+        - Files
+      description: Upload file documents to S3
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: key
+          type: string
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+
+      responses:
+        200:
+          description: Created file on S3
   # /companies/{userId}/documents/{objectKey}:
   #   post:
   #     tags:
