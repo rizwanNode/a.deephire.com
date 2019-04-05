@@ -444,15 +444,15 @@ paths:
         404:
           description: Interview with given ID did not exist
 
-  /candidates/{userId}:
+  /candidates/{email}:
     get:
       tags:
         - Candidates
       parameters:
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
+          description: the candidates email
           type: string
       responses:
         200:
@@ -471,10 +471,10 @@ paths:
           description: Bearer <auth_token>
           required: true
           type: string
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
+          description: the candidates email
           type: string
         - in: body
           name: body
@@ -486,7 +486,7 @@ paths:
         200:
           description: Created or Updated Resource
 
-  /candidates/{userId}/documents:
+  /candidates/{email}/documents:
     post:
       tags:
         - Candidates
@@ -499,10 +499,10 @@ paths:
           description: Bearer <auth_token>
           required: true
           type: string
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
+          description: the candidates email
           type: string
         - in: formData
           name: upfile
@@ -522,10 +522,10 @@ paths:
           description: Bearer <auth_token>
           required: true
           type: string
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
+          description: the candidates email
           type: string
         - name: objectKey
           in: path
