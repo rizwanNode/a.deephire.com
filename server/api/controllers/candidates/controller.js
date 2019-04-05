@@ -4,7 +4,7 @@ export class Controller {
   byParam(req, res) {
     CandidatesService.byParam(req.params.userId).then(r => {
       if (r) res.json(r);
-      else res.status(200).end();
+      else res.status(404).end();
     });
   }
 
