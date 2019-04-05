@@ -8,7 +8,6 @@ export class Controller {
     });
   }
 
-
   put(req, res) {
     CandidatesService.put(req.params.userId, req.body).then(r => res.json(r));
   }
@@ -19,7 +18,7 @@ export class Controller {
   }
 
   postDocuments(req, res) {
-    CandidatesService.postDocuments(req.params.userId, req.params.objectKey, req.files)
+    CandidatesService.postDocuments(req.params.userId, req.files)
       .then(r => res.json(r));
   }
 }

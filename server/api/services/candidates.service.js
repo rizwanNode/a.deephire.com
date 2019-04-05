@@ -7,31 +7,31 @@ const collection = 'candidates';
 const bucket = 'deephire.data';
 
 class CandidatesService {
-  byParam(userId) {
-    l.info(`${this.constructor.name}.byParam(${userId})`);
-    const search = { userId };
+  byParam(email) {
+    l.info(`${this.constructor.name}.byParam(${email})`);
+    const search = { email };
     return byParam(search, collection).then(r => r[0]);
   }
 
-  put(userId, data) {
-    l.info(`${this.constructor.name}.put(${userId},${data})`);
-    const search = { userId };
+  put(email, data) {
+    l.info(`${this.constructor.name}.put(${email},${data})`);
+    const search = { email };
     /* eslint-disable no-param-reassign */
-    data.userId = userId;
+    data.email = email;
     return put(search, collection, data);
   }
 
 
-  async getDocuments(userId, num) {
-    const search = { userId };
+  async getDocuments(email, num) {
+    const search = { email };
     const key = await byParam(search, collection).then(r => r[0].files[num]).catch(err => err);
     return downloadS3(bucket, key);
   }
 
-  postDocuments(userId, name, files) {
+  postDocuments(email, files) {
     const { upfile } = files;
     const { path, originalName } = upfile;
-    l.info(`${this.constructor.name}.put(${userId},${path})`);
+    l.info(`${this.constructor.name}.put(${email},${path})`);
     const key = `candidates/documents/${originalName}`;
     return uploadS3(bucket, key, path);
   }
