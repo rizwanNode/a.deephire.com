@@ -486,7 +486,7 @@ paths:
         200:
           description: Created or Updated Resource
 
-  /candidates/{userId}/documents/{objectKey}:
+  /candidates/{userId}/documents:
     post:
       tags:
         - Candidates
@@ -503,11 +503,6 @@ paths:
           in: path
           required: true
           description: The users auth0 ID
-          type: string
-        - name: objectKey
-          in: path
-          required: true
-          description: objectKey - why??
           type: string
         - in: formData
           name: upfile

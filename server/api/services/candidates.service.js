@@ -21,18 +21,20 @@ class CandidatesService {
     return put(search, collection, data);
   }
 
-
   async getDocuments(email, num) {
     const search = { email };
-    const key = await byParam(search, collection).then(r => r[0].files[num]).catch(err => err);
+    const key = await byParam(search, collection)
+      .then(r => r[0].files[num])
+      .catch(err => err);
     return downloadS3(bucket, key);
   }
 
   postDocuments(email, files) {
+    l.info(`${this.constructor.name}.put(${email},${JSON.stringify(files)})`);
     const { upfile } = files;
-    const { path, originalName } = upfile;
-    l.info(`${this.constructor.name}.put(${email},${path})`);
-    const key = `candidates/documents/${originalName}`;
+    const { path, originalname: originalName } = upfile;
+    const key = `candidates/${email}/${originalName}`;
+    // put(email, key) - add to mongodb
     return uploadS3(bucket, key, path);
   }
 }
