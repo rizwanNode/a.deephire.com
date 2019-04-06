@@ -14,7 +14,7 @@ class CandidatesService {
   }
 
   put(email, data) {
-    l.info(`${this.constructor.name}.put(${email},${data})`);
+    l.info(`${this.constructor.name}.put(${email},${JSON.stringify(data)})`);
     const search = { email };
     /* eslint-disable no-param-reassign */
     data.email = email;
@@ -29,13 +29,17 @@ class CandidatesService {
     return downloadS3(bucket, key);
   }
 
-  postDocuments(email, files) {
+  async postDocuments(email, files) {
     l.info(`${this.constructor.name}.put(${email},${JSON.stringify(files)})`);
     const { upfile } = files;
     const { path, originalname: originalName } = upfile;
     const key = `candidates/${email}/${originalName}`;
-    // put(email, key) - add to mongodb
-    return uploadS3(bucket, key, path);
+    const search = { email };
+    const data = await byParam(search, collection).then(r => r[0]) || {};
+
+    if (data.files) { data.files.push(key); } else { data.files = [key]; }
+    uploadS3(bucket, key, path);
+    return put(search, collection, data);
   }
 }
 
