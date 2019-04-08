@@ -3,7 +3,7 @@ import { uploadS3 } from '../../common/aws';
 
 const bucket = 'deephire.data';
 
-class CandidatesService {
+class FilesService {
   postFiles(key, files) {
     const { upfile } = files;
     const { path, originalname } = upfile;
@@ -13,4 +13,4 @@ class CandidatesService {
   }
 }
 
-export default new CandidatesService();
+export default new FilesService();

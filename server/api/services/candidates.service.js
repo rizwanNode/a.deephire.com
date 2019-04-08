@@ -1,39 +1,63 @@
+import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import { uploadS3, downloadS3 } from '../../common/aws';
-
-import { byParam, put } from './db.service';
+import { byParam, put, deleteSubDocument } from './db.service';
 
 const collection = 'candidates';
 const bucket = 'deephire.data';
 
 class CandidatesService {
-  byParam(userId) {
-    l.info(`${this.constructor.name}.byParam(${userId})`);
-    const search = { userId };
-    return byParam(search, collection).then(r => r[0]);
+  byParam(email) {
+    l.info(`${this.constructor.name}.byParam(${email})`);
+    const search = { email };
+    const [document] = byParam(search, collection);
+    return document;
   }
 
-  put(userId, data) {
-    l.info(`${this.constructor.name}.put(${userId},${data})`);
-    const search = { userId };
+  put(email, data) {
+    l.info(`${this.constructor.name}.put(${email},${JSON.stringify(data)})`);
+    const search = { email };
     /* eslint-disable no-param-reassign */
-    data.userId = userId;
+    data.email = email;
     return put(search, collection, data);
   }
 
+  async getDocuments(email, id) {
+    const search = { email };
+    const [document] = await byParam(search, collection);
+    if (!document) return null;
 
-  async getDocuments(userId, num) {
-    const search = { userId };
-    const key = await byParam(search, collection).then(r => r[0].files[num]).catch(err => err);
-    return downloadS3(bucket, key);
+    const file = document.files.find(file => file.uid.toString() === id);
+    if (!file) return null;
+
+    return downloadS3(bucket, file.key);
   }
 
-  postDocuments(userId, name, files) {
+  async deleteDocuments(email, uid) {
+    const search = { email };
+    return deleteSubDocument(search, uid, collection);
+  }
+
+  async postDocuments(email, files) {
+    l.info(`${this.constructor.name}.put(${email},${JSON.stringify(files)})`);
     const { upfile } = files;
-    const { path, originalName } = upfile;
-    l.info(`${this.constructor.name}.put(${userId},${path})`);
-    const key = `candidates/documents/${originalName}`;
-    return uploadS3(bucket, key, path);
+    const { path, originalname: originalName } = upfile;
+    const key = `candidates/${email}/${originalName}`;
+    const search = { email };
+    const data = (await byParam(search, collection).then(r => r[0])) || {};
+
+    const fileData = {
+      key,
+      name: originalName,
+      uid: ObjectId().valueOf(),
+    };
+    if (data.files) {
+      data.files.push(fileData);
+    } else {
+      data.files = [fileData];
+    }
+    uploadS3(bucket, key, path);
+    return put(search, collection, data);
   }
 }
 

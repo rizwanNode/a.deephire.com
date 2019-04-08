@@ -14,14 +14,14 @@ const s3 = new AWS.S3({
   apiVersion: '2006-03-01',
 });
 
-
 export const uploadS3 = async (bucket, key, fileUri) => {
-  const data = await new Promise(((resolve, reject) => {
+  const data = await new Promise((resolve, reject) => {
     fs.readFile(fileUri, (err, data) => (err ? reject(err) : resolve(data)));
-  })).catch(err => err);
+  }).catch(err => err);
   return new Promise((resolve, reject) => {
     s3.putObject({ Body: data, Bucket: bucket, Key: key }, (err, data) =>
-      (err ? reject(err) : resolve(data)));
+      (err ? reject(err) : resolve(data)),
+    );
   }).catch(err => err);
 };
 
@@ -31,9 +31,6 @@ export const downloadS3 = (bucket, key) => {
     Key: key,
   };
 
-  return new Promise((resolve, reject) => {
-    s3.getObject(params, (err, data) =>
-      (err ? reject(err) : resolve(data)));
-  }).catch(err => err);
-};
 
+  return s3.getObject(params).createReadStream();
+};

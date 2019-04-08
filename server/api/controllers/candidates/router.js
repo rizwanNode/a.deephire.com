@@ -7,7 +7,8 @@ import auth from '../../../common/auth';
 export default express
   .Router()
   .get('/:userId', controller.byParam)
-  .post('/:userId/documents/:objectKey', auth, controller.postDocuments)
-  .get('/:userId/documents/:num', auth, controller.getDocuments)
+  .post('/:userId/documents', auth, controller.postDocuments)
+  .get('/:userId/documents/:id', controller.getDocuments)
+  .delete('/:userId/documents/:id', controller.deleteDocuments)
   .put('/:userId', auth, controller.put);
 
