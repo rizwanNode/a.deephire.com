@@ -486,7 +486,7 @@ paths:
         200:
           description: Created or Updated Resource
 
-  /candidates/{email}/documents:
+  /candidates/{email}/documents/:
     post:
       tags:
         - Candidates
@@ -512,30 +512,44 @@ paths:
       responses:
         200:
           description: Created file on S3
+
+  /candidates/{email}/documents/{id}:
     get:
       tags:
         - Candidates
       description: Get candidate document from s3
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
         - name: email
           in: path
           required: true
           description: the candidates email
           type: string
-        - name: objectKey
+        - name: id
           in: path
           required: true
-          description: objectKey - why??
-
+          description: num of file
+          type: string
       responses:
         200:
           description: Got file from S3
-
+    delete:
+      tags:
+        - Candidates
+      description: Delete candidate subdocument
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: the candidates email
+          type: string
+        - name: id
+          in: path
+          required: true
+          description: id of file to delete
+          type: string
+      responses:
+        200:
+          description: file deleted
   /emails:
     post:
       tags:

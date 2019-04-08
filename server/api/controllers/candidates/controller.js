@@ -14,11 +14,16 @@ export class Controller {
 
   getDocuments(req, res) {
     CandidatesService.getDocuments(req.params.userId, req.params.num)
-      .then(r => res.json(r));
+      .then(r => r.pipe(res));
   }
 
   postDocuments(req, res) {
     CandidatesService.postDocuments(req.params.userId, req.files)
+      .then(r => res.json(r));
+  }
+
+  deleteDocuments(req, res) {
+    CandidatesService.deleteDocuments(req.params.userId, req.params.id)
       .then(r => res.json(r));
   }
 }
