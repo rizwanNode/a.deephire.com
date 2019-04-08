@@ -14,7 +14,10 @@ export class Controller {
 
   getDocuments(req, res) {
     CandidatesService.getDocuments(req.params.userId, req.params.num)
-      .then(r => r.pipe(res));
+      .then(r => {
+        if (r) r.pipe(res);
+        else res.status(404).end();
+      });
   }
 
   postDocuments(req, res) {

@@ -10,7 +10,8 @@ class CandidatesService {
   byParam(email) {
     l.info(`${this.constructor.name}.byParam(${email})`);
     const search = { email };
-    return byParam(search, collection).then(r => r[0]);
+    const [document] = byParam(search, collection);
+    return document;
   }
 
   put(email, data) {
@@ -21,12 +22,15 @@ class CandidatesService {
     return put(search, collection, data);
   }
 
-  async getDocuments(email, num) {
+  async getDocuments(email, id) {
     const search = { email };
-    const key = await byParam(search, collection)
-      .then(r => r[0].files[num])
-      .catch(err => err);
-    return downloadS3(bucket, key);
+    const [document] = await byParam(search, collection);
+    if (!document) return null;
+
+    const file = document.files.find(file => file.uid.toString() === id);
+    if (!file) return null;
+
+    return downloadS3(bucket, file.key);
   }
 
   async deleteDocuments(email, uid) {
