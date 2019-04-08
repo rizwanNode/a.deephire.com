@@ -7,10 +7,10 @@ const collection = 'candidates';
 const bucket = 'deephire.data';
 
 class CandidatesService {
-  byParam(email) {
+  async byParam(email) {
     l.info(`${this.constructor.name}.byParam(${email})`);
     const search = { email };
-    const [document] = byParam(search, collection);
+    const [document] = await byParam(search, collection);
     return document;
   }
 
