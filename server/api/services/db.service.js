@@ -102,6 +102,24 @@ export const deleteObject = async (id, col) => {
   });
 };
 
+
+export const deleteSubDocument = async (search, id, col) => {
+  const collection = mongoClient.db('content').collection(col);
+
+  if (!ObjectId.isValid(id)) {
+    return Promise.resolve(400);
+  }
+  const objectId = new ObjectId(id);
+
+  return new Promise(resolve => {
+    collection.update({ },
+      { $pull: { files: { uid: objectId } } }).then(result => {
+      if (result.ok) resolve(200);
+      else resolve(404);
+    });
+  });
+};
+
 export const createUpdateVideo = async (search, data, col) => {
   const collection = mongoClient.db('content').collection(col);
 

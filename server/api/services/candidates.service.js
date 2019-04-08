@@ -1,7 +1,7 @@
+import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import { uploadS3, downloadS3 } from '../../common/aws';
-
-import { byParam, put } from './db.service';
+import { byParam, put, deleteSubDocument } from './db.service';
 
 const collection = 'candidates';
 const bucket = 'deephire.data';
@@ -29,15 +29,29 @@ class CandidatesService {
     return downloadS3(bucket, key);
   }
 
+  async deleteDocuments(email, uid) {
+    const search = { email };
+    return deleteSubDocument(search, uid, collection);
+  }
+
   async postDocuments(email, files) {
     l.info(`${this.constructor.name}.put(${email},${JSON.stringify(files)})`);
     const { upfile } = files;
     const { path, originalname: originalName } = upfile;
     const key = `candidates/${email}/${originalName}`;
     const search = { email };
-    const data = await byParam(search, collection).then(r => r[0]) || {};
+    const data = (await byParam(search, collection).then(r => r[0])) || {};
 
-    if (data.files) { data.files.push(key); } else { data.files = [key]; }
+    const fileData = {
+      key,
+      name: originalName,
+      uid: ObjectId().valueOf(),
+    };
+    if (data.files) {
+      data.files.push(fileData);
+    } else {
+      data.files = [fileData];
+    }
     uploadS3(bucket, key, path);
     return put(search, collection, data);
   }
