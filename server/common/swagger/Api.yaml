@@ -77,8 +77,6 @@ definitions:
             "https://www.youTube.com/watch?v=QSmXvcrtTpM",
             "https://www.youTube.com/watch?v=emTHLFKcSWQ",
           ]
-  CandidateFile:
-    type: steam
   ShortlistBody:
     type: object
     title: shortlist
@@ -446,15 +444,15 @@ paths:
         404:
           description: Interview with given ID did not exist
 
-  /candidates/{userId}:
+  /candidates/{email}:
     get:
       tags:
         - Candidates
       parameters:
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
+          description: the candidates email
           type: string
       responses:
         200:
@@ -473,10 +471,10 @@ paths:
           description: Bearer <auth_token>
           required: true
           type: string
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
+          description: the candidates email
           type: string
         - in: body
           name: body
@@ -488,7 +486,7 @@ paths:
         200:
           description: Created or Updated Resource
 
-  /candidates/{userId}/documents/{objectKey}:
+  /candidates/{email}/documents/:
     post:
       tags:
         - Candidates
@@ -501,15 +499,10 @@ paths:
           description: Bearer <auth_token>
           required: true
           type: string
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
-          type: string
-        - name: objectKey
-          in: path
-          required: true
-          description: objectKey - why??
+          description: the candidates email
           type: string
         - in: formData
           name: upfile
@@ -519,30 +512,44 @@ paths:
       responses:
         200:
           description: Created file on S3
+
+  /candidates/{email}/documents/{id}:
     get:
       tags:
         - Candidates
       description: Get candidate document from s3
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
-        - name: userId
+        - name: email
           in: path
           required: true
-          description: The users auth0 ID
+          description: the candidates email
           type: string
-        - name: objectKey
+        - name: id
           in: path
           required: true
-          description: objectKey - why??
-
+          description: num of file
+          type: string
       responses:
         200:
           description: Got file from S3
-
+    delete:
+      tags:
+        - Candidates
+      description: Delete candidate subdocument
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: the candidates email
+          type: string
+        - name: id
+          in: path
+          required: true
+          description: id of file to delete
+          type: string
+      responses:
+        200:
+          description: file deleted
   /emails:
     post:
       tags:
@@ -622,6 +629,28 @@ paths:
       responses:
         200:
           description: Return the API specification
+
+  /files/{key}:
+    post:
+      tags:
+        - Files
+      description: Upload file documents to S3
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: key
+          type: string
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+
+      responses:
+        200:
+          description: Created file on S3
   # /companies/{userId}/documents/{objectKey}:
   #   post:
   #     tags:
