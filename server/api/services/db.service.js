@@ -102,7 +102,6 @@ export const deleteObject = async (id, col) => {
   });
 };
 
-
 export const deleteSubDocument = async (search, id, col) => {
   const collection = mongoClient.db('content').collection(col);
 
@@ -112,9 +111,8 @@ export const deleteSubDocument = async (search, id, col) => {
   const objectId = new ObjectId(id);
 
   return new Promise(resolve => {
-    collection.update({ },
-      { $pull: { files: { uid: objectId } } }).then(result => {
-      if (result.ok) resolve(200);
+    collection.update(search, { $pull: { files: { uid: objectId } } }).then(allResultData => {
+      if (allResultData.result.nModified) resolve(200);
       else resolve(404);
     });
   });

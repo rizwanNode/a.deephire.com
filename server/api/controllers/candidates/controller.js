@@ -27,7 +27,7 @@ export class Controller {
 
   deleteDocuments(req, res) {
     CandidatesService.deleteDocuments(req.params.userId, req.params.id)
-      .then(r => res.json(r));
+      .then(r => res.status(r).end());
   }
 }
 export default new Controller();
