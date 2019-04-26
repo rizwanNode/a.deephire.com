@@ -1,13 +1,25 @@
-const getMessage = (type, {
-
-  interviewName,
-  shortUrl,
-  candidateName,
-  candidateEmail,
-  recruiterEmail,
-  id,
-}) => {
+const getMessage = (
+  type,
+  {
+    interviewName,
+    shortUrl,
+    candidateName,
+    candidateEmail,
+    recruiterEmail,
+    id,
+    clientEmail,
+    clientName,
+  },
+) => {
   const emails = {
+    shortListViewed: {
+      subject: `${clientEmail} viewed your shortlist`,
+      text: `A shortlist has been viewed!
+Name: ${clientName}
+Client email: ${clientEmail}
+View Anaytics: https://recruiter.deephire.com/shortlists/shortlistanalytics/?id=${id}
+      `,
+    },
     interviewCreated: {
       subject: `Interview ${interviewName} Created`,
       text: `Thanks for creating a video interview. You are one step closer to placing better hires, faster
