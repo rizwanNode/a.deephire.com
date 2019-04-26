@@ -14,7 +14,7 @@ jobs:
               py-pip \
               bash
             pip install \
-              urllib3>=1.24.1,<1.25 \
+              'urllib3>=1.24.1,<1.25' \
               awsebcli
       - run:
           name: Build application Docker image
