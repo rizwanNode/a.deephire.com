@@ -1,11 +1,17 @@
 import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import { getInterviews, createUpdateVideo, byParam, deleteObject } from './db.service';
+import { archiveValidator } from '../../common/helpers';
 
 class VideoService {
   all(email) {
     l.info(`${this.constructor.name}.all(${email}`);
     return getInterviews(email, 'interviews', 'videos');
+  }
+
+  archives(email) {
+    l.info(`${this.constructor.name}.archives(${email}`);
+    return getInterviews(email, 'interviews', 'videos', true);
   }
 
   insert(data) {
@@ -25,6 +31,16 @@ class VideoService {
   delete(id) {
     l.info(`${this.constructor.name}.delete(${id})`);
     return deleteObject(id, 'videos');
+  }
+
+  archive(data) {
+    l.info(`${this.constructor.name}.archive(${data})`);
+    return archiveValidator(data, true, 'videos');
+  }
+
+  unarchive(data) {
+    l.info(`${this.constructor.name}.unarchive(${data})`);
+    return archiveValidator(data, false, 'videos');
   }
 }
 
