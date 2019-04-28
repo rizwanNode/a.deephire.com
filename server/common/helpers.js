@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { update } from '../api/services/db.service';
 
-export const archiveValidator = (data, archived, col) => {
+export const archiveValidator = (data, shouldArchive, col) => {
   let objectIds = [];
   try {
     objectIds = data.map(id => {
@@ -15,7 +15,9 @@ export const archiveValidator = (data, archived, col) => {
   }
 
   const search = { _id: { $in: objectIds } };
-  const updateData = { $set: { archived } };
+  const updateData = shouldArchive
+    ? { $set: { archived: new Date().toString() } }
+    : { $unset: { archived: '' } };
 
   return update(search, updateData, col);
 };

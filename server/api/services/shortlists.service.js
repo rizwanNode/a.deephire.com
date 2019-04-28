@@ -36,7 +36,7 @@ class ShortlistService {
 
   archive(data) {
     l.info(`${this.constructor.name}.archive(${data})`);
-    return archiveValidator(data, new Date().toString(), 'shortlists');
+    return archiveValidator(data, true, 'shortlists');
   }
 
   unarchive(data) {

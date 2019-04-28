@@ -33,7 +33,7 @@ class InterviewsService {
 
   archive(data) {
     l.info(`${this.constructor.name}.archive(${data})`);
-    return archiveValidator(data, new Date().toString(), 'interviews');
+    return archiveValidator(data, true, 'interviews');
   }
 
   unarchive(data) {

@@ -30,7 +30,7 @@ class VideoService {
 
   archive(data) {
     l.info(`${this.constructor.name}.archive(${data})`);
-    return archiveValidator(data, new Date().toString(), 'videos');
+    return archiveValidator(data, true, 'videos');
   }
 
   unarchive(data) {
