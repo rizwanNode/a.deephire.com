@@ -7,5 +7,6 @@ export default express
   .get('/', auth, controller.all)
   .post('/', auth, controller.insert)
   .get('/:id', controller.byParam)
-  .put('/:id', controller.put);
-
+  .put('/:id', controller.put)
+  .post('/archive', auth, controller.archive)
+  .post('/unarchive', auth, controller.unarchive);

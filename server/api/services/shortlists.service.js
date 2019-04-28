@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import { byParam, insert, put } from './db.service';
 import { shortenLink } from '../../common/rebrandly';
+import { archiveValidator } from '../../common/helpers';
 
 class ShortlistService {
   all(createdBy) {
@@ -31,6 +32,16 @@ class ShortlistService {
     delete data._id;
     l.info(`${this.constructor.name}.put(${id}, ${data})`);
     return put(id, 'shortlists', data, true);
+  }
+
+  archive(data) {
+    l.info(`${this.constructor.name}.archive(${data})`);
+    return archiveValidator(data, new Date().toString(), 'shortlists');
+  }
+
+  unarchive(data) {
+    l.info(`${this.constructor.name}.unarchive(${data})`);
+    return archiveValidator(data, false, 'shortlists');
   }
 }
 

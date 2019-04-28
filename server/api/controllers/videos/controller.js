@@ -22,5 +22,13 @@ export class Controller {
       res.status(r).end();
     });
   }
+
+  archive(req, res) {
+    VideoService.archive(req.body).then(r => res.status(r).end());
+  }
+
+  unarchive(req, res) {
+    VideoService.unarchive(req.body).then(r => res.status(r).end());
+  }
 }
 export default new Controller();

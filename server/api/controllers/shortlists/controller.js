@@ -27,5 +27,12 @@ export class Controller {
       else res.status(500).end();
     });
   }
+  archive(req, res) {
+    ShortlistService.archive(req.body).then(r => res.status(r).end());
+  }
+
+  unarchive(req, res) {
+    ShortlistService.unarchive(req.body).then(r => res.status(r).end());
+  }
 }
 export default new Controller();

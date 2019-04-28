@@ -312,6 +312,48 @@ paths:
         200:
           description: Created or Updated Resource
 
+  /shortlists/archive:
+    post:
+      tags:
+        - Shortlists
+      description: Archive shortlists
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: ids
+          in: body
+          description: ids to archive
+          required: true
+          schema:
+            $ref: "#/definitions/ArchiveBody"
+      responses:
+        200:
+          description: Archive Successful
+
+  /shortlists/unarchive:
+    post:
+      tags:
+        - Shortlists
+      description: Unarchive shortlists
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: ids
+          in: body
+          description: ids to unarchive
+          required: true
+          schema:
+            $ref: "#/definitions/ArchiveBody"
+      responses:
+        200:
+          description: Unarchive Successful
+
   /videos:
     get:
       parameters:
@@ -378,6 +420,48 @@ paths:
         404:
           description: Candidate video unterview with given IDs did not exist
 
+  /videos/archive:
+    post:
+      tags:
+        - Videos
+      description: Archive videos
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: ids
+          in: body
+          description: ids to archive
+          required: true
+          schema:
+            $ref: "#/definitions/ArchiveBody"
+      responses:
+        200:
+          description: Archive Successful
+
+  /videos/unarchive:
+    post:
+      tags:
+        - Videos
+      description: Unarchive videos
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: ids
+          in: body
+          description: ids to unarchive
+          required: true
+          schema:
+            $ref: "#/definitions/ArchiveBody"
+      responses:
+        200:
+          description: Unarchive Successful
+
   /interviews:
     get:
       parameters:
@@ -411,6 +495,45 @@ paths:
       responses:
         201:
           description: Video Created
+
+  /interviews/{id}:
+    get:
+      tags:
+        - Interviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The object id of the interview to get
+          type: string
+      responses:
+        200:
+          description: The interview with the specified ID was successfully returned
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Interview with given ID did not exist
+    delete:
+      tags:
+        - Interviews
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: id
+          in: path
+          required: true
+          description: The object id of the interview to delete
+          type: string
+      responses:
+        204:
+          description: The interview with the specified ID was successfully deleted
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Interview with given ID did not exist
 
   /interviews/archive:
     post:
@@ -453,45 +576,6 @@ paths:
       responses:
         200:
           description: Unarchive Successful
-
-  /interviews/{id}:
-    get:
-      tags:
-        - Interviews
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The object id of the interview to get
-          type: string
-      responses:
-        200:
-          description: The interview with the specified ID was successfully returned
-        400:
-          description: Malformed ID, the ID has to be a 12 character string
-        404:
-          description: Interview with given ID did not exist
-    delete:
-      tags:
-        - Interviews
-      parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
-        - name: id
-          in: path
-          required: true
-          description: The object id of the interview to delete
-          type: string
-      responses:
-        204:
-          description: The interview with the specified ID was successfully deleted
-        400:
-          description: Malformed ID, the ID has to be a 12 character string
-        404:
-          description: Interview with given ID did not exist
 
   /candidates/{email}:
     get:
