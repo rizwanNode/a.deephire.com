@@ -148,7 +148,7 @@ export const createUpdateVideo = async (search, data, col) => {
   });
 };
 
-export const getInterviews = async (email, current, from) =>
+export const getInterviews = async (email, current, from, findArchived = false) =>
   new Promise(resolve => {
     const collection = mongoClient.db('content').collection(current);
     collection
@@ -169,6 +169,7 @@ export const getInterviews = async (email, current, from) =>
             'interview.timestamp': -1,
           },
         },
+        { $match: { 'interview.archived': { $exists: findArchived } } },
       ])
       .toArray((err, result) => {
         if (err) throw err;
