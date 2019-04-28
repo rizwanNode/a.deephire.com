@@ -2,19 +2,12 @@ import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
 import { byParam, insert, put } from './db.service';
 import { shortenLink } from '../../common/rebrandly';
-import { archiveValidator } from '../../common/helpers';
 
 class ShortlistService {
   all(createdBy) {
     l.info(`${this.constructor.name}.all(${createdBy}`);
     const search = { createdBy };
     return byParam(search, 'shortlists');
-  }
-
-  archives(createdBy) {
-    l.info(`${this.constructor.name}.archives(${createdBy})`);
-    const search = { createdBy };
-    return byParam(search, 'shortlists', false, true);
   }
 
   async insert(data, createdBy) {
@@ -38,16 +31,6 @@ class ShortlistService {
     delete data._id;
     l.info(`${this.constructor.name}.put(${id}, ${data})`);
     return put(id, 'shortlists', data, true);
-  }
-
-  archive(data) {
-    l.info(`${this.constructor.name}.archive(${data})`);
-    return archiveValidator(data, true, 'shortlists');
-  }
-
-  unarchive(data) {
-    l.info(`${this.constructor.name}.unarchive(${data})`);
-    return archiveValidator(data, false, 'shortlists');
   }
 }
 
