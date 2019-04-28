@@ -16,8 +16,8 @@ export const archiveValidator = (data, shouldArchive, col) => {
 
   const search = { _id: { $in: objectIds } };
   const updateData = shouldArchive
-    ? { $set: { archived: new Date().toString() } }
-    : { $unset: { archived: '' } };
+    ? { $set: { archives: new Date().toString() } }
+    : { $unset: { archives: '' } };
 
   return update(search, updateData, col);
 };

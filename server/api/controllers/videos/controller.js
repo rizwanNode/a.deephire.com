@@ -5,8 +5,8 @@ export class Controller {
     VideoService.all(res.locals.email).then(r => res.json(r));
   }
 
-  archived(req, res) {
-    VideoService.archived(res.locals.email).then(r => res.json(r));
+  archives(req, res) {
+    VideoService.archives(res.locals.email).then(r => res.json(r));
   }
 
   insert(req, res) {

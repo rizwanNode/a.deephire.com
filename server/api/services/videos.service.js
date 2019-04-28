@@ -9,8 +9,8 @@ class VideoService {
     return getInterviews(email, 'interviews', 'videos');
   }
 
-  archived(email) {
-    l.info(`${this.constructor.name}.archived(${email}`);
+  archives(email) {
+    l.info(`${this.constructor.name}.archives(${email}`);
     return getInterviews(email, 'interviews', 'videos', true);
   }
 

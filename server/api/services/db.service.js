@@ -22,9 +22,9 @@ export const init = async () => {
 };
 
 /* eslint-disable no-param-reassign */
-export const byParam = async (search, col, id = false, findArchived = false) => {
+export const byParam = async (search, col, id = false, findarchives = false) => {
   const collection = mongoClient.db('content').collection(col);
-  search = { ...search, archived: { $exists: findArchived } };
+  search = { ...search, archives: { $exists: findarchives } };
   if (id) {
     if (!ObjectId.isValid(search)) {
       return Promise.resolve(400);
@@ -148,7 +148,7 @@ export const createUpdateVideo = async (search, data, col) => {
   });
 };
 
-export const getInterviews = async (email, current, from, findArchived = false) =>
+export const getInterviews = async (email, current, from, findarchives = false) =>
   new Promise(resolve => {
     const collection = mongoClient.db('content').collection(current);
     collection
@@ -169,7 +169,7 @@ export const getInterviews = async (email, current, from, findArchived = false) 
             'interview.timestamp': -1,
           },
         },
-        { $match: { 'interview.archived': { $exists: findArchived } } },
+        { $match: { 'interview.archives': { $exists: findarchives } } },
       ])
       .toArray((err, result) => {
         if (err) throw err;

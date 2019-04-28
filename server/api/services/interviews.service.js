@@ -11,8 +11,8 @@ class InterviewsService {
     return byParam(search, 'interviews_test');
   }
 
-  archived(createdBy) {
-    l.info(`${this.constructor.name}.archived(${createdBy})`);
+  archives(createdBy) {
+    l.info(`${this.constructor.name}.archives(${createdBy})`);
     const search = { createdBy };
     return byParam(search, 'interviews', false, true);
   }

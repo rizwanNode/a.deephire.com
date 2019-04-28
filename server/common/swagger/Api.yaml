@@ -312,7 +312,7 @@ paths:
         200:
           description: Created or Updated Resource
 
-  /shortlists/archived:
+  /shortlists/archives:
     get:
       parameters:
         - name: authorization
@@ -322,10 +322,10 @@ paths:
           type: string
       tags:
         - Shortlists
-      description: Fetch all archived recruiter shortlist data
+      description: Fetch all archives recruiter shortlist data
       responses:
         200:
-          description: Returns all archived recruiter shortlist data
+          description: Returns all archives recruiter shortlist data
 
   /shortlists/archive:
     post:
@@ -435,7 +435,7 @@ paths:
         404:
           description: Candidate video unterview with given IDs did not exist
 
-  /videos/archived:
+  /videos/archives:
     get:
       parameters:
         - name: authorization
@@ -445,10 +445,10 @@ paths:
           type: string
       tags:
         - Videos
-      description: Fetch all archived video interviews
+      description: Fetch all archives video interviews
       responses:
         200:
-          description: Returns all archived video interviews
+          description: Returns all archives video interviews
 
   /videos/archive:
     post:
@@ -565,7 +565,7 @@ paths:
         404:
           description: Interview with given ID did not exist
 
-  /interviews/archived:
+  /interviews/archives:
     get:
       parameters:
         - name: authorization
@@ -575,10 +575,10 @@ paths:
           type: string
       tags:
         - Interviews
-      description: Fetch all archived interviews
+      description: Fetch all archives interviews
       responses:
         200:
-          description: Returns all archived interviews
+          description: Returns all archives interviews
 
   /interviews/archive:
     post:
