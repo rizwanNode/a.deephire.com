@@ -22,9 +22,9 @@ export const init = async () => {
 };
 
 /* eslint-disable no-param-reassign */
-export const byParam = async (search, col, id = false) => {
+export const byParam = async (search, col, id = false, findArchived = false) => {
   const collection = mongoClient.db('content').collection(col);
-
+  search = { ...search, archived: { $exists: findArchived } };
   if (id) {
     if (!ObjectId.isValid(search)) {
       return Promise.resolve(400);

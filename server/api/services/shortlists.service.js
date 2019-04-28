@@ -11,6 +11,12 @@ class ShortlistService {
     return byParam(search, 'shortlists');
   }
 
+  archived(createdBy) {
+    l.info(`${this.constructor.name}.archived(${createdBy})`);
+    const search = { createdBy };
+    return byParam(search, 'shortlists', false, true);
+  }
+
   async insert(data, createdBy) {
     l.info(`${this.constructor.name}.insert(${data},${createdBy})`);
     const objId = ObjectId();

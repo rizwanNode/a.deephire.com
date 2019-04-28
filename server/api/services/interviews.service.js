@@ -11,6 +11,12 @@ class InterviewsService {
     return byParam(search, 'interviews');
   }
 
+  archived(createdBy) {
+    l.info(`${this.constructor.name}.archived(${createdBy})`);
+    const search = { createdBy };
+    return byParam(search, 'interviews', false, true);
+  }
+
   async insert(data, createdBy) {
     l.info(`${this.constructor.name}.insert(${data},${createdBy})`);
     const objId = ObjectId();
