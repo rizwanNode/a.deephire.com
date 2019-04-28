@@ -40,6 +40,16 @@ export const byParam = async (search, col, id = false) => {
   });
 };
 
+export const update = (search, update, col, multi = true) => {
+  const collection = mongoClient.db('content').collection(col);
+  return new Promise(resolve => {
+    collection.update(search, update, { multi }).then(allResultData => {
+      if (allResultData.result.nModified) resolve(200);
+      else resolve(404);
+    });
+  });
+};
+
 export const put = async (search, col, data, id = false) => {
   const collection = mongoClient.db('content').collection(col);
 

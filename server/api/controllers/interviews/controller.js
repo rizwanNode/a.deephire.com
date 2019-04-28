@@ -20,3 +20,12 @@ export const deleteData = (req, res) => {
     res.status(r).end();
   });
 };
+
+
+export const archive = (req, res) => {
+  InterviewsService.archive(req.body).then(r => res.status(r).end());
+};
+
+export const unarchive = (req, res) => {
+  InterviewsService.unarchive(req.body).then(r => res.status(r).end());
+};
