@@ -1,26 +1,9 @@
 import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
-import { deleteObject, byParam, insert, update } from './db.service';
+import { deleteObject, byParam, insert } from './db.service';
 import { shortenLink } from '../../common/rebrandly';
+import { archiveValidator } from '../../common/helpers';
 
-const arch = (data, archived, col) => {
-  let objectIds = [];
-  try {
-    objectIds = data.map(id => {
-      if (ObjectId.isValid(id)) {
-        return new ObjectId(id);
-      }
-      throw new Error('Invalid ObjectId');
-    });
-  } catch (err) {
-    return Promise.resolve(400);
-  }
-
-  const search = { _id: { $in: objectIds } };
-  const updateData = { $set: { archived } };
-
-  return update(search, updateData, col);
-};
 class InterviewsService {
   all(createdBy) {
     l.info(`${this.constructor.name}.all(${createdBy})`);
@@ -50,12 +33,12 @@ class InterviewsService {
 
   archive(data) {
     l.info(`${this.constructor.name}.archive(${data})`);
-    return arch(data, new Date().toString(), 'interviews_test');
+    return archiveValidator(data, new Date().toString(), 'interviews_test');
   }
 
   unarchive(data) {
     l.info(`${this.constructor.name}.unarchive(${data})`);
-    return arch(data, false, 'interviews_test');
+    return archiveValidator(data, false, 'interviews_test');
   }
 }
 
