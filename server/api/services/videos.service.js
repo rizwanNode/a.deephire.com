@@ -9,6 +9,11 @@ class VideoService {
     return getInterviews(email, 'interviews', 'videos');
   }
 
+  archived(email) {
+    l.info(`${this.constructor.name}.archived(${email}`);
+    return getInterviews(email, 'interviews', 'videos', true);
+  }
+
   insert(data) {
     l.info(`${this.constructor.name}.insert(${data})`);
     const { userId, interviewId } = data;
