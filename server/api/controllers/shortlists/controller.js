@@ -5,6 +5,10 @@ export class Controller {
     ShortlistService.all(res.locals.email).then(r => res.json(r));
   }
 
+  archived(req, res) {
+    ShortlistService.archived(res.locals.email).then(r => res.json(r));
+  }
+
   insert(req, res) {
     ShortlistService.insert(req.body, res.locals.email).then(r => {
       res

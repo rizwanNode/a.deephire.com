@@ -312,6 +312,21 @@ paths:
         200:
           description: Created or Updated Resource
 
+  /shortlists/archived:
+    get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      tags:
+        - Shortlists
+      description: Fetch all archived recruiter shortlist data
+      responses:
+        200:
+          description: Returns all archived recruiter shortlist data
+
   /shortlists/archive:
     post:
       tags:
@@ -419,6 +434,21 @@ paths:
           description: Malformed ID, the ID has to be a 12 character string
         404:
           description: Candidate video unterview with given IDs did not exist
+
+  /videos/archived:
+    get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      tags:
+        - Videos
+      description: Fetch all archived video interviews
+      responses:
+        200:
+          description: Returns all archived video interviews
 
   /videos/archive:
     post:
@@ -534,6 +564,21 @@ paths:
           description: Malformed ID, the ID has to be a 12 character string
         404:
           description: Interview with given ID did not exist
+
+  /interviews/archived:
+    get:
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      tags:
+        - Interviews
+      description: Fetch all archived interviews
+      responses:
+        200:
+          description: Returns all archived interviews
 
   /interviews/archive:
     post:

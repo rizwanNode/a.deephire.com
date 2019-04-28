@@ -4,6 +4,10 @@ export const all = (req, res) => {
   InterviewsService.all(res.locals.email).then(r => res.json(r));
 };
 
+export const archived = (req, res) => {
+  InterviewsService.archived(res.locals.email).then(r => res.json(r));
+};
+
 export const insert = (req, res) => {
   InterviewsService.insert(req.body, res.locals.email).then(r => res.status(r).end());
 };

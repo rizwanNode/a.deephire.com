@@ -8,7 +8,7 @@ class InterviewsService {
   all(createdBy) {
     l.info(`${this.constructor.name}.all(${createdBy})`);
     const search = { createdBy };
-    return byParam(search, 'interviews');
+    return byParam(search, 'interviews_test');
   }
 
   archived(createdBy) {

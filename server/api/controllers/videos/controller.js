@@ -5,6 +5,10 @@ export class Controller {
     VideoService.all(res.locals.email).then(r => res.json(r));
   }
 
+  archived(req, res) {
+    VideoService.archived(res.locals.email).then(r => res.json(r));
+  }
+
   insert(req, res) {
     // add auth for this endpoint, requires sending login from app
     VideoService.insert(req.body).then(r => res.status(r).end());

@@ -4,9 +4,11 @@ import auth from '../../../common/auth';
 
 export default express
   .Router()
+  .get('/archived', controller.archived)
+  .post('/archive', auth, controller.archive)
+  .post('/unarchive', auth, controller.unarchive)
   .get('/', auth, controller.all)
   .post('/', auth, controller.insert)
   .get('/:id', controller.byParam)
-  .put('/:id', controller.put)
-  .post('/archive', auth, controller.archive)
-  .post('/unarchive', auth, controller.unarchive);
+  .put('/:id', controller.put);
+
