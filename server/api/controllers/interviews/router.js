@@ -4,7 +4,7 @@ import { all, insert, byParam, deleteData, archive, unarchive, archives } from '
 
 export default express
   .Router()
-  .get('/archives', archives)
+  .get('/archives', auth, archives)
   .post('/archive', auth, archive)
   .post('/unarchive', auth, unarchive)
   .get('/', auth, all)
