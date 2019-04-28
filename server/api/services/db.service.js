@@ -22,9 +22,9 @@ export const init = async () => {
 };
 
 /* eslint-disable no-param-reassign */
-export const byParam = async (search, col, id = false, findarchives = false) => {
+export const byParam = async (search, col, id = false) => {
   const collection = mongoClient.db('content').collection(col);
-  search = { ...search, archives: { $exists: findarchives } };
+
   if (id) {
     if (!ObjectId.isValid(search)) {
       return Promise.resolve(400);
@@ -36,16 +36,6 @@ export const byParam = async (search, col, id = false, findarchives = false) => 
     collection.find(search).toArray((err, result) => {
       if (err) throw err;
       resolve(result.reverse());
-    });
-  });
-};
-
-export const update = (search, update, col, multi = true) => {
-  const collection = mongoClient.db('content').collection(col);
-  return new Promise(resolve => {
-    collection.update(search, update, { multi }).then(allResultData => {
-      if (allResultData.result.nModified) resolve(200);
-      else resolve(404);
     });
   });
 };
@@ -148,7 +138,7 @@ export const createUpdateVideo = async (search, data, col) => {
   });
 };
 
-export const getInterviews = async (email, current, from, findarchives = false) =>
+export const getInterviews = async (email, current, from) =>
   new Promise(resolve => {
     const collection = mongoClient.db('content').collection(current);
     collection
@@ -169,7 +159,6 @@ export const getInterviews = async (email, current, from, findarchives = false) 
             'interview.timestamp': -1,
           },
         },
-        { $match: { 'interview.archives': { $exists: findarchives } } },
       ])
       .toArray((err, result) => {
         if (err) throw err;
