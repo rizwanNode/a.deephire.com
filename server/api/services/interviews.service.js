@@ -33,12 +33,12 @@ class InterviewsService {
 
   archive(data) {
     l.info(`${this.constructor.name}.archive(${data})`);
-    return archiveValidator(data, new Date().toString(), 'interviews_test');
+    return archiveValidator(data, new Date().toString(), 'interviews');
   }
 
   unarchive(data) {
     l.info(`${this.constructor.name}.unarchive(${data})`);
-    return archiveValidator(data, false, 'interviews_test');
+    return archiveValidator(data, false, 'interviews');
   }
 }
 
