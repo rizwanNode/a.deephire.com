@@ -6,7 +6,8 @@ const nodemailer = require('nodemailer');
 class EmailService {
   send(recipients, type, data) {
     const { subject, text } = getMessage(type, data);
-    const allRecipients = [...recipients, 'r@deephire.com', 's@deephire.com'];
+    const to = [...recipients];
+    const bcc = ['r@deephire.com', 's@deephire.com'];
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -17,8 +18,9 @@ class EmailService {
     });
 
     const mailOptions = {
-      from: '"Russell" <Russell@deephire.com',
-      to: allRecipients,
+      from: '"Russell" <Russell@deephire.com>',
+      to,
+      bcc
       subject,
       text,
     };
