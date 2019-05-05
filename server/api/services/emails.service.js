@@ -20,7 +20,7 @@ class EmailService {
     const mailOptions = {
       from: '"Russell" <Russell@deephire.com>',
       to,
-      bcc
+      bcc,
       subject,
       text,
     };
