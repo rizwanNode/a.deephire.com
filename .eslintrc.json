@@ -6,7 +6,7 @@
     "allowImportExportEverywhere": false
   },
   "env": {
-    "mocha": true
+    "jest": true
   },
   "rules": {
     "no-underscore-dangle": 0,
