@@ -14,7 +14,8 @@ export const insert = (req, res) => {
 
 export const byParam = (req, res) => {
   InterviewsService.byParam(req.params.id).then(r => {
-    if (r) res.json(r);
+    if (r === 400 || r === 404) res.status(r).end();
+    else if (r) res.json(r);
     else res.status(500).end();
   });
 };
@@ -24,7 +25,6 @@ export const deleteData = (req, res) => {
     res.status(r).end();
   });
 };
-
 
 export const archive = (req, res) => {
   InterviewsService.archive(req.body).then(r => res.status(r).end());
