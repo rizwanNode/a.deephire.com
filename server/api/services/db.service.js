@@ -13,7 +13,8 @@ export const init = async () => {
 
   try {
     const mongoClient = await MongoClient.connect(uri, { useNewUrlParser: true });
-    db = mongoClient.db('content');
+    const useDb = process.env.TESTING ? 'test' : 'content';
+    db = mongoClient.db(useDb);
     return true;
   } catch (error) {
     l.error(error);

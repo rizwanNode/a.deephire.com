@@ -1,7 +1,15 @@
 import request from 'supertest';
 import Server from '../server/index';
 
-beforeAll(async () => new Promise(resolve => setTimeout(() => resolve(), 1000)));
+beforeAll(async () => {
+  process.env.TESTING = true;
+  return new Promise(resolve => setTimeout(() => resolve(), 1000));
+});
+
+// afterAll(() => {
+//   process.env.TESTING = null;
+// });
+
 // afterAll(() => console.log(Server));
 
 describe('GET interviews/:id', () => {
@@ -22,3 +30,9 @@ describe('GET interviews/:id', () => {
     expect(response.statusCode).toBe(404);
   });
 });
+
+describe('GET interviews/', () => {});
+describe('POST interviews/', () => {});
+describe('POST interviews/:id', () => {});
+describe('DELETE interviews/:id', () => {});
+describe('GET interviews/:id', () => {});
