@@ -1,14 +1,14 @@
 import { ObjectId } from 'mongodb';
-import l from '../../common/logger';
-import { deleteObject, byParam, insert } from './db.service';
-import { shortenLink } from '../../common/rebrandly';
 import { archiveValidator } from '../../common/helpers';
+import l from '../../common/logger';
+import { shortenLink } from '../../common/rebrandly';
+import { byParam, deleteObject, insert } from './db.service';
 
 class InterviewsService {
   all(createdBy) {
     l.info(`${this.constructor.name}.all(${createdBy})`);
     const search = { createdBy };
-    return byParam(search, 'interviews_test');
+    return byParam(search, 'interviews');
   }
 
   archives(createdBy) {

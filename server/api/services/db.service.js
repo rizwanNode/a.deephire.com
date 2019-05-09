@@ -37,6 +37,7 @@ export const byParam = async (search, col, id = false, findarchives = false) => 
   return new Promise(resolve => {
     collection.find(search).toArray((err, result) => {
       if (err) throw err;
+      if (result.length === 0) resolve(404);
       resolve(result.reverse());
     });
   });
