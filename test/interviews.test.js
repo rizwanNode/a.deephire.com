@@ -1,7 +1,8 @@
 import request from 'supertest';
 import Server from '../server/index';
 
-const token = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik9ESkVORGMxUVVGRU5FSXhNMEpDTVVJMU1EUkVRVEJGUkVRMU9UWkdOVUV4TVRWRlFrSkRRUSJ9.eyJpc3MiOiJodHRwczovL2xvZ2luLmRlZXBoaXJlLmNvbS8iLCJzdWIiOiJhdXRoMHw1Y2QwNzlmNmQ3MTlmZTBmNWI5MGQxNmMiLCJhdWQiOlsiaHR0cDovL2EuZGVlcGhpcmUuY29tIiwiaHR0cHM6Ly9kZWVwaGlyZTIuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTU1NzM5ODYzNiwiZXhwIjoxNTU3NDA1ODM2LCJhenAiOiJqaHpHRlpIVHY4ZWhwR3NrVkt4WnJfalhPQXZLZzdEVSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwifQ.TMw_lbqxSEHB6suNmIQC6oYyWqawa2iRrL4p7eZ03J2ZmTmrSUXpiZ5FbRfHoLFgRfzCdP3ShNCo7W7y25gQap7Izcys2WiNRKJbJFwt4kb5nEn0eZfvdjZ0Www_XiU3FzC9DcgqTHxGgprWMS__iV-JSP0iSWb8FIHHR7aF-I1mICKdvqPQeFNyCohcWSUVyGAiyWYxL1Xbj2GnrwjfpMAHtVyTcDgbUlG56E9OoTR4yXZr7b-RBPeaUhol0vd2R_-y5G75QiDE21A6Mu4Xjeakrry6xwT7y9uy564HYJh0-ZsdwVmpR6VVT8e-jmihBeEUGQHHh4P8TjpGiHmTaw';
+const token =
+  'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik9ESkVORGMxUVVGRU5FSXhNMEpDTVVJMU1EUkVRVEJGUkVRMU9UWkdOVUV4TVRWRlFrSkRRUSJ9.eyJpc3MiOiJodHRwczovL2xvZ2luLmRlZXBoaXJlLmNvbS8iLCJzdWIiOiJhdXRoMHw1Y2NmMjBiZjI2MmI2YTBlMDQ3YzgxNzEiLCJhdWQiOlsiaHR0cDovL2EuZGVlcGhpcmUuY29tIiwiaHR0cHM6Ly9kZWVwaGlyZTIuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTU1NzQwNjI2MiwiZXhwIjoxNTU3NDEzNDYyLCJhenAiOiJqaHpHRlpIVHY4ZWhwR3NrVkt4WnJfalhPQXZLZzdEVSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwifQ.IxcEkpjvfeLAWOG0afHBUJo6wEnE8m2YtvNK1C6Uo_LDRHMRmUyn2akq68Kte8MUxB74W5w15avtB2-NSP02mHbYy6G7aHa1esk1GMda2uby_jlJCCsIGtC28gj7bkhpHJNwKHnfCFVKZ8KpgrZRvyanZKPVnzvMdd9qJV7LSTO2rUnP9RpPCpu9GhsNRJgaMYWuAqDDGrxLSJ0riQotchJ3xk7b0N1wC6tuFB5HFsL5KwcSfVXrmOTXvBYaO-XmFWkasAlQfVvljKhRhzYpH8iHpf2EaW0kgJyY0miW621giMIdCV7mp0FqvA4JHaPgnPCCDJm8tHpyp_RuW07D5w';
 beforeAll(async () => {
   process.env.TESTING = true;
   return new Promise(resolve => setTimeout(() => resolve(), 1000));
@@ -32,20 +33,20 @@ describe('GET interviews/:id', () => {
   });
 });
 
-describe('GET interviews/', () => {
+describe('GET interviews', () => {
   test('Get list of all unarchived interviews for a recruiter', async () => {
     const response = await request(Server)
-      .get('/v1/interviews/')
-      .set('Authorization', token);
-    expect('Content-Type', /json/);
+      .get('/v1/interviews')
+      .set('Authorization', token)
+      .expect('Content-Type', /json/);
     expect(response.statusCode).toBe(200);
   });
 
   test('Send Invalid Auth Key', async () => {
     const response = await request(Server)
-      .get('/v1/interviews/')
-      .set('Authorization', token);
-    expect(response.statusCode).toBe(403);
+      .get('/v1/interviews')
+      .set('Authorization', 123);
+    expect(response.statusCode).toBe(401);
   });
 });
 // describe('POST interviews/', () => {
@@ -53,13 +54,13 @@ describe('GET interviews/', () => {
 //   test('Create a new interview', async () => {
 //   const id = 'abcd';
 //   const response = await request(Server).post(`/v1/interviews/`).set('Authorization', token);
-//   expect(response.statusCode).toBe(403);
+//   expect(response.statusCode).toBe(401);
 // });
 
 // });
 describe('POST interviews/unarchive', () => {
   test('unarchive an array of interviews', async () => {
-    const ids = ['5c79e7a9fe6cd943bd499802', '5c79e827fe6cd943bd499803'];
+    const ids = ['5cd404d41c9d440000eb7542'];
     const response = await request(Server)
       .post('/v1/interviews/unarchive')
       .send(ids)
@@ -82,12 +83,12 @@ describe('POST interviews/unarchive', () => {
       .post('/v1/interviews/unarchive')
       .send(ids)
       .set('Authorization', token);
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(404);
   });
 
   test('send json data', async () => {
     const ids = {
-      ids: ['111111111111111111111111', '111111111111111111111111']
+      ids: ['111111111111111111111111', '111111111111111111111111'],
     };
     const response = await request(Server)
       .post('/v1/interviews/unarchive')
@@ -121,12 +122,12 @@ describe('POST interviews/archive', () => {
       .post('/v1/interviews/archive')
       .send(ids)
       .set('Authorization', token);
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(404);
   });
 
   test('send json data', async () => {
     const ids = {
-      ids: ['111111111111111111111111', '111111111111111111111111']
+      ids: ['111111111111111111111111', '111111111111111111111111'],
     };
     const response = await request(Server)
       .post('/v1/interviews/archive')
@@ -138,19 +139,17 @@ describe('POST interviews/archive', () => {
 
 describe('GET interviews/archives', () => {
   test('Get list of all archived Interviews for a recruiter', async () => {
-    const id = '5cd403861c9d440000eb7541';
     const response = await request(Server)
-      .get(`/v1/interviews/${id}`)
-      .set('Authorization', token);
-    expect('Content-Type', /json/);
+      .get('/v1/interviews/archives')
+      .set('Authorization', token)
+      .expect('Content-Type', /json/);
     expect(response.statusCode).toBe(200);
   });
 
   test('Send Invalid Auth Key', async () => {
-    const id = 'abcd';
     const response = await request(Server)
-      .get(`/v1/interviews/${id}`)
-      .set('Authorization', token);
-    expect(response.statusCode).toBe(403);
+      .get('/v1/interviews/archives')
+      .set('Authorization', 123);
+    expect(response.statusCode).toBe(401);
   });
 });
