@@ -1,7 +1,11 @@
 import InterviewsService from '../../services/interviews.service';
 
 export const all = (req, res) => {
-  InterviewsService.all(res.locals.email).then(r => res.json(r));
+  InterviewsService.all(res.locals.email).then(r => {
+    if (r === 400 || r === 404) res.status(r).end();
+    else if (r) res.json(r);
+    else res.status(500).end();
+  });
 };
 
 export const archives = (req, res) => {

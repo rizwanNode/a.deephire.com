@@ -36,18 +36,7 @@ export default class ExpressServer {
     return this;
   }
 
-  initDb2() {
-    return new Promise((resolve, reject) => {
-      init().then(success => {
-        if (success) {
-          l.info('Database connected.');
 
-          resolve(this);
-        }
-        reject('There was a problem connecting to the database.');
-      });
-    });
-  }
   listen(port = process.env.PORT) {
     const welcome = p => () =>
       l.info(

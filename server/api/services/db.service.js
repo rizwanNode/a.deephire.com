@@ -1,7 +1,7 @@
 import l from '../../common/logger';
 
-const MongoClient = require('mongodb').MongoClient;
-const ObjectId = require('mongodb').ObjectID;
+const { MongoClient } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 let db;
 const timestamp = () => new Date().toString();
@@ -13,8 +13,14 @@ export const init = async () => {
 
   try {
     const mongoClient = await MongoClient.connect(uri, { useNewUrlParser: true });
-    const useDb = process.env.TESTING ? 'test' : 'content';
-    db = mongoClient.db(useDb);
+    if (process.env.TESTING) {
+      const connection = await MongoClient.connect(global.__MONGO_URI__, { useNewUrlParser: true });
+      db = await connection.db(global.__MONGO_DB_NAME__);
+      process.env.CONNECTED = 'true';
+    } else {
+      db = await mongoClient.db('content');
+    }
+
     return true;
   } catch (error) {
     l.error(error);
@@ -180,3 +186,4 @@ export const getInterviews = async (email, current, from, findarchives = false) 
         if (result) resolve(interviews);
       });
   });
+
