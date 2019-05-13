@@ -7,9 +7,9 @@
     "prod": "node dist/index.js",
     "compile": "babel server --out-dir dist --delete-dir-on-start --source-maps inline --copy-files",
     "start": "nodemon server --exec babel-node --config .nodemonrc.json | pino-pretty",
+    "test": "jest --forceExit",
     "dev:debug": "nodemon server --exec babel-node --config .nodemonrc.json --inspect | pino-pretty",
-    "test": "mocha --compilers js:@babel/register --exit",
-    "test:debug": "mocha --compilers js:@babel/register --inspect-brk --exit",
+    "test:debug": "jest --detectOpenHandles",
     "lint": "eslint -c .eslintrc.json {server,test}/**",
     "lint:fix": "eslint --fix -c .eslintrc.json {server,test}/**"
   },
@@ -32,18 +32,21 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
+    "@babel/core": "7.4.4",
     "@babel/node": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-env": "7.4.4",
+    "@shelf/jest-mongodb": "1.0.1",
     "babel-eslint": "^8.2.2",
-    "chai": "^4.1.2",
+    "babel-jest": "24.8.0",
+    "babel-preset-env": "1.7.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^11.3.2",
     "eslint-plugin-import": "^2.14.0",
-    "mocha": "^5.0.5",
+    "jest": "24.8.0",
     "nodemon": "^1.18.4",
     "pino-pretty": "^2.2.2",
-    "supertest": "^3.0.0"
+    "superagent": "5.0.5",
+    "supertest": "4.0.2"
   },
   "author": "Russell Ratcliffe <russell@deephire.com> (https://github.com/cdimascio)"
 }

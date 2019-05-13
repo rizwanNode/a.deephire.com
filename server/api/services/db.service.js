@@ -1,7 +1,7 @@
 import l from '../../common/logger';
 
-const MongoClient = require('mongodb').MongoClient;
-const ObjectId = require('mongodb').ObjectID;
+const { MongoClient } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 let db;
 const timestamp = () => new Date().toString();
@@ -12,8 +12,15 @@ export const init = async () => {
   }@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
 
   try {
-    const mongoClient = await MongoClient.connect(uri);
-    db = mongoClient.db('content');
+    const mongoClient = await MongoClient.connect(uri, { useNewUrlParser: true });
+    if (process.env.TESTING) {
+      const connection = await MongoClient.connect(global.__MONGO_URI__, { useNewUrlParser: true });
+      db = await connection.db(global.__MONGO_DB_NAME__);
+      process.env.CONNECTED = 'true';
+    } else {
+      db = await mongoClient.db('content');
+    }
+
     return true;
   } catch (error) {
     l.error(error);
@@ -36,6 +43,7 @@ export const byParam = async (search, col, id = false, findarchives = false) => 
   return new Promise(resolve => {
     collection.find(search).toArray((err, result) => {
       if (err) throw err;
+      if (result.length === 0) resolve(404);
       resolve(result.reverse());
     });
   });
@@ -178,3 +186,4 @@ export const getInterviews = async (email, current, from, findarchives = false) 
         if (result) resolve(interviews);
       });
   });
+
