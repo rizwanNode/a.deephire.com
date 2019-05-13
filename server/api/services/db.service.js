@@ -1,19 +1,26 @@
 import l from '../../common/logger';
 
-const MongoClient = require('mongodb').MongoClient;
-const ObjectId = require('mongodb').ObjectID;
+const { MongoClient } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
-let mongoClient;
+let db;
 const timestamp = () => new Date().toString();
 
 export const init = async () => {
   const uri = `mongodb://${process.env.MONGO_NAME}:${
     process.env.MONGO_PASS
   }@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
-  mongoClient = new MongoClient(uri, { useNewUrlParser: true });
 
   try {
-    mongoClient = await MongoClient.connect(uri);
+    const mongoClient = await MongoClient.connect(uri, { useNewUrlParser: true });
+    if (process.env.TESTING) {
+      const connection = await MongoClient.connect(global.__MONGO_URI__, { useNewUrlParser: true });
+      db = await connection.db(global.__MONGO_DB_NAME__);
+      process.env.CONNECTED = 'true';
+    } else {
+      db = await mongoClient.db('content');
+    }
+
     return true;
   } catch (error) {
     l.error(error);
@@ -23,7 +30,7 @@ export const init = async () => {
 
 /* eslint-disable no-param-reassign */
 export const byParam = async (search, col, id = false, findarchives = false) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
   if (id) {
     if (!ObjectId.isValid(search)) {
       return Promise.resolve(400);
@@ -36,13 +43,14 @@ export const byParam = async (search, col, id = false, findarchives = false) => 
   return new Promise(resolve => {
     collection.find(search).toArray((err, result) => {
       if (err) throw err;
+      if (result.length === 0) resolve(404);
       resolve(result.reverse());
     });
   });
 };
 
 export const update = (search, update, col, multi = true) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
   return new Promise(resolve => {
     collection.update(search, update, { multi }).then(allResultData => {
       if (allResultData.result.nModified) resolve(200);
@@ -52,7 +60,7 @@ export const update = (search, update, col, multi = true) => {
 };
 
 export const put = async (search, col, data, id = false) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
 
   if (id) {
     l.info('here we are');
@@ -73,7 +81,7 @@ export const put = async (search, col, data, id = false) => {
 };
 
 export const insert = async (data, col) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
 
   data.timestamp = timestamp();
   return new Promise(resolve => {
@@ -87,7 +95,7 @@ export const insert = async (data, col) => {
 };
 
 export const updateByEmail = async (data, col) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
 
   return new Promise(resolve => {
     collection.updateOne({ email: data.email }, { $set: data }, { upsert: true }, (err, result) => {
@@ -99,7 +107,7 @@ export const updateByEmail = async (data, col) => {
 };
 
 export const deleteObject = async (id, col) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
 
   if (!ObjectId.isValid(id)) {
     return Promise.resolve(400);
@@ -114,7 +122,7 @@ export const deleteObject = async (id, col) => {
 };
 
 export const deleteSubDocument = async (search, id, col) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
 
   if (!ObjectId.isValid(id)) {
     return Promise.resolve(400);
@@ -130,7 +138,7 @@ export const deleteSubDocument = async (search, id, col) => {
 };
 
 export const createUpdateVideo = async (search, data, col) => {
-  const collection = mongoClient.db('content').collection(col);
+  const collection = db.collection(col);
 
   data.timestamp = timestamp();
   const { responses } = data;
@@ -151,7 +159,7 @@ export const createUpdateVideo = async (search, data, col) => {
 
 export const getInterviews = async (email, current, from, findarchives = false) =>
   new Promise(resolve => {
-    const collection = mongoClient.db('content').collection(current);
+    const collection = db.collection(current);
     collection
       .aggregate([
         { $match: { email } },
@@ -178,3 +186,4 @@ export const getInterviews = async (email, current, from, findarchives = false) 
         if (result) resolve(interviews);
       });
   });
+

@@ -1,12 +1,12 @@
-import Express from 'express';
-import * as path from 'path';
 import * as bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import Express from 'express';
 import * as http from 'http';
 import * as os from 'os';
-import cookieParser from 'cookie-parser';
-import swaggerify from './swagger';
-import l from './logger';
+import * as path from 'path';
 import { init } from '../api/services/db.service';
+import l from './logger';
+import swaggerify from './swagger';
 
 const app = new Express();
 
@@ -26,17 +26,16 @@ export default class ExpressServer {
   }
 
   initDb() {
-    return new Promise((resolve, reject) => {
-      init().then(success => {
-        if (success) {
-          l.info('Database connected.');
-
-          resolve(this);
-        }
-        reject('There was a problem connecting to the database.');
-      });
+    init().then(success => {
+      if (success) {
+        l.info('Database connected.');
+      } else {
+        l.error('Database failed to comnnect.');
+      }
     });
+    return this;
   }
+
 
   listen(port = process.env.PORT) {
     const welcome = p => () =>
