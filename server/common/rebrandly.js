@@ -42,8 +42,7 @@ const fetchShortLists = slashtag =>
     .then(data => {
       if (data[0]) return data[0].id;
       return null;
-    })
-;
+    });
 
 export const deleteLinksById = id => {
   if (id) {
@@ -64,6 +63,8 @@ export const deleteLinksBySlashtags = shortlists => {
   const urls = shortlists.map(r => r.shortUrl || r.short_url);
   const chop = urls.map(r => {
     if (r) return r.slice(18);
+    // use below if there is http:// at the begining
+    // if (r) return r.slice(25);
     return null;
   });
   const ids = chop.map(r => fetchShortLists(r).then(r => r));
