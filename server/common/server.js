@@ -10,6 +10,9 @@ import swaggerify from './swagger';
 
 const app = new Express();
 
+// const deleteRebrandlyLinks = async () => {
+//   deleteLinksBySlashtags(await fetchLinksByEmail('russell@deephire.io'));
+// };
 export default class ExpressServer {
   constructor() {
     const root = path.normalize(`${__dirname}/../..`);
@@ -29,13 +32,13 @@ export default class ExpressServer {
     init().then(success => {
       if (success) {
         l.info('Database connected.');
+        // deleteRebrandlyLinks();
       } else {
         l.error('Database failed to comnnect.');
       }
     });
     return this;
   }
-
 
   listen(port = process.env.PORT) {
     const welcome = p => () =>
