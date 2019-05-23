@@ -12,7 +12,7 @@ const app = new Express();
 
 // const deleteRebrandlyLinks = async () => {
 //   deleteLinksBySlashtags(await fetchLinksByEmail('russell@deephire.io'));
-};
+// };
 export default class ExpressServer {
   constructor() {
     const root = path.normalize(`${__dirname}/../..`);
