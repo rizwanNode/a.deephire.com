@@ -157,12 +157,12 @@ export const createUpdateVideo = async (search, data, col) => {
   });
 };
 
-export const getInterviews = async (email, current, from, findarchives = false) =>
+export const getInterviews = async (createdBy, current, from, findarchives = false) =>
   new Promise(resolve => {
     const collection = db.collection(current);
     collection
       .aggregate([
-        { $match: { email } },
+        { $match: { createdBy } },
         {
           $lookup: {
             from,
