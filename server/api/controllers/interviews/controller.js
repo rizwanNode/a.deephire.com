@@ -9,11 +9,15 @@ export const all = (req, res) => {
 };
 
 export const archives = (req, res) => {
-  InterviewsService.archives(res.locals.email).then(r => res.json(r));
+  InterviewsService.archives(res.locals.email).then(r => {
+    if (r === 400 || r === 404) res.status(r).end();
+    else if (r) res.json(r);
+    else res.status(500).end();
+  });
 };
 
 export const insert = (req, res) => {
-  InterviewsService.insert(req.body, res.locals.email).then(r => res.status(r).end());
+  InterviewsService.insert(req.body, res.locals.email).then(r => res.json(r).end());
 };
 
 export const byParam = (req, res) => {
