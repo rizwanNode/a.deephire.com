@@ -1,0 +1,13 @@
+const token =
+  'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik9ESkVORGMxUVVGRU5FSXhNMEpDTVVJMU1EUkVRVEJGUkVRMU9UWkdOVUV4TVRWRlFrSkRRUSJ9.eyJpc3MiOiJodHRwczovL2xvZ2luLmRlZXBoaXJlLmNvbS8iLCJzdWIiOiJhdXRoMHw1Y2NmMjBiZjI2MmI2YTBlMDQ3YzgxNzEiLCJhdWQiOlsiaHR0cDovL2EuZGVlcGhpcmUuY29tIiwiaHR0cHM6Ly9kZWVwaGlyZTIuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTU1ODk1NTQ3MCwiZXhwIjoxNTU4OTYyNjcwLCJhenAiOiJqaHpHRlpIVHY4ZWhwR3NrVkt4WnJfalhPQXZLZzdEVSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwifQ.LkKfflrDQ0fH1RoQCIXODvRWeJMmEWjPt7nPvnoyOSzDZamRG91yo81MKpSegbFMufpgR3HRe0E9DoAihj15MTOcM6mwRfdv2M-zs7jMOV05IxdSTwyve5wv6_iYx3Ibg_eNEgCZmahrLJLEUG973RO2Sz__UeSEDArsjHu72tI6UaO628yQEr9QHqX6mH07gobik8zlkGg2VXFaaH-ZnCGwcdW9jSE1_Adpox-6MWeNcXkcd9ypnY4Ostcc8GHl7Gdrs3uQeX9Eywau5i6kFiiX4aptFj_OYcxHQgfJeil_84yIZIRJztqulbVQ3hTTqdh6HMEFL7QCs7Rt7D6ICw';
+
+export const dbConnected = async () => {
+  await new Promise(resolve => setTimeout(() => resolve(), 500));
+  if (process.env.CONNECTED) return true;
+  return dbConnected();
+};
+
+const id1 = '5cd403861c9d440000eb7541';
+const id2 = '5cd403861c9d440000eb7542';
+export { id1, id2, token }
+;

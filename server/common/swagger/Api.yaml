@@ -100,7 +100,7 @@ definitions:
     type: object
     title: video
     required:
-      - userId
+      - candidateEmail
     properties:
       userId:
         type: string

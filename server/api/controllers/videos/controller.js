@@ -15,7 +15,9 @@ export class Controller {
 
   insert(req, res) {
     // add auth for this endpoint, requires sending login from app
-    VideoService.insert(req.body).then(r => res.status(r).end());
+    VideoService.insert(req.body).then(id => res
+      .status(201)
+      .location(`/v1/videos/${id}`).end());
   }
 
   byParam(req, res) {
