@@ -143,12 +143,12 @@ export const createUpdateVideo = async (search, data, col) => {
   data.timestamp = timestamp();
   const { responses } = data;
   delete data.responses;
-  const eek = await collection.findOneAndUpdate(
+  const result = await collection.findOneAndUpdate(
     search,
     { $push: { responses }, $setOnInsert: data },
     { upsert: true },
   );
-  const { _id } = eek.value;
+  const { _id } = result.value;
   return _id;
 };
 
