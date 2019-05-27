@@ -1,6 +1,7 @@
 // import token from './common';
 import request from 'supertest';
 import Server from '../server/index';
+import { token, dbConnected, id1, id2 } from './common';
 
 const { ObjectId, MongoClient } = require('mongodb');
 
@@ -28,18 +29,8 @@ const { ObjectId, MongoClient } = require('mongodb');
 //   });
 // });
 
-const token =
-  'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik9ESkVORGMxUVVGRU5FSXhNMEpDTVVJMU1EUkVRVEJGUkVRMU9UWkdOVUV4TVRWRlFrSkRRUSJ9.eyJpc3MiOiJodHRwczovL2xvZ2luLmRlZXBoaXJlLmNvbS8iLCJzdWIiOiJhdXRoMHw1Y2NmMjBiZjI2MmI2YTBlMDQ3YzgxNzEiLCJhdWQiOlsiaHR0cDovL2EuZGVlcGhpcmUuY29tIiwiaHR0cHM6Ly9kZWVwaGlyZTIuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTU1NzY2Njg3NSwiZXhwIjoxNTU3Njc0MDc1LCJhenAiOiJqaHpHRlpIVHY4ZWhwR3NrVkt4WnJfalhPQXZLZzdEVSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwifQ.Z_fvzpVp9Y4p_jymvWUSP-_PWcP7L8A49NM4SD-D_lMqVEO_dAHOuaLFWNSoWZ4j4EitKID05yyAxA4iP00slg73CZxDCbx40nwlVUaJyuFlI7Knrw_Jsg0Ajx7sYWwO8SbEb8YvHKNhepr3_qml2zgU3cRr3LmixbbQPVoCLzFv53Laolf8VHyfOENkwNfWVYEamTVHMk0G5fJko0t-3w_EbU4bKlNfSrTWs4Zpk7a0rq7wqBXEs2GVu-Ey3N9oSrIvXC5jxPy1LAbnWLjHAyQN3ZkReB6nFgTLa7N8DpUpcaVduZYDBl0b9ovCFuICjpk6Z9dll1oBYjVhKX1vAg';
-const id1 = '5cd403861c9d440000eb7541';
-const id2 = '5cd403861c9d440000eb7542';
 const createdBy = 'testing@gmail.com';
 let interviews;
-
-const dbConnected = async () => {
-  await new Promise(resolve => setTimeout(() => resolve(), 500));
-  if (process.env.CONNECTED) return true;
-  return dbConnected();
-};
 
 beforeAll(async () => {
   process.env.TESTING = true;
@@ -51,6 +42,8 @@ describe('Tests with a populated Database', () => {
     const connection = await MongoClient.connect(global.__MONGO_URI__, { useNewUrlParser: true });
     const db = await connection.db(global.__MONGO_DB_NAME__);
     interviews = db.collection('interviews');
+    await interviews.deleteMany({});
+
     const getById = { _id: new ObjectId(id1), createdBy };
     const testUnArchive = {
       _id: new ObjectId(id2),
