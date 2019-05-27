@@ -143,18 +143,13 @@ export const createUpdateVideo = async (search, data, col) => {
   data.timestamp = timestamp();
   const { responses } = data;
   delete data.responses;
-  return new Promise(resolve => {
-    collection.update(
-      search,
-      { $push: { responses }, $setOnInsert: data },
-      { upsert: true },
-      (err, result) => {
-        if (err) throw err;
-        if (result.result.n) resolve(201);
-        else resolve(400);
-      },
-    );
-  });
+  const eek = await collection.findOneAndUpdate(
+    search,
+    { $push: { responses }, $setOnInsert: data },
+    { upsert: true },
+  );
+  const { _id } = eek.value;
+  return _id;
 };
 
 export const getInterviews = async (createdBy, current, from, findarchives = false) =>
@@ -186,4 +181,3 @@ export const getInterviews = async (createdBy, current, from, findarchives = fal
         if (result) resolve(interviews);
       });
   });
-
