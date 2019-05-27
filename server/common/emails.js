@@ -9,6 +9,7 @@ const getMessage = (
     id,
     clientEmail,
     clientName,
+    videosId,
   },
 ) => {
   const emails = {
@@ -34,7 +35,7 @@ Send this link to candidates for them to take your interview. Reply to this emai
       text: `Interview name: ${interviewName}
 Candidate name: ${candidateName}
 Candidate email: ${candidateEmail}
-Check them out on: https://recruiter.deephire.com/candidates/candidates/${id}`,
+Check them out on: https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
     },
 
     jobSeekerCompleted: {
