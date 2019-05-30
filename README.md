@@ -1,9 +1,3 @@
-# DeepHireNodeAPI
+Check out the api live at a.deephire.com - please be gentle as this is being used in production and there are a few security flaws
 
-Powers
-
-[recruiter.deephire.com](http://recruiter.deephire.com/)
-
-[interviews.deephire.com](http://interviews.deephire.com/)
-
-[candidates.deephire.com](http://candidates.deephire.com/)
+You'll need some private env variables to run this locally. If you wana run it, email me at russell@deephire.com
