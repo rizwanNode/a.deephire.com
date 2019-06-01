@@ -148,8 +148,8 @@ export const createUpdateVideo = async (search, data, col) => {
     { $push: { responses }, $setOnInsert: data },
     { upsert: true },
   );
-  const { _id } = result.value;
-  return _id;
+  if (result.value) return result.value._id;
+  return result.lastErrorObject.upserted;
 };
 
 export const getInterviews = async (createdBy, current, from, findarchives = false) =>
