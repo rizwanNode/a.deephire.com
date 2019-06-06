@@ -2,7 +2,11 @@ import VideoService from '../../services/videos.service';
 
 export class Controller {
   all(req, res) {
-    VideoService.all(res.locals.email).then(r => res.json(r));
+    VideoService.all(res.locals.email).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
   }
 
   archives(req, res) {
@@ -19,7 +23,8 @@ export class Controller {
       res.header('Access-Control-Expose-Headers', 'Location');
       return res
         .status(201)
-        .location(`/v1/videos/${id}`).end();
+        .location(`/v1/videos/${id}`)
+        .end();
     });
   }
 
