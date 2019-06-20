@@ -21,7 +21,7 @@ class InterviewsService {
     l.info(`${this.constructor.name}.insert(${data},${createdBy})`);
     const objId = ObjectId();
     const longUrl = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
-    const shortUrl = await shortenLink(longUrl, `${createdBy}'s interview ${data.interviewName}`);
+    const shortUrl = await shortenLink(longUrl, 'interview.deephire.com', `${createdBy}'s interview ${data.interviewName}`);
     const shortList = { ...data, createdBy, _id: objId, shortUrl };
     return insert(shortList, 'interviews');
   }
