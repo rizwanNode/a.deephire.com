@@ -7,17 +7,15 @@ const getMessage = (
     candidateEmail,
     recruiterEmail,
     id,
-    clientEmail,
     clientName,
     videosId,
   },
 ) => {
   const emails = {
     shortListViewed: {
-      subject: `${clientEmail} viewed your shortlist`,
-      text: `A shortlist has been viewed!
+      subject: `${clientName} viewed your share link`,
+      text: `A share link has been viewed!
 Name: ${clientName}
-Client email: ${clientEmail}
 View Anaytics: https://recruiter.deephire.com/shortlists/shortlistanalytics/?id=${id}
       `,
     },
