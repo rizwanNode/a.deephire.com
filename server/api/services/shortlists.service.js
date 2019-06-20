@@ -22,7 +22,7 @@ class ShortlistService {
     const objId = ObjectId();
     const longUrl = `https://candidates.deephire.com/shortlist?shortlist=${objId.valueOf()}`;
 
-    const shortUrl = await shortenLink(longUrl, `${createdBy}'s shortList for ${data.email}`);
+    const shortUrl = await shortenLink(longUrl, 'share.deephire.com', `${createdBy}'s shortList for ${data.email}`);
 
     const shortList = { ...data, createdBy, _id: objId, shortUrl };
     return insert(shortList, 'shortlists');
