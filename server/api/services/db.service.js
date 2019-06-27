@@ -59,11 +59,10 @@ export const update = (search, update, col, multi = true) => {
   });
 };
 
-export const put = async (search, col, data, id = false) => {
+export const put = async (search, col, data, id = false, upsert = true) => {
   const collection = db.collection(col);
 
   if (id) {
-    l.info('here we are');
     if (!ObjectId.isValid(search)) {
       return Promise.resolve(400);
     }
@@ -71,10 +70,13 @@ export const put = async (search, col, data, id = false) => {
   }
 
   return new Promise(resolve => {
-    collection.updateOne(search, { $set: data }, { upsert: true }, (err, result) => {
+    collection.updateOne(search, { $set: data }, { upsert }, (err, result) => {
       if (err) throw err;
       if (result) {
-        resolve(200);
+        const { matchedCount } = result;
+        if (!matchedCount && !upsert) resolve(404);
+        if (!matchedCount && upsert) resolve(201);
+        else resolve(200);
       } else resolve(400);
     });
   });

@@ -1,7 +1,7 @@
 // import token from './common';
 import request from 'supertest';
 import Server from '../server/index';
-import { token, dbConnected, id1, id2 } from './common';
+import { token, dbConnected, id1, id2, id3, unusedId } from './common';
 
 const { ObjectId, MongoClient } = require('mongodb');
 
@@ -49,7 +49,11 @@ describe('Tests with a populated Database', () => {
       _id: new ObjectId(id2),
       archives: 'Fri May 10 2019 17:45:14 GMT-0400 (Eastern Daylight Time)',
     };
-    const mockInterviews = [getById, testUnArchive];
+    const testPut = {
+      _id: new ObjectId(id3),
+      interviewQuestions: [{ question: 'Tell me about yourself' }],
+    };
+    const mockInterviews = [getById, testUnArchive, testPut];
     await interviews.insertMany(mockInterviews);
   });
   afterEach(async () => {
@@ -93,6 +97,51 @@ describe('Tests with a populated Database', () => {
         .send(ids)
         .set('Authorization', token);
       expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe('PUT interviews/:id', () => {
+    const data = {
+      interviewQuestions: [
+        {
+          question: 'Tell me about yourself (test)',
+        },
+      ],
+      interviewName: 'DH Sales Interview',
+      interviewConfig: {
+        retakesAllowed: 8,
+        prepTime: 45,
+        answerTime: 90,
+      },
+    };
+    test('update an interview', async () => {
+      const id = id3;
+      const response = await request(Server)
+        .put(`/v1/interviews/${id}`)
+        .send(data)
+        .set('Authorization', token);
+      expect(response.statusCode).toBe(200);
+
+      const checkUpdateResponse = await interviews.findOne({ _id: new ObjectId(id3) });
+      delete checkUpdateResponse._id;
+      expect(checkUpdateResponse).toEqual(data);
+    });
+
+    test('invalid update id', async () => {
+      const response = await request(Server)
+        .put(`/v1/interviews/${123}`)
+        .send(data)
+        .set('Authorization', token);
+      expect(response.statusCode).toBe(400);
+    });
+
+    test('non-exist objectID', async () => {
+      const id = unusedId;
+      const response = await request(Server)
+        .put(`/v1/interviews/${id}`)
+        .send(data)
+        .set('Authorization', token);
+      expect(response.statusCode).toBe(404);
     });
   });
 });
