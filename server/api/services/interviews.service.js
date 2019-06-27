@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import { archiveValidator } from '../../common/helpers';
 import l from '../../common/logger';
 import { shortenLink } from '../../common/rebrandly';
-import { byParam, deleteObject, insert } from './db.service';
+import { byParam, deleteObject, insert, put } from './db.service';
 
 class InterviewsService {
   all(createdBy) {
@@ -18,10 +18,14 @@ class InterviewsService {
   }
 
   async insert(data, createdBy) {
-    l.info(`${this.constructor.name}.insert(${data},${createdBy})`);
+    l.info(`$this.constructor.name}.insert(${data},${createdBy})`);
     const objId = ObjectId();
     const longUrl = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
-    const shortUrl = await shortenLink(longUrl, 'interview.deephire.com', `${createdBy}'s interview ${data.interviewName}`);
+    const shortUrl = await shortenLink(
+      longUrl,
+      'interview.deephire.com',
+      `${createdBy}'s interview ${data.interviewName}`,
+    );
     const shortList = { ...data, createdBy, _id: objId, shortUrl };
     return insert(shortList, 'interviews');
   }
@@ -44,6 +48,12 @@ class InterviewsService {
   unarchive(data) {
     l.info(`${this.constructor.name}.unarchive(${data})`);
     return archiveValidator(data, false, 'interviews');
+  }
+
+  put(id, data) {
+    l.info(`${this.constructor.name}.update(${id}, ${JSON.stringify(data)})`);
+    delete data._id;
+    return put(id, 'interviews', data, true, false);
   }
 }
 

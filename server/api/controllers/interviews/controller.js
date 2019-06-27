@@ -41,3 +41,8 @@ export const archive = (req, res) => {
 export const unarchive = (req, res) => {
   InterviewsService.unarchive(req.body).then(r => res.status(r).end());
 };
+
+export const put = (req, res) => {
+  // use res.locals.email here to make sure recruiters can only update interview they, or someone on their team owns
+  InterviewsService.put(req.params.id, req.body).then(r => res.status(r).end());
+};
