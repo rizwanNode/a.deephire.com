@@ -28,8 +28,16 @@ async function getEmail(req, res, next) {
   const value = myCache.get(accessToken);
   if (value === undefined) {
     auth0.getProfile(accessToken);
-    const { email } = await auth0.getProfile(accessToken);
+    let { email } = await auth0.getProfile(accessToken);
+
+    // START CUSTOM CODE FOR LINKING TWO RECRUITER ACCOUNTS TOGETHER
+    if (email === 'patrick@egntechnical.com') {
+      email = 'errol@egntechnical.com';
+    }
+    // END CUSTOM CODE FOR LINKING TWO RECRUITER ACCOUNTS TOGETHER
+
     myCache.set(accessToken, email);
+
     l.info(`set ${email} in cache`);
     res.locals.email = email;
   } else {
