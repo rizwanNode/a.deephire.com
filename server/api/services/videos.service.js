@@ -9,6 +9,18 @@ class VideoService {
     return getInterviews(email, 'interviews', 'videos');
   }
 
+  async filter(email, candidateEmail) {
+    l.info(`${this.constructor.name}.filter(${email}, ${candidateEmail}`);
+    return getInterviews(email, 'interviews', 'videos').then(allVideos => {
+      if (allVideos == 400) return Promise.resolve(allVideos);
+      if (allVideos == 404) return Promise.resolve([]);
+      if (candidateEmail) {
+        return allVideos.filter(interview => interview.candidateEmail === candidateEmail);
+      }
+      return allVideos;
+    });
+  }
+
   archives(email) {
     l.info(`${this.constructor.name}.archives(${email}`);
     return getInterviews(email, 'interviews', 'videos', true);

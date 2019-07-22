@@ -398,7 +398,28 @@ paths:
       responses:
         201:
           description: Video Created
-
+  /videos/filter:
+    get:
+      tags:
+        - Videos
+      summary: "Filter candidate videos"
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: candidateEmail
+          in: query
+          description: Email to filter by
+          required: false
+          type: string
+        # collectionFormat: "multi"
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Invalid email value"
   /videos/{id}:
     get:
       tags:
