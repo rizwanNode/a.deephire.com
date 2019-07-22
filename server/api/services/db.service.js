@@ -177,7 +177,11 @@ export const getInterviews = async (createdBy, current, from, findarchives = fal
         },
         { $match: { 'interview.archives': { $exists: findarchives } } },
       ])
-      .toArray((err, result) => {
+      .toArray(async (err, result) => {
+        const interviewsStuff = await collection.find({}).toArray();
+        const videoColl = db.collection(from);
+        const videosStuff = await videoColl.find({}).toArray();
+              
         if (err) throw err;
         const interviews = result.map(r => r.interview);
         if (result) resolve(interviews);

@@ -9,6 +9,14 @@ export class Controller {
     });
   }
 
+  filter(req, res) {
+    VideoService.filter(res.locals.email, req.query.candidateEmail).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
   archives(req, res) {
     VideoService.archives(res.locals.email).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
