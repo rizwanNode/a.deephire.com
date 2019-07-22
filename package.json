@@ -28,7 +28,8 @@
     "node-fetch": "2.3.0",
     "nodemailer": "4.7.0",
     "pino": "^5.10.2",
-    "swagger-express-middleware": "^2.0.0"
+    "swagger-express-middleware": "^2.0.0",
+    "jwt-decode": "^2.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -48,5 +49,5 @@
     "superagent": "5.0.5",
     "supertest": "4.0.2"
   },
-  "author": "Russell Ratcliffe <russell@deephire.com> (https://github.com/cdimascio)"
+  "author": "Russell Ratcliffe <russell@deephire.com> (https://github.com/russeii)"
 }
