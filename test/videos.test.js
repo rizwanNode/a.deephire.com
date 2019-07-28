@@ -5,7 +5,6 @@ import { dbConnected, id1, id2, token } from './common';
 
 const email = 'testing@deephire.com';
 const filterEmail = 'testingFilter@deephire.com';
-
 const { ObjectId, MongoClient } = require('mongodb');
 
 let videos;
@@ -68,19 +67,28 @@ describe('Tests with a populated Database', () => {
 
   describe('POST videos', () => {
     test('Add a new video response', async () => {
-      const userInfo = {
-        candidateEmail: email,
-        interviewId: id2,
-        responses: {
-          question: 'whats your name?',
+      const question1 = 'whats your name?';
+      const question2 = 'whats your name2?';
+      const responses1 = [
+        {
+          question: question1,
           response: 'https://www.youtube.com/watch?v=5pX3mwnAvyo',
         },
-      };
-      const response = await request(Server)
-        .post('/v1/videos')
-        .send(userInfo);
-      expect(response.statusCode).toBe(201);
-      expect(response.headers.location).toBe(`/v1/videos/${id1}`);
+      ];
+
+      const responses2 = [
+        {
+          question: question1,
+          response: 'https://www.youtube.com/watch?v=5pX3mwnAvyo',
+        },
+        {
+          question: question2,
+          response: 'https://www.youtube.com/watch?v=5pX3mwnAvyo',
+        },
+      ];
+      await insertVideo(question1, responses1);
+      await insertVideo(question1, responses1);
+      await insertVideo(question2, responses2);
     });
   });
 
@@ -104,3 +112,27 @@ describe('Tests with a populated Database', () => {
   //   });
   // });
 });
+
+const insertVideo = async (question, responses) => {
+  const userInfo = {
+    candidateEmail: email,
+    interviewId: id2,
+    responses: {
+      question,
+      response: 'https://www.youtube.com/watch?v=5pX3mwnAvyo',
+    },
+  };
+  const response = await request(Server)
+    .post('/v1/videos')
+    .send(userInfo);
+  expect(response.statusCode).toBe(201);
+  expect(response.headers.location).toBe(`/v1/videos/${id1}`);
+
+  const results = await videos.findOne(ObjectId(id1));
+  delete results._id;
+  delete results.interviewId;
+  expect(results).toEqual({
+    candidateEmail: 'testing@deephire.com',
+    responses,
+  });
+};

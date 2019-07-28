@@ -145,11 +145,29 @@ export const createUpdateVideo = async (search, data, col) => {
   data.timestamp = timestamp();
   const { responses } = data;
   delete data.responses;
-  const result = await collection.findOneAndUpdate(
-    search,
-    { $push: { responses }, $setOnInsert: data },
-    { upsert: true },
-  );
+
+  let flag = false;
+  let newResponses;
+  let result;
+  const checkIfAnsweredBefore = await collection.findOne(search);
+  if (checkIfAnsweredBefore && checkIfAnsweredBefore.responses) {
+    newResponses = checkIfAnsweredBefore.responses.map(response => {
+      if (response.question == responses.question) {
+        flag = true;
+        return responses;
+      }
+      return response;
+    });
+  }
+  if (flag) {
+    result = await collection.findOneAndUpdate(search, { $set: { responses: newResponses } });
+  } else {
+    result = await collection.findOneAndUpdate(
+      search,
+      { $push: { responses }, $setOnInsert: data },
+      { upsert: true },
+    );
+  }
   if (result.value) return result.value._id;
   return result.lastErrorObject.upserted;
 };
@@ -181,7 +199,7 @@ export const getInterviews = async (createdBy, current, from, findarchives = fal
         const interviewsStuff = await collection.find({}).toArray();
         const videoColl = db.collection(from);
         const videosStuff = await videoColl.find({}).toArray();
-              
+
         if (err) throw err;
         const interviews = result.map(r => r.interview);
         if (result) resolve(interviews);
