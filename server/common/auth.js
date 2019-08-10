@@ -3,7 +3,8 @@ import jwksRsa from 'jwks-rsa';
 import NodeCache from 'node-cache';
 import { AuthenticationClient } from 'auth0';
 import l from './logger';
-var jwtDecode = require('jwt-decode');
+
+let jwtDecode = require('jwt-decode');
 
 const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 240 });
 
@@ -42,9 +43,9 @@ async function getEmail(req, res, next) {
     // END CUSTOM CODE FOR LINKING .Jobs accounts
 
     // START CUSTOM CODE FOR LINKING TWO RECRUITER ACCOUNTS TOGETHER
-    if (email === 'patrick@egntechnical.com') {
-      email = 'errol@egntechnical.com';
-    }
+    // if (email === 'patrick@egntechnical.com') {
+    //   email = 'errol@egntechnical.com';
+    // }
     // END CUSTOM CODE FOR LINKING TWO RECRUITER ACCOUNTS TOGETHER
 
     myCache.set(accessToken, email);
