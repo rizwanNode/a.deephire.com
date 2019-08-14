@@ -205,3 +205,17 @@ export const getInterviews = async (createdBy, current, from, findarchives = fal
         if (result) resolve(interviews);
       });
   });
+
+export const editDocument = async (search, data, customEdit, col) => {
+  const collection = db.collection(col);
+  const test = await collection.find(search);
+  const count = await test.count();
+  if (count) {
+    test.forEach(doc => {
+      customEdit(collection, doc, data);
+    });
+    return 200;
+  }
+
+  return 404;
+};

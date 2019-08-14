@@ -97,6 +97,12 @@ definitions:
       type: string
     example: ["5c79e7a9fe6cd943bd499802", "5c79e827fe6cd943bd499803"]
 
+  ArchiveVideoBody:
+    type: array
+    items:
+      type: number
+    example: [0]
+
   VideoBody:
     type: object
     title: video
@@ -472,6 +478,58 @@ paths:
         200:
           description: Returns all archives video interviews
 
+  
+  /videos/{id}/archive:
+    post:
+      tags:
+        - Videos
+      description: Archive a Video response
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          type: string
+          required: true
+        - name: index
+          in: body
+          description: index to archive
+          required: true
+          schema:
+            $ref: "#/definitions/ArchiveVideoBody"
+      responses:
+        200:
+          description: Archive Successful
+
+  /videos/{id}/unarchive:
+    post:
+      tags:
+        - Videos
+      description: Archive a Video response
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          type: string
+          required: true
+        - name: index
+          in: body
+          description: index to archive
+          required: true
+          schema:
+            $ref: "#/definitions/ArchiveVideoBody"
+      responses:
+        200:
+          description: Archive Successful
   /videos/archive:
     post:
       tags:
