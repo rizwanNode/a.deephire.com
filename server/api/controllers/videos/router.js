@@ -8,8 +8,9 @@ export default express
   .get('/archives', auth, controller.archives)
   .post('/archive', auth, controller.archive)
   .post('/unarchive', auth, controller.unarchive)
-  .get('/', auth, controller.all)
-  .post('/', controller.insert)
+  .post('/:id/archive', auth, controller.archiveVideo)
+  .post('/:id/unarchive', auth, controller.unarchiveVideo)
   .get('/:id', controller.byParam)
-  .delete('/:id', auth, controller.delete);
-
+  .delete('/:id', auth, controller.delete)
+  .get('/', auth, controller.all)
+  .post('/', controller.insert);

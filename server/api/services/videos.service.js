@@ -1,7 +1,32 @@
 import { ObjectId } from 'mongodb';
 import l from '../../common/logger';
-import { getInterviews, createUpdateVideo, byParam, deleteObject } from './db.service';
+import {
+  editDocument,
+  getInterviews,
+  createUpdateVideo,
+  byParam,
+  deleteObject,
+} from './db.service';
 import { archiveValidator } from '../../common/helpers';
+
+const customEdit = archive => async (collection, doc, data) => {
+  const index = Array.isArray(data) ? data[0] : data;
+
+  const deletingFrom = archive ? 'responses' : 'archivedResponses';
+  const addingTo = archive ? 'archivedResponses' : 'responses';
+  if (!doc[deletingFrom]) return;
+  const videoToArchive = doc[deletingFrom][index];
+  Array.isArray(doc[addingTo]);
+
+  if (Array.isArray(doc[addingTo])) {
+    doc[addingTo].push(videoToArchive);
+  } else {
+    // eslint-disable-next-line no-param-reassign
+    doc[addingTo] = [videoToArchive];
+  }
+  doc[deletingFrom].splice(index, 1);
+  await collection.save(doc);
+};
 
 class VideoService {
   all(email) {
@@ -12,8 +37,8 @@ class VideoService {
   async filter(email, candidateEmail) {
     l.info(`${this.constructor.name}.filter(${email}, ${candidateEmail}`);
     return getInterviews(email, 'interviews', 'videos').then(allVideos => {
-      if (allVideos == 400) return Promise.resolve(allVideos);
-      if (allVideos == 404) return Promise.resolve([]);
+      if (allVideos === 400) return Promise.resolve(allVideos);
+      if (allVideos === 404) return Promise.resolve([]);
       if (candidateEmail) {
         return allVideos.filter(interview => interview.candidateEmail === candidateEmail);
       }
@@ -53,6 +78,23 @@ class VideoService {
   unarchive(data) {
     l.info(`${this.constructor.name}.unarchive(${data})`);
     return archiveValidator(data, false, 'videos');
+  }
+
+  archiveVideo(id, data) {
+    l.info(`${this.constructor.name}.archiveVideo(${id},${data})`);
+    if (!ObjectId.isValid(id)) {
+      return Promise.resolve(400);
+    }
+    const search = { _id: new ObjectId(id) };
+    return editDocument(search, data, customEdit(true), 'videos');
+  }
+  unarchiveVideo(id, data) {
+    l.info(`${this.constructor.name}.unarchiveVideo(${id},${data})`);
+    if (!ObjectId.isValid(id)) {
+      return Promise.resolve(400);
+    }
+    const search = { _id: new ObjectId(id) };
+    return editDocument(search, data, customEdit(false), 'videos');
   }
 }
 

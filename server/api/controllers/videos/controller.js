@@ -57,5 +57,13 @@ export class Controller {
   unarchive(req, res) {
     VideoService.unarchive(req.body).then(r => res.status(r).end());
   }
+
+  archiveVideo(req, res) {
+    VideoService.archiveVideo(req.params.id, req.body).then(r => res.status(r).end());
+  }
+
+  unarchiveVideo(req, res) {
+    VideoService.unarchiveVideo(req.params.id, req.body).then(r => res.status(r).end());
+  }
 }
 export default new Controller();

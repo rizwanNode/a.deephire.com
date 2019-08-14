@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { update } from '../api/services/db.service';
 
+// eslint-disable-next-line import/prefer-default-export
 export const archiveValidator = (data, shouldArchive, col) => {
   let objectIds = [];
   try {
