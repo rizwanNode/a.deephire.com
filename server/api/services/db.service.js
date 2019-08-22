@@ -1,4 +1,5 @@
 import l from '../../common/logger';
+import { shortenLink } from '../../common/rebrandly';
 
 const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
@@ -218,4 +219,25 @@ export const editDocument = async (search, data, customEdit, col) => {
   }
 
   return 404;
+};
+
+export const duplicate = async (search, col) => {
+  const collection = db.collection(col);
+  const documents = await collection.find(search).toArray();
+  const copies = await Promise.all(documents.map(async document => {
+    const objId = new ObjectId();
+    document._id = objId;
+    document.interviewName = `(Copy) ${document.interviewName}`;
+    const longUrl = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
+    const shortUrl = await shortenLink(
+      longUrl,
+      'interview.deephire.com',
+      `${document.createdBy}'s interview copy ${document.interviewName}`,
+    );
+    document.shortUrl = shortUrl;
+    return document;
+  }));
+  const insert = await collection.insertMany(copies);
+  if (insert.insertedCount > 0) return 200;
+  return 500;
 };

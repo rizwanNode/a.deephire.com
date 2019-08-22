@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { update } from '../api/services/db.service';
+import { update, duplicate } from '../api/services/db.service';
 
 // eslint-disable-next-line import/prefer-default-export
 export const archiveValidator = (data, shouldArchive, col) => {
@@ -23,3 +23,20 @@ export const archiveValidator = (data, shouldArchive, col) => {
   return update(search, updateData, col);
 };
 
+export const duplicateValidator = (data, col) => {
+  let objectIds = [];
+  try {
+    objectIds = data.map(id => {
+      if (ObjectId.isValid(id)) {
+        return new ObjectId(id);
+      }
+      throw new Error('Invalid ObjectId');
+    });
+  } catch (err) {
+    return Promise.resolve(400);
+  }
+
+  const search = { _id: { $in: objectIds } };
+
+  return duplicate(search, col);
+};

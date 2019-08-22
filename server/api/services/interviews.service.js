@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { archiveValidator } from '../../common/helpers';
+import { archiveValidator, duplicateValidator } from '../../common/helpers';
 import l from '../../common/logger';
 import { shortenLink } from '../../common/rebrandly';
 import { byParam, deleteObject, insert, put } from './db.service';
@@ -54,6 +54,11 @@ class InterviewsService {
     l.info(`${this.constructor.name}.update(${id}, ${JSON.stringify(data)})`);
     delete data._id;
     return put(id, 'interviews', data, true, false);
+  }
+
+  duplicate(data) {
+    l.info(`${this.constructor.name}.duplicate(${data})`);
+    return duplicateValidator(data, 'interviews');
   }
 }
 
