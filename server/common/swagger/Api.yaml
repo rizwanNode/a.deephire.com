@@ -606,6 +606,27 @@ paths:
         201:
           description: Video Created
 
+  /interviews/duplicate:
+    post:
+      tags:
+        - Interviews
+      description: Duplicate interviews
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: ids
+          in: body
+          description: ids to duplicate
+          required: true
+          schema:
+            $ref: "#/definitions/ArchiveBody"
+      responses:
+        200:
+          description: Duplicate Successful
+
   /interviews/{id}:
     get:
       tags:
