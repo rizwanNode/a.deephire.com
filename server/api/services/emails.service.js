@@ -1,39 +1,56 @@
 import l from '../../common/logger';
-import getMessage from '../../common/emails';
 
-const nodemailer = require('nodemailer');
+const mandrill = require('mandrill-api/mandrill');
+
+const mandrillClient = new mandrill.Mandrill(process.env.MANDRILL_API_KEY);
+
+const sendTemplate = opts =>
+  new Promise((resolve, reject) => {
+    mandrillClient.messages.sendTemplate(opts, resolve, reject);
+  });
 
 class EmailService {
-  send(recipients, type, data) {
-    const { subject, text } = getMessage(type, data);
-    const to = [...recipients];
-    const bcc = ['r@deephire.com', 's@deephire.com'];
+  async send(msgRecipents, templateName, mergeTags) {
+    l.info(
+      `${this.constructor.name}.send(${msgRecipents}, ${templateName}, ${JSON.stringify(
+        mergeTags,
+      )})`,
+    );
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_NAME,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: '"Russell" <Russell@deephire.com>',
+    const recipents = Array.isArray(msgRecipents) ? msgRecipents : [msgRecipents];
+    const to = recipents.map(email => ({ email }));
+    const vars = Object.keys(mergeTags).map(key => ({ name: key, content: mergeTags[key] }));
+    const mergeVars = recipents.map(rcpt => ({ rcpt, vars }));
+    const message = {
       to,
-      bcc,
-      subject,
-      text,
+      headers: {
+        'Reply-To': 'russell@deephire.com',
+      },
+      important: false,
+      track_opens: true,
+      track_clicks: true,
+      auto_text: null,
+      auto_html: null,
+      inline_css: null,
+      url_strip_qs: null,
+      preserve_recipients: false,
+      view_content_link: null,
+      tracking_domain: null,
+      signing_domain: null,
+      return_path_domain: null,
+      merge: true,
+      merge_language: 'mailchimp',
+      merge_vars: mergeVars,
+      tags: ['candidate-completed-interview-test'],
     };
 
-    return new Promise(resolve => {
-      transporter.sendMail(mailOptions, error => {
-        if (error) {
-          l.error(error);
-          return resolve(500);
-        }
-        return resolve(200);
-      });
-    });
+    return sendTemplate({
+      template_name: templateName,
+      template_content: null,
+      message,
+    })
+      .then(result => result)
+      .catch(e => e);
   }
 }
 
