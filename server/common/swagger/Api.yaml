@@ -30,7 +30,7 @@ definitions:
     title: email
     required:
       - recipients
-      - type
+      - template
     properties:
       videoId: "123456789"
       recipients:
@@ -39,9 +39,9 @@ definitions:
         items:
           type: string
         example: ["russell@deephire.com"]
-      type:
+      template:
         type: string
-        example: interviewCreated
+        example: completed-interview-recruiter-notification
       interviewName:
         type: string
         example: Russell's Test Interview

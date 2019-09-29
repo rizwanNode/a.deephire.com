@@ -2,7 +2,7 @@ import EmailsService from '../../services/emails.service';
 
 export class Controller {
   send(req, res) {
-    EmailsService.send(req.body.recipients, req.body.type, req.body).then(
+    EmailsService.send(req.body.recipients, req.body.template, req.body).then(
       r => res.json(r),
     );
   }
