@@ -69,7 +69,13 @@ async function getEmail(req, res, next) {
 async function logMixpanel(req, res, next) {
   const email = res.locals.email;
   const { originalUrl, method } = req;
-  mixpanel.track(`${method} ${originalUrl}`, { email });
+  const eventName = `${method} ${originalUrl}`;
+  mixpanel.track(eventName, { email });
+  mixpanel.people.increment(email, eventName);
+  mixpanel.people.set_once(email, {
+    $email: email,
+    $created: new Date(),
+  });
   next();
 }
 
