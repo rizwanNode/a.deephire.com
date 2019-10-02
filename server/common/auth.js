@@ -4,7 +4,13 @@ import NodeCache from 'node-cache';
 import { AuthenticationClient } from 'auth0';
 import l from './logger';
 
-let jwtDecode = require('jwt-decode');
+const Mixpanel = require('mixpanel');
+
+const mixpanel = Mixpanel.init(process.env.MIXPANEL_API, {
+  protocol: 'https',
+});
+
+const jwtDecode = require('jwt-decode');
 
 const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 240 });
 
@@ -60,5 +66,12 @@ async function getEmail(req, res, next) {
   next();
 }
 
-const auth = [checkJwt, getEmail];
+async function logMixpanel(req, res, next) {
+  const email = res.locals.email;
+  const { originalUrl, method } = req;
+  mixpanel.track(`${method} ${originalUrl}`, { email });
+  next();
+}
+
+const auth = [checkJwt, getEmail, logMixpanel];
 export default auth;
