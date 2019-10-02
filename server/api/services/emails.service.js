@@ -4,11 +4,23 @@ const mandrill = require('mandrill-api/mandrill');
 
 const mandrillClient = new mandrill.Mandrill(process.env.MANDRILL_API_KEY);
 
+const Mixpanel = require('mixpanel');
+
+const mixpanel = Mixpanel.init(process.env.MIXPANEL_API, {
+  protocol: 'https',
+});
+
 const sendTemplate = opts =>
   new Promise((resolve, reject) => {
     mandrillClient.messages.sendTemplate(opts, resolve, reject);
   });
 
+const trackTemplatesSent = (recipents, templateName) => {
+  recipents.forEach(recipent => {
+    mixpanel.track(templateName, { email: recipent });
+    mixpanel.people.increment(recipent, templateName);
+  });
+};
 class EmailService {
   async send(msgRecipents, templateName, mergeTags) {
     l.info(
@@ -43,6 +55,8 @@ class EmailService {
       merge_vars: mergeVars,
       tags: ['candidate-completed-interview-test'],
     };
+
+    trackTemplatesSent(recipents, templateName);
 
     return sendTemplate({
       template_name: templateName,
