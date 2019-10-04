@@ -18,6 +18,7 @@ const sendTemplate = opts =>
 const trackTemplatesSent = (recipents, templateName) => {
   recipents.forEach(recipent => {
     mixpanel.track(templateName, { email: recipent });
+    mixpanel.people.set_once(recipent, { email: recipent });
     mixpanel.people.increment(recipent, templateName);
   });
 };
