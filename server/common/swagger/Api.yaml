@@ -4,11 +4,7 @@ info:
   title: DeepHireNodeAPI
   description: Automate the recruiting process with one-way video interviews
 basePath: /v1
-tags:
-  - name: Examples
-    description: Simple example endpoints
-  - name: Specification
-    description: The swagger API specification
+
 
 consumes:
   - application/json
@@ -84,7 +80,7 @@ definitions:
     properties:
       userId:
         type: string
-        example: uselessdata
+        example: exampleData
       youtubeUrls:
         type: array
         items:
@@ -208,45 +204,6 @@ definitions:
             example: 90
 
 paths:
-  /examples:
-    get:
-      tags:
-        - Examples
-      description: Fetch all examples
-      responses:
-        200:
-          description: Returns all examples
-    post:
-      tags:
-        - Examples
-      description: Create a new example
-      parameters:
-        - name: example
-          in: body
-          description: an example
-          required: true
-          schema:
-            $ref: "#/definitions/ExampleBody"
-      responses:
-        201:
-          description: Example Created
-
-  /examples/{id}:
-    get:
-      tags:
-        - Examples
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The id of the example to retrieve
-          type: integer
-      responses:
-        200:
-          description: Return the example with the specified id
-        404:
-          description: Example not found
-
   /shortlists:
     get:
       parameters:
