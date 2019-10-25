@@ -7,7 +7,7 @@ import l from './logger';
 const Mixpanel = require('mixpanel');
 
 const mixpanel = Mixpanel.init(process.env.MIXPANEL_API, {
-  protocol: 'https',
+  protocol: 'https'
 });
 
 const jwtDecode = require('jwt-decode');
@@ -16,7 +16,7 @@ const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 240 });
 
 const auth0 = new AuthenticationClient({
   domain: 'login.deephire.com',
-  clientId: 'jhzGFZHTv8ehpGskVKxZr_jXOAvKg7DU',
+  clientId: 'jhzGFZHTv8ehpGskVKxZr_jXOAvKg7DU'
 });
 
 const checkJwt = jwt({
@@ -24,11 +24,11 @@ const checkJwt = jwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: 'https://login.deephire.com/.well-known/jwks.json',
+    jwksUri: 'https://login.deephire.com/.well-known/jwks.json'
   }),
   audience: 'http://a.deephire.com',
   issuer: 'https://login.deephire.com/',
-  algorithms: ['RS256'],
+  algorithms: ['RS256']
 });
 
 async function getEmail(req, res, next) {
@@ -47,6 +47,20 @@ async function getEmail(req, res, next) {
       email = 'dh@find.jobs';
     }
     // END CUSTOM CODE FOR LINKING .Jobs accounts
+
+    // START CUSTOM CODE FOR LINKING 360industrialservices accounts
+
+    if (
+      email === 'efroese@360industrialservices.com' ||
+      email === 'cmason@360industrialservices.com' ||
+      email === 'cbrill@360industrialservices.com' ||
+      email === 'dvogt@360industrialservices.com' ||
+      email === 'xramos@360industrialservices.com'
+    ) {
+      email = '360industrialservices@deephire.com';
+    }
+
+    // END CUSTOM CODE FOR LINKING 360industrialservices accounts
 
     // START CUSTOM CODE FOR LINKING TWO RECRUITER ACCOUNTS TOGETHER
     // if (email === 'patrick@egntechnical.com') {
@@ -74,7 +88,7 @@ async function logMixpanel(req, res, next) {
   mixpanel.people.increment(email, eventName);
   mixpanel.people.set_once(email, {
     $email: email,
-    $created: new Date(),
+    $created: new Date()
   });
   next();
 }
