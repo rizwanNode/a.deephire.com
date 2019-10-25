@@ -40,7 +40,9 @@ class VideoService {
       if (allVideos === 400) return Promise.resolve(allVideos);
       if (allVideos === 404) return Promise.resolve([]);
       if (candidateEmail) {
-        return allVideos.filter(interview => interview.candidateEmail === candidateEmail);
+        return allVideos.filter(
+          interview => interview.candidateEmail === candidateEmail
+        );
       }
       return allVideos;
     });
@@ -61,13 +63,19 @@ class VideoService {
 
   byParam(id) {
     l.info(`${this.constructor.name}.byParam(${id})`);
-
     return byParam(id, 'videos', true);
   }
 
   delete(id) {
     l.info(`${this.constructor.name}.delete(${id})`);
     return deleteObject(id, 'videos');
+  }
+
+  deleteIndividualQuestion(id, questionId) {
+    l.info(
+      `${this.constructor.name}.deleteIndividualQuestion(${id}, ${questionId})`
+    );
+    return Promise.resolve(204);
   }
 
   archive(data) {

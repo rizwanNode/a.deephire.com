@@ -50,6 +50,12 @@ export class Controller {
     });
   }
 
+  deleteIndividualQuestion(req, res) {
+    VideoService.deleteIndividualQuestion(req.params.id, req.params.questionId).then(r => {
+      res.status(r).end();
+    });
+  }
+
   archive(req, res) {
     VideoService.archive(req.body).then(r => res.status(r).end());
   }
