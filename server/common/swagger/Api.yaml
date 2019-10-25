@@ -410,7 +410,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: The users id
+          description: The id of the users interview document (_id)
           type: string
       responses:
         204:
@@ -542,7 +542,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: The users id
+          description: The id of the users interview document (_id)
           type: string
         - name: questionId
           in: path
