@@ -10,6 +10,7 @@
   },
   "rules": {
     "no-underscore-dangle": 0,
+    "comma-dangle": 0,
     "no-shadow": 0,
 
     "class-methods-use-this": ["off"],

@@ -410,7 +410,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: The users id
+          description: The id of the users interview document (_id)
           type: string
       responses:
         204:
@@ -528,6 +528,34 @@ paths:
       responses:
         200:
           description: Unarchive Successful
+
+  /videos/{id}/{questionId}:
+    delete:
+      tags:
+        - Videos
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: id
+          in: path
+          required: true
+          description: The id of the users interview document (_id)
+          type: string
+        - name: questionId
+          in: path
+          required: true
+          description: The question id
+          type: string
+      responses:
+        204:
+          description: The candidate video question with the specified ID was successfully deleted
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Candidate video with given IDs did not exist
 
   /interviews:
     get:

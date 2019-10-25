@@ -6,6 +6,7 @@ import {
   createUpdateVideo,
   byParam,
   deleteObject,
+  deleteSubDocument
 } from './db.service';
 import { archiveValidator } from '../../common/helpers';
 
@@ -40,7 +41,9 @@ class VideoService {
       if (allVideos === 400) return Promise.resolve(allVideos);
       if (allVideos === 404) return Promise.resolve([]);
       if (candidateEmail) {
-        return allVideos.filter(interview => interview.candidateEmail === candidateEmail);
+        return allVideos.filter(
+          interview => interview.candidateEmail === candidateEmail
+        );
       }
       return allVideos;
     });
@@ -61,13 +64,28 @@ class VideoService {
 
   byParam(id) {
     l.info(`${this.constructor.name}.byParam(${id})`);
-
     return byParam(id, 'videos', true);
   }
 
   delete(id) {
     l.info(`${this.constructor.name}.delete(${id})`);
     return deleteObject(id, 'videos');
+  }
+
+  deleteIndividualQuestion(id, questionId) {
+    l.info(
+      `${this.constructor.name}.deleteIndividualQuestion(${id}, ${questionId})`
+    );
+    if (!ObjectId.isValid(id)) {
+      return Promise.resolve(400);
+    }
+    const search = { _id: new ObjectId(id) };
+    const match = {
+      responses: { uuid: questionId },
+      archivedResponses: { uuid: questionId }
+    };
+
+    return deleteSubDocument(search, match, 'videos');
   }
 
   archive(data) {

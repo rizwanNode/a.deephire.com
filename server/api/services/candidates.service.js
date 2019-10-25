@@ -35,7 +35,12 @@ class CandidatesService {
 
   async deleteDocuments(email, uid) {
     const search = { email };
-    return deleteSubDocument(search, uid, collection);
+    if (!ObjectId.isValid(uid)) {
+      return Promise.resolve(400);
+    }
+    const objectId = new ObjectId(uid);
+    const match = { files: { uid: objectId } };
+    return deleteSubDocument(search, match, collection);
   }
 
   async postDocuments(email, files) {
