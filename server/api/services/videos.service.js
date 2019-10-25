@@ -6,6 +6,7 @@ import {
   createUpdateVideo,
   byParam,
   deleteObject,
+  deleteSubDocument
 } from './db.service';
 import { archiveValidator } from '../../common/helpers';
 
@@ -75,7 +76,16 @@ class VideoService {
     l.info(
       `${this.constructor.name}.deleteIndividualQuestion(${id}, ${questionId})`
     );
-    return Promise.resolve(204);
+    if (!ObjectId.isValid(id)) {
+      return Promise.resolve(400);
+    }
+    const search = { _id: new ObjectId(id) };
+    const match = {
+      responses: { uuid: questionId },
+      archivedResponses: { uuid: questionId }
+    };
+
+    return deleteSubDocument(search, match, 'videos');
   }
 
   archive(data) {

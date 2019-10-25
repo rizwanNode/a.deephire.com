@@ -124,17 +124,11 @@ export const deleteObject = async (id, col) => {
   });
 };
 
-export const deleteSubDocument = async (search, id, col) => {
+export const deleteSubDocument = async (search, match, col) => {
   const collection = db.collection(col);
-
-  if (!ObjectId.isValid(id)) {
-    return Promise.resolve(400);
-  }
-  const objectId = new ObjectId(id);
-
   return new Promise(resolve => {
-    collection.update(search, { $pull: { files: { uid: objectId } } }).then(allResultData => {
-      if (allResultData.result.nModified) resolve(200);
+    collection.update(search, { $pull: match }).then(allResultData => {
+      if (allResultData.result.nModified) resolve(204);
       else resolve(404);
     });
   });
