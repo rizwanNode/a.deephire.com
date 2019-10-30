@@ -56,6 +56,8 @@ async function getEmail(req, res, next) {
       email === 'cbrill@360industrialservices.com' ||
       email === 'dvogt@360industrialservices.com' ||
       email === 'xramos@360industrialservices.com' ||
+      email === 'xramos@360professionalplacements.com' ||
+      email === 'dvogt@360professionalplacements.com' ||
       email === 'russellindustrial@deephire.com'
     ) {
       email = '360industrialservices@deephire.com';
