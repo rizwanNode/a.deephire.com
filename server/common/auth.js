@@ -61,12 +61,11 @@ async function getEmail(req, res, next) {
       email = '360industrialservices@deephire.com';
     }
 
-
     if (
-      email === "russelltest1@deephire.com" ||
-      email === "russelltest2@deephire.com" 
+      email === 'russelltest1@deephire.com' ||
+      email === 'russelltest2@deephire.com'
     ) {
-      email = "russelltest3@deephire.com"
+      email = 'russelltest3@deephire.com';
     }
     // END CUSTOM CODE FOR LINKING 360industrialservices accounts
 
