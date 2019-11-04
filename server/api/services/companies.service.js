@@ -1,11 +1,11 @@
 import l from '../../common/logger';
-import { byParam } from './db.service';
+import { byParam, insert } from './db.service';
 
-class CandidatesService {
-  // update(data) {
-  //   l.info(`${this.constructor.name}.add(${data})`);
-  //   return updateByEmail(data, 'companies');
-  // }
+class CompaniesService {
+  insert(data) {
+    l.info(`${this.constructor.name}.insert(${JSON.stringify(data)})`);
+    return insert(data, 'companies').then(r => r._id);
+  }
 
   byParam(email) {
     l.info(`${this.constructor.name}.byParam(${email})`);
@@ -14,4 +14,4 @@ class CandidatesService {
   }
 }
 
-export default new CandidatesService();
+export default new CompaniesService();

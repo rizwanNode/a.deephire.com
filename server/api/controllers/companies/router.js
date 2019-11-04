@@ -5,5 +5,5 @@ import auth from '../../../common/auth';
 export default express
   .Router()
   .get('/', auth, controller.all)
-  // .post('/', controller.update)
+  .post('/', auth, controller.insert)
   .get('/:email', controller.byParam);
