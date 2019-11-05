@@ -49,17 +49,15 @@ definitions:
     type: object
     title: company
     required:
-      - email
+      - owner
+      - companyName
     properties:
-      email:
+      owner:
         type: string
         example: russell@deephire.com
-      name:
+      companyName:
         type: string
         example: Forge
-      logo:
-        type: string
-        example: https://www.kiwiclubny.org/wordpress1/wp-content/uploads/2012/08/dub.logo_.url_.blk_1.jpg
   CandidateBody:
     type: object
     title: candidate
@@ -881,11 +879,11 @@ paths:
       tags:
         - Companies
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
+        # - name: authorization
+        #   in: header
+        #   description: Bearer <auth_token>
+        #   required: true
+        #   type: string
         - in: body
           name: body
           description: "Add Company Name or Logo"
