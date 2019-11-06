@@ -48,9 +48,11 @@ describe('Tests with an unpopulated Database', () => {
       expect(response.statusCode).toBe(201);
       expect(response.headers.location).toBe(`/v1/companies/${id1}`);
 
-      const results = await companies.findOne({ _id: id1 });
+      const results = await companies.findOne(new ObjectId(id1));
       delete results.timestamp;
-      expect(results).toEqual({ _id: new ObjectId(id1), ...companyData });
+      const { owner, companyName } = results;
+      expect(owner).toBe(companyData.owner);
+      expect(companyName).toBe(companyData.companyName);
     });
     test('Send invalid company Data', async () => {
       const companyData = { junk: 'wow' };

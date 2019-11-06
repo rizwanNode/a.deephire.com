@@ -102,6 +102,10 @@ export const put = async (search, col, data, id = false, upsert = true) => {
 
 export const insert = async (data, col) => {
   const collection = db.collection(col);
+  const { _id } = data;
+  if (_id && ObjectId.isValid(_id)) {
+    data._id = ObjectId(_id);
+  }
 
   data.timestamp = timestamp();
   return new Promise(resolve => {
