@@ -1,5 +1,5 @@
 import l from '../../common/logger';
-import { byParam, insert } from './db.service';
+import { insert, byId } from './db.service';
 
 class CompaniesService {
   insert(data) {
@@ -7,10 +7,9 @@ class CompaniesService {
     return insert(data, 'companies').then(r => r._id);
   }
 
-  byParam(email) {
-    l.info(`${this.constructor.name}.byParam(${email})`);
-    const search = { recruiters: email };
-    return byParam(search, 'companies').then(r => r[0]);
+  byId(companyId) {
+    l.info(`${this.constructor.name}.byParam(${companyId})`);
+    return byId(companyId, 'companies', true);
   }
 }
 

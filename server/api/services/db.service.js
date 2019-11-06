@@ -8,14 +8,16 @@ let db;
 const timestamp = () => new Date().toString();
 
 export const init = async () => {
-  const uri = `mongodb://${process.env.MONGO_NAME}:${
-    process.env.MONGO_PASS
-  }@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
+  const uri = `mongodb://${process.env.MONGO_NAME}:${process.env.MONGO_PASS}@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
 
   try {
-    const mongoClient = await MongoClient.connect(uri, { useNewUrlParser: true });
+    const mongoClient = await MongoClient.connect(uri, {
+      useNewUrlParser: true
+    });
     if (process.env.TESTING) {
-      const connection = await MongoClient.connect(global.__MONGO_URI__, { useNewUrlParser: true });
+      const connection = await MongoClient.connect(global.__MONGO_URI__, {
+        useNewUrlParser: true
+      });
       db = await connection.db(global.__MONGO_DB_NAME__);
       process.env.CONNECTED = 'true';
     } else {
@@ -30,7 +32,12 @@ export const init = async () => {
 };
 
 /* eslint-disable no-param-reassign */
-export const byParam = async (search, col, id = false, findarchives = false) => {
+export const byParam = async (
+  search,
+  col,
+  id = false,
+  findarchives = false
+) => {
   const collection = db.collection(col);
   if (id) {
     if (!ObjectId.isValid(search)) {
@@ -48,6 +55,16 @@ export const byParam = async (search, col, id = false, findarchives = false) => 
       resolve(result.reverse());
     });
   });
+};
+
+export const byId = async (id, col) => {
+  if (!ObjectId.isValid(id)) {
+    return Promise.resolve(400);
+  }
+  const oid = new ObjectId(id);
+  const collection = db.collection(col);
+  const results = await collection.findOne(oid);
+  return Promise.resolve(results || 404);
 };
 
 export const update = (search, update, col, multi = true) => {
@@ -101,11 +118,16 @@ export const updateByEmail = async (data, col) => {
   const collection = db.collection(col);
 
   return new Promise(resolve => {
-    collection.updateOne({ email: data.email }, { $set: data }, { upsert: true }, (err, result) => {
-      if (err) throw err;
-      if (result.result.n) resolve(201);
-      else resolve(400);
-    });
+    collection.updateOne(
+      { email: data.email },
+      { $set: data },
+      { upsert: true },
+      (err, result) => {
+        if (err) throw err;
+        if (result.result.n) resolve(201);
+        else resolve(400);
+      }
+    );
   });
 };
 
@@ -155,19 +177,26 @@ export const createUpdateVideo = async (search, data, col) => {
     });
   }
   if (flag) {
-    result = await collection.findOneAndUpdate(search, { $set: { responses: newResponses } });
+    result = await collection.findOneAndUpdate(search, {
+      $set: { responses: newResponses }
+    });
   } else {
     result = await collection.findOneAndUpdate(
       search,
       { $push: { responses }, $setOnInsert: data },
-      { upsert: true },
+      { upsert: true }
     );
   }
   if (result.value) return result.value._id;
   return result.lastErrorObject.upserted;
 };
 
-export const getInterviews = async (createdBy, current, from, findarchives = false) =>
+export const getInterviews = async (
+  createdBy,
+  current,
+  from,
+  findarchives = false
+) =>
   new Promise(resolve => {
     const collection = db.collection(current);
     collection
@@ -178,17 +207,17 @@ export const getInterviews = async (createdBy, current, from, findarchives = fal
             from,
             localField: '_id',
             foreignField: 'interviewId',
-            as: 'interview',
-          },
+            as: 'interview'
+          }
         },
         { $unwind: { path: '$interview' } },
         { $project: { _id: false, interview: true } },
         {
           $sort: {
-            'interview.timestamp': -1,
-          },
+            'interview.timestamp': -1
+          }
         },
-        { $match: { 'interview.archives': { $exists: findarchives } } },
+        { $match: { 'interview.archives': { $exists: findarchives } } }
       ])
       .toArray(async (err, result) => {
         const interviewsStuff = await collection.find({}).toArray();
@@ -218,19 +247,21 @@ export const editDocument = async (search, data, customEdit, col) => {
 export const duplicate = async (search, col) => {
   const collection = db.collection(col);
   const documents = await collection.find(search).toArray();
-  const copies = await Promise.all(documents.map(async document => {
-    const objId = new ObjectId();
-    document._id = objId;
-    document.interviewName = `(Copy) ${document.interviewName}`;
-    const longUrl = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
-    const shortUrl = await shortenLink(
-      longUrl,
-      'interview.deephire.com',
-      `${document.createdBy}'s interview copy ${document.interviewName}`,
-    );
-    document.shortUrl = shortUrl;
-    return document;
-  }));
+  const copies = await Promise.all(
+    documents.map(async document => {
+      const objId = new ObjectId();
+      document._id = objId;
+      document.interviewName = `(Copy) ${document.interviewName}`;
+      const longUrl = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
+      const shortUrl = await shortenLink(
+        longUrl,
+        'interview.deephire.com',
+        `${document.createdBy}'s interview copy ${document.interviewName}`
+      );
+      document.shortUrl = shortUrl;
+      return document;
+    })
+  );
   const insert = await collection.insertMany(copies);
   if (insert.insertedCount > 0) return 200;
   return 500;

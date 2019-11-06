@@ -12,16 +12,29 @@ beforeAll(async () => {
   await dbConnected();
 });
 
-beforeEach(async () => {
-  const connection = await MongoClient.connect(global.__MONGO_URI__, {
-    useNewUrlParser: true
-  });
-  const db = await connection.db(global.__MONGO_DB_NAME__);
-  companies = db.collection('companies');
-  await companies.deleteMany({});
-});
-
 describe('Tests with an unpopulated Database', () => {
+  beforeEach(async () => {
+    const connection = await MongoClient.connect(global.__MONGO_URI__, {
+      useNewUrlParser: true
+    });
+    const db = await connection.db(`${global.__MONGO_DB_NAME__}`);
+    companies = db.collection('companies');
+    await companies.deleteMany({});
+  });
+
+  describe('GET companies', () => {
+    test('Send invalid ID', async () => {
+      const id = 'abcd';
+      const response = await request(Server).get(`/v1/companies/${id}`);
+      expect(response.statusCode).toBe(400);
+    });
+    test('Send non-existant ID', async () => {
+      const id = id1;
+      const response = await request(Server).get(`/v1/companies/${id}`);
+      expect(response.statusCode).toBe(404);
+    });
+  });
+
   describe('POST companies', () => {
     test('Add a valid company', async () => {
       const companyData = {
@@ -45,6 +58,29 @@ describe('Tests with an unpopulated Database', () => {
         .post('/v1/companies')
         .send(companyData);
       expect(response.statusCode).toBe(400);
+    });
+  });
+});
+
+describe('Tests with an populated Database', () => {
+  beforeEach(async () => {
+    const connection = await MongoClient.connect(global.__MONGO_URI__, {
+      useNewUrlParser: true
+    });
+    const db = await connection.db(`${global.__MONGO_DB_NAME__}`);
+    companies = db.collection('companies');
+    await companies.deleteMany({});
+
+    const getById = { _id: new ObjectId(id1) };
+    const mockCompanies = [getById];
+    await companies.insertMany(mockCompanies);
+  });
+
+  describe('GET companies', () => {
+    test('Get company info', async () => {
+      const id = id1;
+      const response = await request(Server).get(`/v1/companies/${id}`);
+      expect(response.statusCode).toBe(200);
     });
   });
 });
