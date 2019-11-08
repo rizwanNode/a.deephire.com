@@ -196,16 +196,17 @@ export const createUpdateVideo = async (search, data, col) => {
 };
 
 export const getInterviews = async (
-  createdBy,
+  compId,
   current,
   from,
   findarchives = false
 ) =>
   new Promise(resolve => {
+    const companyId = ObjectId(compId)
     const collection = db.collection(current);
     collection
       .aggregate([
-        { $match: { createdBy } },
+        { $match: { companyId } },
         {
           $lookup: {
             from,
