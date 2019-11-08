@@ -17,7 +17,7 @@ export const archives = (req, res) => {
 };
 
 export const insert = (req, res) => {
-  InterviewsService.insert(req.body, res.locals.email).then(r => res.json(r).end());
+  InterviewsService.insert(req.body, res.locals.email, res.locals.companyId).then(r => res.json(r).end());
 };
 
 export const byParam = (req, res) => {
