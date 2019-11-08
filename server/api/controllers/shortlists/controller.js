@@ -18,7 +18,7 @@ export class Controller {
   }
 
   insert(req, res) {
-    ShortlistService.insert(req.body, res.locals.email).then(r => {
+    ShortlistService.insert(req.body, res.locals.email, res.locals.companyId).then(r => {
       res
         .status(201)
         .location(`/v1/shortlists/${r._id}`)
