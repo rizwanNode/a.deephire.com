@@ -5,15 +5,15 @@ import { shortenLink } from '../../common/rebrandly';
 import { byParam, deleteObject, insert, put } from './db.service';
 
 class InterviewsService {
-  all(createdBy) {
-    l.info(`${this.constructor.name}.all(${createdBy})`);
-    const search = { createdBy };
+  all(companyId) {
+    l.info(`${this.constructor.name}.all(${companyId})`);
+    const search = { companyId: new ObjectId(companyId) };
     return byParam(search, 'interviews');
   }
 
-  archives(createdBy) {
-    l.info(`${this.constructor.name}.archives(${createdBy})`);
-    const search = { createdBy };
+  archives(companyId) {
+    l.info(`${this.constructor.name}.archives(${companyId})`);
+    const search = { companyId: new ObjectId(companyId) };
     return byParam(search, 'interviews', false, true);
   }
 
