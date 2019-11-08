@@ -33,12 +33,6 @@ const checkJwt = jwt({
   algorithms: ['RS256']
 });
 
-// async function getProfile(req, res, next) {
-//   const accessToken = req.headers.authorization.split(' ')[1];
-//   const userId = jwtDecode(accessToken).sub;
-//   const userProfile = await auth0Managment.getUser({ id: userId }).catch(error => l.error(error));
-//   next();
-// }
 async function getEmailandCompany(req, res, next) {
   const accessToken = req.headers.authorization.split(' ')[1];
   const value = myCache.get(accessToken);
