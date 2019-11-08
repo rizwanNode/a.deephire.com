@@ -1,7 +1,7 @@
 import InterviewsService from '../../services/interviews.service';
 
 export const all = (req, res) => {
-  InterviewsService.all(res.locals.email).then(r => {
+  InterviewsService.all(res.locals.companyId).then(r => {
     if (r === 400 || r === 404) res.status(r).end();
     else if (r) res.json(r);
     else res.status(500).end();
@@ -9,7 +9,7 @@ export const all = (req, res) => {
 };
 
 export const archives = (req, res) => {
-  InterviewsService.archives(res.locals.email).then(r => {
+  InterviewsService.archives(res.locals.companyId).then(r => {
     if (r === 400 || r === 404) res.status(r).end();
     else if (r) res.json(r);
     else res.status(500).end();
@@ -17,7 +17,7 @@ export const archives = (req, res) => {
 };
 
 export const insert = (req, res) => {
-  InterviewsService.insert(req.body, res.locals.email).then(r => res.json(r).end());
+  InterviewsService.insert(req.body, res.locals.email, res.locals.companyId).then(r => res.json(r).end());
 };
 
 export const byParam = (req, res) => {

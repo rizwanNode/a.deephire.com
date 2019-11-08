@@ -5,26 +5,26 @@ import { shortenLink } from '../../common/rebrandly';
 import { archiveValidator } from '../../common/helpers';
 
 class ShortlistService {
-  all(createdBy) {
-    l.info(`${this.constructor.name}.all(${createdBy}`);
-    const search = { createdBy };
+  all(companyId) {
+    l.info(`${this.constructor.name}.all(${companyId}`);
+    const search = { companyId: new ObjectId(companyId) };
     return byParam(search, 'shortlists');
   }
 
-  archives(createdBy) {
-    l.info(`${this.constructor.name}.archives(${createdBy})`);
-    const search = { createdBy };
+  archives(companyId) {
+    l.info(`${this.constructor.name}.archives(${companyId})`);
+    const search = { companyId: new ObjectId(companyId) };
     return byParam(search, 'shortlists', false, true);
   }
 
-  async insert(data, createdBy) {
-    l.info(`${this.constructor.name}.insert(${data},${createdBy})`);
+  async insert(data, createdBy, companyId) {
+    l.info(`${this.constructor.name}.insert(${data},${createdBy}, ${companyId})`);
     const objId = ObjectId();
     const longUrl = `https://candidates.deephire.com/shortlist?shortlist=${objId.valueOf()}`;
 
     const shortUrl = await shortenLink(longUrl, 'share.deephire.com', `${createdBy}'s shortList for ${data.email}`);
 
-    const shortList = { ...data, createdBy, _id: objId, shortUrl };
+    const shortList = { ...data, createdBy, _id: objId, shortUrl, companyId: new ObjectId(companyId) };
     return insert(shortList, 'shortlists');
   }
 

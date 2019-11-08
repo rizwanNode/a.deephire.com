@@ -30,14 +30,14 @@ const customEdit = archive => async (collection, doc, data) => {
 };
 
 class VideoService {
-  all(email) {
-    l.info(`${this.constructor.name}.all(${email}`);
-    return getInterviews(email, 'interviews', 'videos');
+  all(companyId) {
+    l.info(`${this.constructor.name}.all(${companyId}`);
+    return getInterviews(companyId, 'interviews', 'videos');
   }
 
-  async filter(email, candidateEmail) {
-    l.info(`${this.constructor.name}.filter(${email}, ${candidateEmail}`);
-    return getInterviews(email, 'interviews', 'videos').then(allVideos => {
+  async filter(companyId, candidateEmail) {
+    l.info(`${this.constructor.name}.filter(${companyId}, ${candidateEmail}`);
+    return getInterviews(companyId, 'interviews', 'videos').then(allVideos => {
       if (allVideos === 400) return Promise.resolve(allVideos);
       if (allVideos === 404) return Promise.resolve([]);
       if (candidateEmail) {
@@ -49,9 +49,9 @@ class VideoService {
     });
   }
 
-  archives(email) {
-    l.info(`${this.constructor.name}.archives(${email}`);
-    return getInterviews(email, 'interviews', 'videos', true);
+  archives(companyId) {
+    l.info(`${this.constructor.name}.archives(${companyId}`);
+    return getInterviews(companyId, 'interviews', 'videos', true);
   }
 
   insert(data) {

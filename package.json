@@ -14,7 +14,7 @@
     "lint:fix": "eslint --fix -c .eslintrc.json {server,test}/**"
   },
   "dependencies": {
-    "auth0": "2.14.0",
+    "auth0": "2.20.0",
     "aws-sdk": "^2.403.0",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",

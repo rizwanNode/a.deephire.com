@@ -2,7 +2,7 @@ import VideoService from '../../services/videos.service';
 
 export class Controller {
   all(req, res) {
-    VideoService.all(res.locals.email).then(r => {
+    VideoService.all(res.locals.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();
@@ -10,7 +10,7 @@ export class Controller {
   }
 
   filter(req, res) {
-    VideoService.filter(res.locals.email, req.query.candidateEmail).then(r => {
+    VideoService.filter(res.locals.companyId, req.query.candidateEmail).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();
@@ -18,7 +18,7 @@ export class Controller {
   }
 
   archives(req, res) {
-    VideoService.archives(res.locals.email).then(r => {
+    VideoService.archives(res.locals.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();

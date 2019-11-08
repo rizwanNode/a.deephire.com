@@ -862,19 +862,6 @@ paths:
           description: Error!
 
   /companies:
-    get:
-      parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
-      tags:
-        - Companies
-      description: Fetch all companyData
-      responses:
-        200:
-          description: companyData fetched successfully
     post:
       tags:
         - Companies
@@ -896,21 +883,23 @@ paths:
         500:
           description: Error!
 
-  /companies/{email}:
+  /companies/{companyId}:
     get:
       tags:
         - Companies
       parameters:
-        - name: email
+        - name: companyId
           in: path
           required: true
-          description: The email of the company to retrieve
+          description: The ID of the company to retrieve
           type: string
       responses:
         200:
-          description: Return the company with the associated recruiter email
+          description: Returns company information
+        400:
+          description: Invalid ObjectId
         404:
-          description: A company with that recruiter email is not found
+          description: A company with that id is not found
   /spec:
     get:
       tags:
