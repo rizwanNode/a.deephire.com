@@ -1,7 +1,7 @@
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import NodeCache from 'node-cache';
-import { AuthenticationClient } from 'auth0';
+import { ManagementClient } from 'auth0';
 import l from './logger';
 
 const Mixpanel = require('mixpanel');
@@ -14,9 +14,11 @@ const jwtDecode = require('jwt-decode');
 
 const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 240 });
 
-const auth0 = new AuthenticationClient({
-  domain: 'login.deephire.com',
-  clientId: 'jhzGFZHTv8ehpGskVKxZr_jXOAvKg7DU'
+const auth0Managment = new ManagementClient({
+  domain: 'deephire2.auth0.com',
+  clientId: 'M437SEOw0zLaSbZJAKcxV15m5njDbScr',
+  clientSecret: process.env.AUTH0_MANAGMENT_SECRET,
+  scope: 'read:users read:user_idp_tokens'
 });
 
 const checkJwt = jwt({
@@ -31,60 +33,40 @@ const checkJwt = jwt({
   algorithms: ['RS256']
 });
 
-async function getEmail(req, res, next) {
+// async function getProfile(req, res, next) {
+//   const accessToken = req.headers.authorization.split(' ')[1];
+//   const userId = jwtDecode(accessToken).sub;
+//   const userProfile = await auth0Managment.getUser({ id: userId }).catch(error => l.error(error));
+//   next();
+// }
+async function getEmailandCompany(req, res, next) {
   const accessToken = req.headers.authorization.split(' ')[1];
   const value = myCache.get(accessToken);
   if (value === undefined) {
-    let { email } = await auth0.getProfile(accessToken);
+    let userId = jwtDecode(accessToken).sub;
 
     // START CUSTOM CODE FOR LINKING .Jobs accounts
 
-    if (
-      jwtDecode(accessToken).azp === '44QwZq2HNuPHJhDcIKKgCq75Xd6TQvaW' ||
-      email === 'dkraciun@find.jobs' ||
-      email === 'tcooper@find.jobs'
-    ) {
-      email = 'dh@find.jobs';
+    if (jwtDecode(accessToken).azp === '44QwZq2HNuPHJhDcIKKgCq75Xd6TQvaW') {
+      userId = 'auth0|5da60c64f2b1420e45859173'; // 'dkraciun@find.jobs'
     }
     // END CUSTOM CODE FOR LINKING .Jobs accounts
 
-    // START CUSTOM CODE FOR LINKING 360industrialservices accounts
+    const userProfile = await auth0Managment
+      .getUser({ id: userId, fields: 'app_metadata,email,name,user_id' })
+      .catch(error => l.error(error));
+    console.log(userProfile, 'uzerProfil');
 
-    if (
-      email === 'efroese@360industrialservices.com' ||
-      email === 'cmason@360industrialservices.com' ||
-      email === 'cbrill@360industrialservices.com' ||
-      email === 'dvogt@360industrialservices.com' ||
-      email === 'xramos@360industrialservices.com' ||
-      email === 'xramos@360professionalplacements.com' ||
-      email === 'dvogt@360professionalplacements.com' ||
-      email === 'russellindustrial@deephire.com'
-    ) {
-      email = '360industrialservices@deephire.com';
-    }
+    myCache.set(accessToken, userProfile);
 
-    if (
-      email === 'russelltest1@deephire.com' ||
-      email === 'russelltest2@deephire.com'
-    ) {
-      email = 'russelltest3@deephire.com';
-    }
-    // END CUSTOM CODE FOR LINKING 360industrialservices accounts
-
-    // START CUSTOM CODE FOR LINKING TWO RECRUITER ACCOUNTS TOGETHER
-    // if (email === 'patrick@egntechnical.com') {
-    //   email = 'errol@egntechnical.com';
-    // }
-    // END CUSTOM CODE FOR LINKING TWO RECRUITER ACCOUNTS TOGETHER
-
-    myCache.set(accessToken, email);
-
-    l.info(`set ${email} in cache`);
-    res.locals.email = email;
+    l.info(`set ${JSON.stringify(userProfile)} in cache`);
+    res.locals.email = userProfile.email;
   } else {
     l.info(`got ${value} from cache`);
 
-    res.locals.email = value;
+    res.locals.email = value.email;
+    res.locals.companyId = value.app_metadata.companyId;
+    res.locals.userProfile = value;
   }
   next();
 }
@@ -102,5 +84,5 @@ async function logMixpanel(req, res, next) {
   next();
 }
 
-const auth = [checkJwt, getEmail, logMixpanel];
+const auth = [checkJwt, getEmailandCompany, logMixpanel];
 export default auth;
