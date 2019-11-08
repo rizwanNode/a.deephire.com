@@ -18,7 +18,7 @@ class ShortlistService {
   }
 
   async insert(data, createdBy, companyId) {
-    l.info(`${this.constructor.name}.insert(${data},${createdBy})`);
+    l.info(`${this.constructor.name}.insert(${data},${createdBy}, ${companyId})`);
     const objId = ObjectId();
     const longUrl = `https://candidates.deephire.com/shortlist?shortlist=${objId.valueOf()}`;
 
