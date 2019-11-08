@@ -261,7 +261,7 @@ export const duplicate = async (search, col) => {
       const shortUrl = await shortenLink(
         longUrl,
         'interview.deephire.com',
-        `${document.createdBy}'s interview copy ${document.interviewName}`
+        `${document.createdBy}'s interview ${document.interviewName}`
       );
       document.shortUrl = shortUrl;
       return document;
