@@ -57,7 +57,7 @@ async function getEmailandCompany(req, res, next) {
     res.locals.companyId = userProfile.app_metadata.companyId;
     res.locals.userProfile = userProfile;
   } else {
-    l.info(`got ${value} from cache`);
+    l.info(`got ${JSON.stringify(value)} from cache`);
 
     res.locals.email = value.email;
     res.locals.companyId = value.app_metadata.companyId;

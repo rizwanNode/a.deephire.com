@@ -26,7 +26,7 @@ class InterviewsService {
       'interview.deephire.com',
       `${createdBy}'s interview ${data.interviewName}`,
     );
-    const shortList = { ...data, createdBy, _id: objId, shortUrl, companyId };
+    const shortList = { ...data, createdBy, _id: objId, shortUrl, companyId: new ObjectId(companyId) };
     return insert(shortList, 'interviews');
   }
 
