@@ -49,7 +49,6 @@ async function getEmailandCompany(req, res, next) {
     const userProfile = await auth0Managment
       .getUser({ id: userId, fields: 'app_metadata,email,name,user_id' })
       .catch(error => l.error(error));
-    console.log(userProfile, 'uzerProfil');
 
     myCache.set(accessToken, userProfile);
 
