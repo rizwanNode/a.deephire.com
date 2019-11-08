@@ -55,6 +55,8 @@ async function getEmailandCompany(req, res, next) {
 
     l.info(`set ${JSON.stringify(userProfile)} in cache`);
     res.locals.email = userProfile.email;
+    res.locals.companyId = userProfile.app_metadata.companyId;
+    res.locals.userProfile = userProfile;
   } else {
     l.info(`got ${value} from cache`);
 
