@@ -5,15 +5,15 @@ import { shortenLink } from '../../common/rebrandly';
 import { archiveValidator } from '../../common/helpers';
 
 class ShortlistService {
-  all(createdBy) {
-    l.info(`${this.constructor.name}.all(${createdBy}`);
-    const search = { createdBy };
+  all(companyId) {
+    l.info(`${this.constructor.name}.all(${companyId}`);
+    const search = { companyId: new ObjectId(companyId) };
     return byParam(search, 'shortlists');
   }
 
-  archives(createdBy) {
-    l.info(`${this.constructor.name}.archives(${createdBy})`);
-    const search = { createdBy };
+  archives(companyId) {
+    l.info(`${this.constructor.name}.archives(${companyId})`);
+    const search = { companyId: new ObjectId(companyId) };
     return byParam(search, 'shortlists', false, true);
   }
 

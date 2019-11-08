@@ -2,7 +2,7 @@ import ShortlistService from '../../services/shortlists.service';
 
 export class Controller {
   all(req, res) {
-    ShortlistService.all(res.locals.email).then(r => {
+    ShortlistService.all(res.locals.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();
@@ -10,7 +10,7 @@ export class Controller {
   }
 
   archives(req, res) {
-    ShortlistService.archives(res.locals.email).then(r => {
+    ShortlistService.archives(res.locals.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();
