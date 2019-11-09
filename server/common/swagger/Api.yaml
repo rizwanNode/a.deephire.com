@@ -862,6 +862,22 @@ paths:
           description: Error!
 
   /companies:
+    get:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      responses:
+        200:
+          description: Returns company associated with your account
+        400:
+          description: Invalid ObjectId attached to your account
+        404:
+          description: You don't have a company
     post:
       tags:
         - Companies
