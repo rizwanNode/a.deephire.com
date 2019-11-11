@@ -899,6 +899,29 @@ paths:
         500:
           description: Error!
 
+
+  /companies/logo:
+    put:
+      tags:
+        - Companies
+      description: Upload file to s3 and store public link in company object accociated with your account
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+
+      responses:
+        200:
+          description: Created file on S3
+          
   /companies/{companyId}:
     get:
       tags:

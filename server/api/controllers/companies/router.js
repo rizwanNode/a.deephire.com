@@ -4,6 +4,8 @@ import auth from '../../../common/auth';
 
 export default express
   .Router()
+  .put('/logo', auth, controller.putLogo)
   .post('/', controller.insert)
   .get('/:companyId', controller.byId)
   .get('/', auth, controller.byCompanyId);
+
