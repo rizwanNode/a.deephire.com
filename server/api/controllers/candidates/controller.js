@@ -15,18 +15,23 @@ export class Controller {
 
   getDocuments(req, res) {
     CandidatesService.getDocuments(req.params.userId, req.params.id).then(r => {
-      if (r) r.pipe(res);
-      else res.status(404).end();
+      if (r && r.file) {
+        res.set('Content-Disposition', `filename=${r.fileName}`);
+        return r.file.pipe(res);
+      }
+      res.status(404).end();
     });
   }
 
   postDocuments(req, res) {
-    CandidatesService.postDocuments(req.params.userId, req.files).then(r => res.json(r));
+    CandidatesService.postDocuments(req.params.userId, req.files).then(r =>
+      res.json(r)
+    );
   }
 
   deleteDocuments(req, res) {
-    CandidatesService.deleteDocuments(req.params.userId, req.params.id).then(r =>
-      res.status(r).end(),
+    CandidatesService.deleteDocuments(req.params.userId, req.params.id).then(
+      r => res.status(r).end()
     );
   }
 }

@@ -30,7 +30,9 @@ class CandidatesService {
     const file = document.files.find(file => file.uid.toString() === id);
     if (!file) return null;
 
-    return downloadS3(bucket, file.key);
+    const readableFile = downloadS3(bucket, file.key);
+    if (readableFile) return { file: readableFile, fileName: file.name };
+    return null;
   }
 
   async deleteDocuments(email, uid) {
@@ -54,7 +56,7 @@ class CandidatesService {
     const fileData = {
       key,
       name: originalName,
-      uid: ObjectId().valueOf(),
+      uid: ObjectId().valueOf()
     };
     if (data.files) {
       data.files.push(fileData);
