@@ -27,5 +27,11 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  putLogo(req, res) {
+    CompaniesService.putLogo(res.locals.companyId, req.files).then(r =>
+      res.json(r)
+    );
+  }
 }
 export default new Controller();
