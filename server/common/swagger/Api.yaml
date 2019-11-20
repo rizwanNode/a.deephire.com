@@ -165,7 +165,7 @@ definitions:
     required:
       - interviewName
       - interviewQuestions
-      - interviewConfig
+   
     properties:
       interviewQuestions:
         # ArrayOfStr:
@@ -176,7 +176,35 @@ definitions:
           properties:
             question:
               type: string
-              example: Tell me about yourself (test)
+              example: Tell us about yourself. 
+            hint:
+              type: string
+              example: "Example: Hello my name is [Your Name]. I've been working as a [Profession] for [Number of] years.)"
+            questionInfo:
+              type: string
+              example: "This question is meant to give a quick summary of your relevant experience"
+            tips:
+              type: array
+              items:
+                type: string
+              example:
+                [
+                  "Make sure you are in a quiet location",
+                  "Focus on things you have done that are most relevant to what you want to do next",
+                ]
+            exampleVideos:
+              type: array
+              items:
+                type: string
+              example:
+                [
+                  "https://www.youtube.com/watch?v=Tg6BVRTsuic",
+                  "https://www.youtube.com/watch?v=4I3EhIFVHlA", 
+                ]
+            answerTime:
+              type: number
+              example: 60
+            
 
         #   type: string
         # example: ["russell@deephire.com"]
@@ -186,10 +214,6 @@ definitions:
       interviewConfig:
         type: object
         title: config
-        required:
-          - retakesAllowed
-          - prepTime
-          - answerTime
         properties:
           retakesAllowed:
             type: number
