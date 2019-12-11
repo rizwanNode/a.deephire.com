@@ -58,6 +58,16 @@ definitions:
       companyName:
         type: string
         example: Forge
+
+
+  PutCompany:
+    type: object
+    title: company
+    properties:
+      companyName:
+        type: string
+        example: Forge
+
   CandidateBody:
     type: object
     title: candidate
@@ -922,6 +932,25 @@ paths:
           description: Info Added
         500:
           description: Error!
+    put:
+      tags:
+        - Companies
+      description: Add/add data for your company
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: "add company data"
+          required: true
+          schema:
+            $ref: "#/definitions/PutCompany"
+      responses:
+        200:
+          description: Created file on S3
 
 
   /companies/logo:
@@ -945,6 +974,7 @@ paths:
       responses:
         200:
           description: Created file on S3
+  
           
   /companies/{companyId}:
     get:
