@@ -10,7 +10,7 @@ class EventsService {
 
   victory(data) {
     l.info(`${this.constructor.name}.victory(${JSON.stringify(data)})`);
-    return clockworkIntegration(data);
+    return clockworkIntegration(data, true);
   }
 }
 
