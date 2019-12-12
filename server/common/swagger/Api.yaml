@@ -138,20 +138,23 @@ definitions:
           response:
             type: string
             example: https://www.youtube.com/watch?v=5pX3mwnAvyo
-  TestBody:
+  EventBody:
     type: object
-    title: video
+    title: event
     properties:
-      objectKey:
+      candidateEmail:
         type: string
-        example: email_filename
-      responses:
-        type: object
-        title: responses
-        properties:
-          uid:
-            type: string
-            example: whats your name?
+        example: russell@deephire.com
+      companyId:
+        type: string
+        example: 5dc5d305a4ea435efa57f644
+      interviewName:
+        type: string
+        example: Remote Interview
+      userName:
+        type: string
+        example:  Russell Ratcliffe
+
   DocumentBody:
     type: object
     title: document
@@ -1022,3 +1025,38 @@ paths:
       responses:
         200:
           description: Created file on S3
+
+
+  /events/started:
+    post:
+      tags:
+        - Events
+      parameters:
+        - in: body
+          name: body
+          description: Interview Started Event
+          required: true
+          schema:
+            $ref: "#/definitions/EventBody"
+      responses:
+        201:
+          description: Event Submitted
+        500:
+          description: Error!
+
+  /events/victory:
+    post:
+      tags:
+        - Events
+      parameters:
+        - in: body
+          name: body
+          description: Create a new shortlist
+          required: true
+          schema:
+            $ref: "#/definitions/EventBody"
+      responses:
+        201:
+           description: Event Submitted
+        500:
+          description: Error!

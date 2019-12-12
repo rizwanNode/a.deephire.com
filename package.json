@@ -17,6 +17,7 @@
     "auth0": "2.20.0",
     "aws-sdk": "^2.403.0",
     "body-parser": "^1.18.2",
+    "btoa": "^1.2.1",
     "cookie-parser": "^1.4.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.4",

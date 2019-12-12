@@ -202,7 +202,7 @@ export const getInterviews = async (
   findarchives = false
 ) =>
   new Promise(resolve => {
-    const companyId = ObjectId(compId)
+    const companyId = ObjectId(compId);
     const collection = db.collection(current);
     collection
       .aggregate([
