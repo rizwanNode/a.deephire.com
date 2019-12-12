@@ -11,12 +11,24 @@ class CompaniesService {
   }
 
   byId(companyId) {
-    l.info(`${this.constructor.name}.byParam(${companyId})`);
+    l.info(`${this.constructor.name}.byId(${companyId})`);
     return byId(companyId, collection, true);
   }
 
+  byIdPublic(companyId) {
+    l.info(`${this.constructor.name}.byIdPublic(${companyId})`);
+    return byId(companyId, collection, true).then(r => {
+      if (r.clockworkIntegration) {
+        // eslint-disable-next-line no-param-reassign
+        delete r.clockworkIntegration.key;
+        return r;
+      }
+      return r;
+    });
+  }
+
   async putLogo(companyId, files) {
-    l.info(`${this.constructor.name}.put(${JSON.stringify(files)})`);
+    l.info(`${this.constructor.name}.putLogo(${JSON.stringify(files)})`);
     const { upfile } = files;
     const { path, originalname: originalName } = upfile;
     const key = `companies/${companyId}/${originalName}`;
@@ -25,6 +37,11 @@ class CompaniesService {
     const data = {
       logo: `https://s3.amazonaws.com/${bucket}/${key}`
     };
+    return put(companyId, collection, data, true);
+  }
+
+  async put(companyId, data) {
+    l.info(`${this.constructor.name}.put(${companyId}`);
     return put(companyId, collection, data, true);
   }
 }

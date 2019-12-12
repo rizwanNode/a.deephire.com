@@ -21,7 +21,7 @@ export class Controller {
     });
   }
   byId(req, res) {
-    CompaniesService.byId(req.params.companyId).then(r => {
+    CompaniesService.byIdPublic(req.params.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();
@@ -30,6 +30,12 @@ export class Controller {
 
   putLogo(req, res) {
     CompaniesService.putLogo(res.locals.companyId, req.files).then(r =>
+      res.json(r)
+    );
+  }
+
+  put(req, res) {
+    CompaniesService.put(res.locals.companyId, req.body).then(r =>
       res.json(r)
     );
   }
