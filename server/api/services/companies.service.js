@@ -1,6 +1,7 @@
 import l from '../../common/logger';
 import { insert, byId, put } from './db.service';
 import { uploadS3 } from '../../common/aws';
+import { auth0Managment } from '../../common/auth';
 
 const collection = 'companies';
 const bucket = 'deephire.data.public';
@@ -43,6 +44,20 @@ class CompaniesService {
   async put(companyId, data) {
     l.info(`${this.constructor.name}.put(${companyId}`);
     return put(companyId, collection, data, true);
+  }
+
+  //   async getInvites(companyId) {
+  //   l.info(`${this.constructor.name}.getInvites(${companyId}`);
+  //   return put(companyId, collection, true);
+  // }
+
+  async getTeam(companyId) {
+    l.info(`${this.constructor.name}.getTeam(${companyId}`);
+    const team = await auth0Managment
+      .getUsers({
+        q: `app_metadata.companyId:${companyId}`
+      });
+    return team;
   }
 }
 
