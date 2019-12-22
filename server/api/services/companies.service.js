@@ -1,5 +1,6 @@
+import { ObjectID } from 'mongodb';
 import l from '../../common/logger';
-import { insert, byId, put } from './db.service';
+import { insert, byId, put, byParam } from './db.service';
 import { uploadS3 } from '../../common/aws';
 import { auth0Managment } from '../../common/auth';
 
@@ -46,10 +47,10 @@ class CompaniesService {
     return put(companyId, collection, data, true);
   }
 
-  //   async getInvites(companyId) {
-  //   l.info(`${this.constructor.name}.getInvites(${companyId}`);
-  //   return put(companyId, collection, true);
-  // }
+  async getInvites(companyId) {
+    l.info(`${this.constructor.name}.getInvites(${companyId}`);
+    return byParam({ companyId: new ObjectID(companyId) }, 'companies_invites');
+  }
 
   async getTeam(companyId) {
     l.info(`${this.constructor.name}.getTeam(${companyId}`);
@@ -71,7 +72,7 @@ class CompaniesService {
     const { companyName } = companyData;
     const inviteData = {
       ...data,
-      companyId,
+      companyId: new ObjectID(companyId),
       createdBy,
       inviteStats: 'pending',
       companyName,

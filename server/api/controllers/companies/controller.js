@@ -41,13 +41,13 @@ export class Controller {
     });
   }
 
-  // getInvites(req, res) {
-  //   CompaniesService.getInvites(res.locals.companyId).then(r => {
-  //     if (r === 400 || r === 404) res.status(r).end();
-  //     else if (r) res.json(r);
-  //     else res.status(500).end();
-  //   });
-  // }
+  getInvites(req, res) {
+    CompaniesService.getInvites(res.locals.companyId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 
   getTeam(req, res) {
     CompaniesService.getTeam(res.locals.companyId).then(r => {

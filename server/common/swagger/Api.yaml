@@ -1078,6 +1078,24 @@ paths:
 
   
   /companies/invites:
+    get:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      responses:
+        201:
+          description: Invite Successful
+        400:
+          description: Invalid Request
+        404:
+          description: Not found
+        500:
+          description: Server Error
     post:
       tags:
         - Companies
