@@ -4,7 +4,7 @@ import auth from '../../../common/auth';
 
 export default express
   .Router()
-  // .post('/invites', auth, controller.sendInvites)
+  .post('/invites', auth, controller.sendInvites)
   // .get('/invites', auth, controller.getInvites)
   // .delete('/invites/:inviteId', auth, controller.deleteInvite)
   .get('/team', auth, controller.getTeam)

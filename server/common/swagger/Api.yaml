@@ -45,6 +45,20 @@ definitions:
         type: string
         example: https://deephire.com/test
 
+  InviteBody:
+    type: object
+    title: email
+    required:
+      - invitedEmail
+      - role
+    properties:
+      invitedEmail:
+        type: string
+        example: russell@deephire.com
+      role:
+        type: string
+        example: admin
+ 
   CompanyBody:
     type: object
     title: company
@@ -1061,6 +1075,29 @@ paths:
           description: Invalid ObjectId attached to your account
         404:
           description: You don't belong to a company
+
+  
+  /companies/invites:
+    post:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Invite Details
+          required: true
+          schema:
+            $ref: "#/definitions/InviteBody"
+      responses:
+        201:
+          description: Invite Successful
+        500:
+          description: Invite Failed
 
   /companies/logo:
     put:

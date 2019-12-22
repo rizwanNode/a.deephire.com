@@ -101,6 +101,7 @@ export const put = async (search, col, data, id = false, upsert = true) => {
 };
 
 export const insert = async (data, col) => {
+  console.log("insert", col);
   const collection = db.collection(col);
   const { _id } = data;
   if (_id && ObjectId.isValid(_id)) {

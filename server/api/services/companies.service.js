@@ -53,11 +53,31 @@ class CompaniesService {
 
   async getTeam(companyId) {
     l.info(`${this.constructor.name}.getTeam(${companyId}`);
-    const team = await auth0Managment
-      .getUsers({
-        q: `app_metadata.companyId:${companyId}`
-      });
+    const team = await auth0Managment.getUsers({
+      q: `app_metadata.companyId:${companyId}`
+    });
     return team;
+  }
+
+  async sendInvites(companyId, userProfile, data) {
+    l.info(
+      `${this.constructor.name}.sendInvites(${companyId}, ${JSON.stringify(
+        userProfile
+      )}, ${JSON.stringify(data)})`
+    );
+
+    const { email: createdBy, name: createdByName } = userProfile;
+    const companyData = await byId(companyId, collection, true);
+    const { companyName } = companyData;
+    const inviteData = {
+      ...data,
+      companyId,
+      createdBy,
+      inviteStats: 'pending',
+      companyName,
+      createdByName
+    };
+    return insert(inviteData, 'companies_invites').then(r => r._id);
   }
 }
 

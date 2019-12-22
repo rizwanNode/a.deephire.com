@@ -56,6 +56,16 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  sendInvites(req, res) {
+    CompaniesService.sendInvites(res.locals.companyId, res.locals.userProfile, req.body).then(id => {
+      res.header('Access-Control-Expose-Headers', 'Location');
+      return res
+        .status(201)
+        .location(`/v1/companies/invites/${id}`)
+        .end();
+    });
+  }
 }
 export default new Controller();
 
