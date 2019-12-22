@@ -45,6 +45,20 @@ definitions:
         type: string
         example: https://deephire.com/test
 
+  InviteBody:
+    type: object
+    title: email
+    required:
+      - invitedEmail
+      - role
+    properties:
+      invitedEmail:
+        type: string
+        example: russell@deephire.com
+      role:
+        type: string
+        example: admin
+ 
   CompanyBody:
     type: object
     title: company
@@ -107,6 +121,7 @@ definitions:
       type: number
     example: [0]
 
+  
   VideoBody:
     type: object
     title: video
@@ -237,6 +252,91 @@ definitions:
           answerTime:
             type: number
             example: 90
+  TeamObject:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        email_verified:
+          type: boolean
+        name:
+          type: string
+        given_name:
+          type: string
+        family_name:
+          type: string
+        picture:
+          type: string
+        locale:
+          type: string
+        updated_at:
+          type: string
+        user_id:
+          type: string
+        nickname:
+          type: string
+        identities:
+          type: array
+          items:
+            type: object
+            properties:
+              provider:
+                type: string
+              access_token:
+                type: string
+              expires_in:
+                type: integer
+              user_id:
+                type: string
+              connection:
+                type: string
+              isSocial:
+                type: boolean
+            required:
+            - provider
+            - access_token
+            - expires_in
+            - user_id
+            - connection
+            - isSocial
+        created_at:
+          type: string
+        user_metadata:
+          type: object
+        last_login:
+          type: string
+        last_ip:
+          type: string
+        logins_count:
+          type: integer
+        app_metadata:
+          type: object
+          properties:
+            companyId:
+              type: string
+          required:
+          - companyId
+      required:
+      - email
+      - email_verified
+      - name
+      - given_name
+      - family_name
+      - picture
+      - locale
+      - updated_at
+      - user_id
+      - nickname
+      - identities
+      - created_at
+      - user_metadata
+      - last_login
+      - last_ip
+      - logins_count
+      - app_metadata
+      
 
 paths:
   /shortlists:
@@ -955,6 +1055,67 @@ paths:
         200:
           description: Created file on S3
 
+
+  /companies/team:
+    get:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      responses:
+        200:
+          description: Returns your team members
+          schema:
+            $ref: "#/definitions/TeamObject"
+        400:
+          description: Invalid ObjectId attached to your account
+        404:
+          description: You don't belong to a company
+
+  
+  /companies/invites:
+    get:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      responses:
+        201:
+          description: Invite Successful
+        400:
+          description: Invalid Request
+        404:
+          description: Not found
+        500:
+          description: Server Error
+    post:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Invite Details
+          required: true
+          schema:
+            $ref: "#/definitions/InviteBody"
+      responses:
+        201:
+          description: Invite Successful
+        500:
+          description: Invite Failed
 
   /companies/logo:
     put:

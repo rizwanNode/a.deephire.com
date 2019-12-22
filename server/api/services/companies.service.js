@@ -1,6 +1,8 @@
+import { ObjectID } from 'mongodb';
 import l from '../../common/logger';
-import { insert, byId, put } from './db.service';
+import { insert, byId, put, byParam } from './db.service';
 import { uploadS3 } from '../../common/aws';
+import { auth0Managment } from '../../common/auth';
 
 const collection = 'companies';
 const bucket = 'deephire.data.public';
@@ -43,6 +45,40 @@ class CompaniesService {
   async put(companyId, data) {
     l.info(`${this.constructor.name}.put(${companyId}`);
     return put(companyId, collection, data, true);
+  }
+
+  async getInvites(companyId) {
+    l.info(`${this.constructor.name}.getInvites(${companyId}`);
+    return byParam({ companyId: new ObjectID(companyId) }, 'companies_invites');
+  }
+
+  async getTeam(companyId) {
+    l.info(`${this.constructor.name}.getTeam(${companyId}`);
+    const team = await auth0Managment.getUsers({
+      q: `app_metadata.companyId:${companyId}`
+    });
+    return team;
+  }
+
+  async sendInvites(companyId, userProfile, data) {
+    l.info(
+      `${this.constructor.name}.sendInvites(${companyId}, ${JSON.stringify(
+        userProfile
+      )}, ${JSON.stringify(data)})`
+    );
+
+    const { email: createdBy, name: createdByName } = userProfile;
+    const companyData = await byId(companyId, collection, true);
+    const { companyName } = companyData;
+    const inviteData = {
+      ...data,
+      companyId: new ObjectID(companyId),
+      createdBy,
+      inviteStats: 'pending',
+      companyName,
+      createdByName
+    };
+    return insert(inviteData, 'companies_invites').then(r => r._id);
   }
 }
 

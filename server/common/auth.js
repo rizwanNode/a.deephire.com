@@ -14,7 +14,7 @@ const jwtDecode = require('jwt-decode');
 
 const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 240 });
 
-const auth0Managment = new ManagementClient({
+export const auth0Managment = new ManagementClient({
   domain: 'deephire2.auth0.com',
   clientId: 'M437SEOw0zLaSbZJAKcxV15m5njDbScr',
   clientSecret: process.env.AUTH0_MANAGMENT_SECRET,

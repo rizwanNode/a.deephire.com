@@ -1,7 +1,6 @@
 import CompaniesService from '../../services/companies.service';
 
 export class Controller {
-
   byCompanyId(req, res) {
     CompaniesService.byId(res.locals.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
@@ -35,9 +34,43 @@ export class Controller {
   }
 
   put(req, res) {
-    CompaniesService.put(res.locals.companyId, req.body).then(r =>
-      res.json(r)
-    );
+    CompaniesService.put(res.locals.companyId, req.body).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
+  getInvites(req, res) {
+    CompaniesService.getInvites(res.locals.companyId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
+  getTeam(req, res) {
+    CompaniesService.getTeam(res.locals.companyId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
+  sendInvites(req, res) {
+    CompaniesService.sendInvites(res.locals.companyId, res.locals.userProfile, req.body).then(id => {
+      res.header('Access-Control-Expose-Headers', 'Location');
+      return res
+        .status(201)
+        .location(`/v1/companies/invites/${id}`)
+        .end();
+    });
   }
 }
 export default new Controller();
+
+// .post('/invites', auth, controller.sendInvites)
+//   .get('/invites', auth, controller.getInvites)
+//   .delete('/invites/:inviteId', auth, controller.deleteInvite)
+//   .get('/team', auth, controller.getTeam)
+//   .delete('/team/:teamMemberId', auth, controller.getTeam)
