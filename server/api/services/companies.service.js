@@ -3,6 +3,7 @@ import l from '../../common/logger';
 import { insert, byId, put, byParam, deleteObject } from './db.service';
 import { uploadS3 } from '../../common/aws';
 import { auth0Managment } from '../../common/auth';
+import EmailsService from './emails.service';
 
 const collection = 'companies';
 const bucket = 'deephire.data.public';
@@ -67,6 +68,7 @@ class CompaniesService {
       )}, ${JSON.stringify(data)})`
     );
 
+    const { invitedEmail } = data;
     const { email: createdBy, name: createdByName } = userProfile;
     const companyData = await byId(companyId, collection, true);
     const { companyName } = companyData;
@@ -78,7 +80,12 @@ class CompaniesService {
       companyName,
       createdByName
     };
-    return insert(inviteData, 'companies_invites').then(r => r._id);
+
+
+    const inviteId = await insert(inviteData, 'companies_invites').then(r => r._id);
+    const emailData = { ...inviteData, inviteUrl: `https://recruiter.deephire.com/user/login?invited=${inviteId}` }
+    EmailsService.send([invitedEmail], 'deephire-team-invitation', emailData);
+    return inviteId;
   }
 
   async deleteInvite(companyId, inviteId) {
