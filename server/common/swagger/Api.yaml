@@ -1076,7 +1076,29 @@ paths:
         404:
           description: You don't belong to a company
 
-  
+  /companies/team/{teamMemberId}:
+    delete:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: teamMemberId
+          in: path
+          required: true
+          description: teamMemberId of the team member to delete
+          type: string
+      responses:
+        204:
+          description: The team member with the specified ID was successfully deleted
+        400:
+          description: Malformed ID, this should be an auth0 user_id
+        404:
+          description: User with given ID did not exist
+
   /companies/invites:
     get:
       tags:
@@ -1116,6 +1138,68 @@ paths:
           description: Invite Successful
         500:
           description: Invite Failed
+
+  /companies/invites/{inviteId}:
+    get:
+      tags:
+        - Companies
+      parameters:
+        - name: inviteId
+          in: path
+          required: true
+          description: id for the invite
+          type: string
+      responses:
+        200:
+          description: The invite with the specified ID was successfully fetched
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: invite with given ID did not exist or has been deleted
+    put:
+      tags:
+        - Companies
+      description: Resend an invite
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: inviteId
+          in: path
+          required: true
+          description: id for the invite to resend
+          type: string
+      responses:
+        201:
+          description: The invite with the specified ID was successfully 
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: invite with given ID did not exist or has been deleted
+    delete:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: inviteId
+          in: path
+          required: true
+          description: id of the invite to delete
+          type: string
+      responses:
+        204:
+          description: The invite with the specified ID was successfully deleted
+        400:
+          description: Malformed ID, the ID has to be a 12 character string
+        404:
+          description: Invite with given IDs did not exist
+
 
   /companies/logo:
     put:

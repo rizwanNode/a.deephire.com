@@ -136,7 +136,7 @@ export const updateByEmail = async (data, col) => {
   });
 };
 
-export const deleteObject = async (id, col) => {
+export const deleteObject = async (id, col, search = {}) => {
   const collection = db.collection(col);
 
   if (!ObjectId.isValid(id)) {
@@ -144,7 +144,7 @@ export const deleteObject = async (id, col) => {
   }
   return new Promise(resolve => {
     const objectId = new ObjectId(id);
-    collection.deleteOne({ _id: objectId }).then(result => {
+    collection.deleteOne({ _id: objectId, ...search }).then(result => {
       if (result.deletedCount) resolve(204);
       else resolve(404);
     });
