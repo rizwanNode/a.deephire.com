@@ -1,6 +1,6 @@
 import { ObjectID } from 'mongodb';
 import l from '../../common/logger';
-import { insert, byId, put, byParam } from './db.service';
+import { insert, byId, put, byParam, deleteObject } from './db.service';
 import { uploadS3 } from '../../common/aws';
 import { auth0Managment } from '../../common/auth';
 
@@ -14,7 +14,7 @@ class CompaniesService {
 
   byId(companyId) {
     l.info(`${this.constructor.name}.byId(${companyId})`);
-    return byId(companyId, collection, true);
+    return byId(companyId, collection);
   }
 
   byIdPublic(companyId) {
@@ -79,6 +79,41 @@ class CompaniesService {
       createdByName
     };
     return insert(inviteData, 'companies_invites').then(r => r._id);
+  }
+
+  async deleteInvite(companyId, inviteId) {
+    l.info(`${this.constructor.name}.deleteInvite(${companyId}, ${inviteId})`);
+    return deleteObject(inviteId, 'companies_invites', { companyId: new ObjectID(companyId) });
+  }
+
+  async deleteTeamMember(companyId, teamMemberId) {
+    l.info(`${this.constructor.name}.deleteInvite(${companyId}, ${teamMemberId})`);
+    const user = await auth0Managment.getUser({
+      id: teamMemberId
+    });
+    // eslint-disable-next-line camelcase
+    if (user?.app_metadata?.companyId === companyId) {
+      return auth0Managment.updateAppMetadata({
+        id: teamMemberId
+      }, { oldCompanyId: companyId, companyId: null }
+      );
+    }
+    return 404;
+  }
+
+  async resendInvite(companyId, userProfile, inviteId) {
+    l.info(`${this.constructor.name}.resendInvite(${companyId}, ${inviteId})`);
+    const invite = await this.getInviteById(inviteId);
+    if (invite === 400 || invite === 404) return invite;
+    const { invitedEmail, role } = invite;
+    deleteObject(inviteId, 'companies_invites', { companyId: new ObjectID(companyId) });
+    return this.sendInvites(companyId, userProfile, { invitedEmail, role });
+  }
+
+
+  async getInviteById(inviteId) {
+    l.info(`${this.constructor.name}.getInviteById(${inviteId})`);
+    return byId(inviteId, 'companies_invites');
   }
 }
 

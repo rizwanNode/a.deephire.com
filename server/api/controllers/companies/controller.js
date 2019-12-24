@@ -66,11 +66,40 @@ export class Controller {
         .end();
     });
   }
+
+  getInviteById(req, res) {
+    CompaniesService.getInviteById(req.params.inviteId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
+  resendInvite(req, res) {
+    CompaniesService.resendInvite(res.locals.companyId, res.locals.userProfile, req.params.inviteId).then(id => {
+      console.log(id)
+      if (id === 400 || id === 404) return res.status(id).end();
+      res.header('Access-Control-Expose-Headers', 'Location');
+      return res
+        .status(201)
+        .location(`/v1/companies/invites/${id}`)
+        .end();
+    });
+  }
+
+
+  deleteInvite(req, res) {
+    CompaniesService.deleteInvite(res.locals.companyId, req.params.inviteId).then(r => {
+      res.status(r).end();
+    });
+  }
+
+  deleteTeamMember(req, res) {
+    CompaniesService.deleteTeamMember(res.locals.companyId, req.params.teamMemberId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 }
 export default new Controller();
-
-// .post('/invites', auth, controller.sendInvites)
-//   .get('/invites', auth, controller.getInvites)
-//   .delete('/invites/:inviteId', auth, controller.deleteInvite)
-//   .get('/team', auth, controller.getTeam)
-//   .delete('/team/:teamMemberId', auth, controller.getTeam)
