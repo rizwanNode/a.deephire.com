@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, ObjectID } from 'mongodb';
 import l from '../../common/logger';
 import { byParam, insert, put } from './db.service';
 import { shortenLink } from '../../common/rebrandly';
@@ -37,6 +37,11 @@ class ShortlistService {
   put(id, data) {
     delete data._id;
     l.info(`${this.constructor.name}.put(${id}, ${data})`);
+    if (data.companyId) {
+      // fixes a bug where it deletes the object ID
+      // eslint-disable-next-line no-param-reassign
+      data.companyId = new ObjectID(data.companyId);
+    }
     return put(id, 'shortlists', data, true);
   }
 
