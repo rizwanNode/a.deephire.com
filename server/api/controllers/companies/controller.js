@@ -77,7 +77,6 @@ export class Controller {
 
   resendInvite(req, res) {
     CompaniesService.resendInvite(res.locals.companyId, res.locals.userProfile, req.params.inviteId).then(id => {
-      console.log(id)
       if (id === 400 || id === 404) return res.status(id).end();
       res.header('Access-Control-Expose-Headers', 'Location');
       return res
@@ -96,6 +95,15 @@ export class Controller {
 
   deleteTeamMember(req, res) {
     CompaniesService.deleteTeamMember(res.locals.companyId, req.params.teamMemberId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
+
+  getProduct(req, res) {
+    CompaniesService.getProduct(res.locals.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();
