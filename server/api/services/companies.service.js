@@ -5,6 +5,9 @@ import { uploadS3 } from '../../common/aws';
 import { auth0Managment } from '../../common/auth';
 import EmailsService from './emails.service';
 
+const stripe = require('stripe')(process.env.STRIPE_API_KEY);
+
+
 const collection = 'companies';
 const bucket = 'deephire.data.public';
 class CompaniesService {
@@ -83,7 +86,7 @@ class CompaniesService {
 
 
     const inviteId = await insert(inviteData, 'companies_invites').then(r => r._id);
-    const emailData = { ...inviteData, inviteUrl: `https://recruiter.deephire.com/user/login?invited=${inviteId}` }
+    const emailData = { ...inviteData, inviteUrl: `https://recruiter.deephire.com/user/login?invited=${inviteId}` };
     EmailsService.send([invitedEmail], 'deephire-team-invitation', emailData);
     return inviteId;
   }
@@ -121,6 +124,22 @@ class CompaniesService {
   async getInviteById(inviteId) {
     l.info(`${this.constructor.name}.getInviteById(${inviteId})`);
     return byId(inviteId, 'companies_invites');
+  }
+
+  async getProduct(companyId) {
+    l.info(`${this.constructor.name}.getProduct(${companyId})`);
+    const companyData = await byId(companyId, collection);
+    const { stripeCustomerId } = companyData;
+    if (!stripeCustomerId) return 404;
+    const customer = await stripe.customers.retrieve(
+      stripeCustomerId);
+    const { subscriptions } = customer;
+    const { plan } = subscriptions?.data[0]?.items?.data[0];
+    const { product } = plan;
+    if (!product) return 404;
+    const productData = await stripe.products.retrieve(
+      product);
+    return productData;
   }
 }
 

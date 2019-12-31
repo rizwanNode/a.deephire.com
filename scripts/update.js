@@ -3,6 +3,7 @@ const { ManagementClient } = require('auth0');
 
 const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
+const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
 let db;
 
@@ -36,6 +37,28 @@ const init = async () => {
     return false;
   }
 };
+
+
+// const addStripeCustomerIdsToCompanies = async () => {
+//   const collection = db.collection('companies');
+//   const companies = await collection.find({});
+//   companies.forEach(async company => {
+//     const { billing } = company;
+//     if (billing) {
+//       const customer = await stripe.customers.list({ email: billing });
+//       if (customer.data[0]) {
+//         const billingCustomer = customer.data[0].email;
+//         const stripeCustomerId = customer.data[0].id;
+//         console.log(billingCustomer, stripeCustomerId);
+//         collection.updateOne(
+//           { _id: new ObjectId(company._id) },
+//           { $set: { stripeCustomerId } }
+//         );
+//       }
+//     }
+//   });
+// };
+
 
 // Is used to add or edit a field for an entire collection. The use case here that I used it to, was to add an "owner" field for all of the companies.
 // const addFieldToCompanies = async () => {
@@ -118,10 +141,10 @@ const init = async () => {
 init().then(success => {
   if (success) {
     console.log('connected');
+    // addStripeCustomerIdsToCompanies();
     // updateInterviewIds()
     // updateShortListIds()
     // addRolesToUsers()
     // updateUserMetaData();
-
   }
 });

@@ -4,6 +4,7 @@ import auth from '../../../common/auth';
 
 export default express
   .Router()
+  .get('/product', auth, controller.getProduct)
   .post('/invites', auth, controller.sendInvites)
   .get('/invites', auth, controller.getInvites)
   .get('/invites/:inviteId', controller.getInviteById)

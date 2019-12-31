@@ -31,6 +31,7 @@
     "node-cache": "4.2.0",
     "node-fetch": "2.3.0",
     "pino": "^5.10.2",
+    "stripe": "^7.15.0",
     "swagger-express-middleware": "^2.0.0"
   },
   "devDependencies": {
