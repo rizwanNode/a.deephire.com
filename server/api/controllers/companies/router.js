@@ -5,6 +5,9 @@ import auth from '../../../common/auth';
 export default express
   .Router()
   .get('/product', auth, controller.getProduct)
+  .get('/invoices', auth, controller.getInvoices)
+  .get('/subscriptions', auth, controller.getSubscriptions)
+  .get('/payment_methods', auth, controller.getPaymentMethods)
   .post('/invites', auth, controller.sendInvites)
   .get('/invites', auth, controller.getInvites)
   .get('/invites/:inviteId', controller.getInviteById)
