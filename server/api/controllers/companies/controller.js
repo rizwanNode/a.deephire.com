@@ -109,5 +109,28 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  getInvoices(req, res) {
+    CompaniesService.getInvoices(res.locals.companyId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+  getSubscriptions(req, res) {
+    CompaniesService.getSubscriptions(res.locals.companyId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
+  getPaymentMethods(req, res) {
+    CompaniesService.getPaymentMethods(res.locals.companyId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 }
 export default new Controller();

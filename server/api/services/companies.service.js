@@ -10,6 +10,15 @@ const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
 const collection = 'companies';
 const bucket = 'deephire.data.public';
+
+
+const listCustomerAttribute = async (companyId, type, additionalParams = {}) => {
+  const companyData = await byId(companyId, collection);
+  const { stripeCustomerId } = companyData;
+  if (!stripeCustomerId) return 404;
+  return stripe[type].list(
+    { customer: stripeCustomerId, ...additionalParams });
+};
 class CompaniesService {
   insert(data) {
     l.info(`${this.constructor.name}.insert(${JSON.stringify(data)})`);
@@ -141,6 +150,24 @@ class CompaniesService {
       product);
     return productData;
   }
+
+
+  async getInvoices(companyId) {
+    l.info(`${this.constructor.name}.getInvoices(${companyId})`);
+    return listCustomerAttribute(companyId, 'invoices');
+  }
+
+
+  async getSubscriptions(companyId) {
+    l.info(`${this.constructor.name}.getSubscriptions(${companyId})`);
+    return listCustomerAttribute(companyId, 'subscriptions');
+  }
+
+  async getPaymentMethods(companyId) {
+    l.info(`${this.constructor.name}.getPaymentMethods(${companyId})`);
+    return listCustomerAttribute(companyId, 'paymentMethods', { type: 'card' });
+  }
 }
+
 
 export default new CompaniesService();
