@@ -17,7 +17,10 @@ const listCustomerAttribute = async (companyId, type, additionalParams = {}) => 
   const { stripeCustomerId } = companyData;
   if (!stripeCustomerId) return 404;
   return stripe[type].list(
-    { customer: stripeCustomerId, ...additionalParams });
+    { customer: stripeCustomerId, ...additionalParams }).catch(err => {
+    l.error(err);
+    return err;
+  });
 };
 class CompaniesService {
   insert(data) {

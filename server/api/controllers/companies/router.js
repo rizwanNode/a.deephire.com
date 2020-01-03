@@ -4,6 +4,7 @@ import auth from '../../../common/auth';
 
 export default express
   .Router()
+  .get('/card_wallet', controller.cardWallet)
   .get('/product', auth, controller.getProduct)
   .get('/invoices', auth, controller.getInvoices)
   .get('/subscriptions', auth, controller.getSubscriptions)

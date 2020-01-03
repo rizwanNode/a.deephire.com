@@ -1,5 +1,7 @@
 import CompaniesService from '../../services/companies.service';
 
+const stripe = require('stripe')(process.env.STRIPE_API_KEY);
+
 export class Controller {
   byCompanyId(req, res) {
     CompaniesService.byId(res.locals.companyId).then(r => {
@@ -131,6 +133,11 @@ export class Controller {
       else if (r) res.json(r);
       else res.status(500).end();
     });
+  }
+
+  async cardWallet(req, res) {
+    const intent = await stripe.setupIntents.create();
+    return res.json({ clientSecret: intent.client_secret });
   }
 }
 export default new Controller();
