@@ -1049,6 +1049,17 @@ paths:
         200:
           description: Created file on S3
 
+  /companies/card_wallet:
+    get:
+      tags:
+        - Companies
+
+      responses:
+        200:
+          description: Returns your payment methods
+        500:
+          description: Unknown error
+
   /companies/product:
     get:
       tags:
