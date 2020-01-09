@@ -1,31 +1,39 @@
 import { byId, insert, byParam } from '../api/services/db.service';
+import l from './logger';
 
 const btoa = require('btoa');
 const fetch = require('node-fetch');
 
-const url = 'https://testfirma.qa.clkwkdev.com/api/v2';
-
+// const url = 'https://testfirma.qa.clkwkdev.com/api/v2';
+let url;
 const getId = async data => {
   const { candidateEmail, companyId } = data;
 
   const companyData = await byId(companyId, 'companies', true);
+
   if (companyData.clockworkIntegration) {
-    const { apiKey, apiSecret } = companyData.clockworkIntegration;
+    const { apiKey, apiSecret, firmKey, firmName } = companyData.clockworkIntegration;
+    url = `https://${firmName}.clockworkrecruiting.com/api/v2`;
     const token = `Token ${btoa(`${apiKey}:${apiSecret}`)}`;
+    l.info('id token');
     const response = await fetch(`${url}/people?q=${candidateEmail}`, {
       headers: {
+        'X-Api-Key':
+        firmKey,
         Authorization: token
       }
     });
+
     const jsonData = await response.json();
 
+    l.info(jsonData);
     if (jsonData.people.length > 0) {
       // sorts in decending order
       const sortedPeople = jsonData.people.sort(
         (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
       );
       const id = sortedPeople[0].id;
-      return { id, token };
+      return { id, token, firmKey };
     }
   }
   return null;
@@ -48,7 +56,7 @@ const createOrUpdateNote = async (idAndToken, data, victory = false) => {
         },
         body: JSON.stringify({
           note: {
-            content: `${userName} completed their video interview. <a target=”_blank href="${candidateUrl}">View their interview</a>`
+            content: `${userName} completed their <b>DeepHire</b> interview. <a target=”_blank href="${candidateUrl}">View their interview</a>`
           }
         })
       }
@@ -63,7 +71,7 @@ const createOrUpdateNote = async (idAndToken, data, victory = false) => {
     },
     body: JSON.stringify({
       note: {
-        content: `${userName} started the video interview ${interviewName}`
+        content: `${userName} started their <b>DeepHire</b> video interview ${interviewName}`
       }
     })
   });
