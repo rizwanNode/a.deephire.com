@@ -1,19 +1,47 @@
+import { ObjectId, ObjectID } from 'mongodb';
+
 import l from '../../common/logger';
-import { insert } from './db.service';
+import { insert, byParam } from './db.service';
 
 import clockworkIntegration from '../../common/clockwork';
 
+
+const createObjectIds = data => {
+  const { _id: interviewId } = data?.completeInterviewData?.interviewData || {};
+  const { _id: companyId } = data?.completeInterviewData?.companyData || {};
+
+  if (interviewId && ObjectId.isValid(interviewId)) {
+    // eslint-disable-next-line no-param-reassign
+    data.completeInterviewData.interviewData._id = new ObjectId(interviewId);
+  }
+
+  if (companyId && ObjectId.isValid(companyId)) {
+    // eslint-disable-next-line no-param-reassign
+    data.completeInterviewData.companyData._id = new ObjectId(companyId);
+  }
+  return data;
+};
+
 class EventsService {
-  started(data) {
+  async started(data) {
     l.info(`${this.constructor.name}.started(${JSON.stringify(data)})`);
-    insert({ event: 'started', ...data }, 'events');
-    return clockworkIntegration(data);
+    const dataWithObjectIds = createObjectIds(data);
+    const { candidateEmail } = data;
+    const { _id } = data?.completeInterviewData?.interviewData || {};
+    const search = { candidateEmail, completeInterviewData: { interviewData: { _id: new ObjectID(_id) } } };
+    await insert({ event: 'started', ...dataWithObjectIds }, 'events');
+    const events = await byParam(search, 'events');
+    if (events && events.length === 1) {
+      console.log('Send reminder event to step function');
+    }
+    return clockworkIntegration(dataWithObjectIds);
   }
 
   victory(data) {
     l.info(`${this.constructor.name}.victory(${JSON.stringify(data)})`);
-    insert({ event: 'completed', ...data }, 'events');
-    return clockworkIntegration(data, true);
+    const dataWithObjectIds = createObjectIds(data);
+    insert({ event: 'completed', ...dataWithObjectIds }, 'events');
+    return clockworkIntegration(dataWithObjectIds, true);
   }
 }
 
