@@ -101,7 +101,6 @@ export const put = async (search, col, data, id = false, upsert = true) => {
 };
 
 export const insert = async (data, col) => {
-  console.log("insert", col);
   const collection = db.collection(col);
   const { _id } = data;
   if (_id && ObjectId.isValid(_id)) {
@@ -226,10 +225,6 @@ export const getInterviews = async (
         { $match: { 'interview.archives': { $exists: findarchives } } }
       ])
       .toArray(async (err, result) => {
-        const interviewsStuff = await collection.find({}).toArray();
-        const videoColl = db.collection(from);
-        const videosStuff = await videoColl.find({}).toArray();
-
         if (err) throw err;
         const interviews = result.map(r => r.interview);
         if (result) resolve(interviews);
