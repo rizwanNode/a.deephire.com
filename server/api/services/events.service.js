@@ -30,15 +30,16 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
     const { candidateEmail } = data;
     const { _id } = data?.completeInterviewData?.interviewData || {};
-    const search = { event: 'started', candidateEmail, completeInterviewData: { interviewData: { _id: new ObjectID(_id) } } };
+    const search = { event: 'started', candidateEmail, 'completeInterviewData.interviewData._id': new ObjectID(_id) };
     await insert({ event: 'started', ...dataWithObjectIds }, 'events');
     const events = await byParam(search, 'events');
     if (events && events.length === 1) {
-      fetch('https://rest.deephire.com/v1/reminders', {
+      await fetch('https://rest.deephire.com/v1/reminders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataWithObjectIds) });
+        body: JSON.stringify(data) });
     }
+
     return clockworkIntegration(dataWithObjectIds);
   }
 
