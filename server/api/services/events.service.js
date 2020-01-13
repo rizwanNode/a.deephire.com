@@ -11,6 +11,8 @@ import clockworkIntegration from '../../common/clockwork';
 const createObjectIds = data => {
   const { _id: interviewId } = data?.completeInterviewData?.interviewData || {};
   const { _id: companyId } = data?.completeInterviewData?.companyData || {};
+  // eslint-disable-next-line no-param-reassign
+  data.candidateEmail = data.candidateEmail.toLowerCase();
 
   if (interviewId && ObjectId.isValid(interviewId)) {
     // eslint-disable-next-line no-param-reassign
@@ -30,14 +32,14 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
     const { candidateEmail } = data;
     const { _id } = data?.completeInterviewData?.interviewData || {};
-    const search = { event: 'started', candidateEmail, 'completeInterviewData.interviewData._id': new ObjectID(_id) };
+    const search = { event: 'started', candidateEmail: candidateEmail.toLowerCase(), 'completeInterviewData.interviewData._id': new ObjectID(_id) };
     await insert({ event: 'started', ...dataWithObjectIds }, 'events');
     const events = await byParam(search, 'events');
     if (events && events.length === 1) {
       await fetch('https://rest.deephire.com/v1/reminders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data) });
+        body: JSON.stringify(dataWithObjectIds) });
     }
     return clockworkIntegration(dataWithObjectIds);
   }
