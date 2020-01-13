@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 import { ObjectId, ObjectID } from 'mongodb';
 
 import l from '../../common/logger';
@@ -28,11 +30,14 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
     const { candidateEmail } = data;
     const { _id } = data?.completeInterviewData?.interviewData || {};
-    const search = { candidateEmail, completeInterviewData: { interviewData: { _id: new ObjectID(_id) } } };
+    const search = { event: 'started', candidateEmail, completeInterviewData: { interviewData: { _id: new ObjectID(_id) } } };
     await insert({ event: 'started', ...dataWithObjectIds }, 'events');
     const events = await byParam(search, 'events');
     if (events && events.length === 1) {
-      console.log('Send reminder event to step function');
+      fetch('https://rest.deephire.com/v1/reminders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataWithObjectIds) });
     }
     return clockworkIntegration(dataWithObjectIds);
   }
