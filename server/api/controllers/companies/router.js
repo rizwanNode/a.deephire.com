@@ -9,6 +9,7 @@ export default express
   .get('/invoices', auth, controller.getInvoices)
   .get('/subscriptions', auth, controller.getSubscriptions)
   .get('/payment_methods', auth, controller.getPaymentMethods)
+  .post('/payment_methods/:paymentMethodId', auth, controller.addPaymentMethod)
   .post('/invites', auth, controller.sendInvites)
   .get('/invites', auth, controller.getInvites)
   .get('/invites/:inviteId', controller.getInviteById)
