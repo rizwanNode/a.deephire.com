@@ -154,7 +154,7 @@ class CompaniesService {
     const companyData = await byId(companyId, collection);
     const { stripeCustomerId } = companyData;
     if (!stripeCustomerId) return 404;
-    const subscriptions = await getSubscriptionsFromStripe(customerId);
+    const subscriptions = await getSubscriptionsFromStripe(stripeCustomerId);
     const { plan } = subscriptions?.data[0]?.items?.data[0];
     const { product } = plan;
     if (!product) return 404;
