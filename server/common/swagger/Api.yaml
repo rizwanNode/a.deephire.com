@@ -1049,6 +1049,27 @@ paths:
         200:
           description: Created file on S3
 
+  /companies/payment_methods/{paymentMethodId}:
+    post:
+      tags:
+        - Companies
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: paymentMethodId
+          in: path
+          required: true
+          description: the payment method ID
+          type: string
+      responses:
+        201:
+          description: Payment Method added
+        500:
+          description: Unknown error
+
   /companies/card_wallet:
     get:
       tags:
@@ -1059,7 +1080,6 @@ paths:
           description: Returns your payment methods
         500:
           description: Unknown error
-
   /companies/product:
     get:
       tags:

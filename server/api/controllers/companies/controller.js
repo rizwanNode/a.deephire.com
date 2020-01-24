@@ -139,5 +139,13 @@ export class Controller {
     const intent = await stripe.setupIntents.create();
     return res.json({ clientSecret: intent.client_secret });
   }
+
+  async addPaymentMethod(req, res) {
+    CompaniesService.addPaymentMethod(res.locals.companyId, req.params.paymentMethodId).then(r => {
+      if (r === 400 || r === 404) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 }
 export default new Controller();

@@ -11,16 +11,26 @@ const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 const collection = 'companies';
 const bucket = 'deephire.data.public';
 
-
-const listCustomerAttribute = async (companyId, type, additionalParams = {}) => {
+const getStripeId = async companyId => {
   const companyData = await byId(companyId, collection);
   const { stripeCustomerId } = companyData;
+  return stripeCustomerId;
+};
+const listCustomerAttribute = async (companyId, type, additionalParams = {}) => {
+  const stripeCustomerId = await getStripeId(companyId);
   if (!stripeCustomerId) return 404;
   return stripe[type].list(
     { customer: stripeCustomerId, ...additionalParams }).catch(err => {
     l.error(err);
     return err;
   });
+};
+
+const getSubscriptionsFromStripe = async stripeCustomerId => {
+  const customer = await stripe.customers.retrieve(
+    stripeCustomerId);
+  const { subscriptions } = customer;
+  return subscriptions;
 };
 class CompaniesService {
   insert(data) {
@@ -138,14 +148,13 @@ class CompaniesService {
     return byId(inviteId, 'companies_invites');
   }
 
+
   async getProduct(companyId) {
     l.info(`${this.constructor.name}.getProduct(${companyId})`);
     const companyData = await byId(companyId, collection);
     const { stripeCustomerId } = companyData;
     if (!stripeCustomerId) return 404;
-    const customer = await stripe.customers.retrieve(
-      stripeCustomerId);
-    const { subscriptions } = customer;
+    const subscriptions = await getSubscriptionsFromStripe(customerId);
     const { plan } = subscriptions?.data[0]?.items?.data[0];
     const { product } = plan;
     if (!product) return 404;
@@ -169,6 +178,33 @@ class CompaniesService {
   async getPaymentMethods(companyId) {
     l.info(`${this.constructor.name}.getPaymentMethods(${companyId})`);
     return listCustomerAttribute(companyId, 'paymentMethods', { type: 'card' });
+  }
+
+
+  async addPaymentMethod(companyId, paymentMethodId) {
+    l.info(`${this.constructor.name}.addPaymentMethod(${companyId})`);
+    const stripeId = await getStripeId(companyId);
+    if (!stripeId) return 404;
+    await stripe.paymentMethods.attach(
+      paymentMethodId,
+      {
+        customer: stripeId,
+      }).catch(err => l.error(err));
+
+    await stripe.customers.update(
+      stripeId,
+      { invoice_settings: { default_payment_method: paymentMethodId } }
+    ).catch(err => l.error(err));
+
+    const subscription = await getSubscriptionsFromStripe(stripeId);
+    const subscriptionId = subscription.data[0].id;
+    const updatedSubscription = stripe.subscriptions.update(
+      subscriptionId,
+      { default_payment_method: paymentMethodId }
+    ).catch(err => l.error(err));
+
+
+    return updatedSubscription;
   }
 }
 
