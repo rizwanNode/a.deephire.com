@@ -57,7 +57,8 @@ class VideoService {
   insert(data) {
     l.info(`${this.constructor.name}.insert(${data})`);
     const { candidateEmail, interviewId } = data;
-    const search = { candidateEmail, interviewId: ObjectId(interviewId) };
+    const lowerCaseCandidateEmail = candidateEmail.toLowerCase();
+    const search = { candidateEmail: lowerCaseCandidateEmail, interviewId: ObjectId(interviewId) };
     const updateData = { ...data, ...search };
     return createUpdateVideo(search, updateData, 'videos');
   }
