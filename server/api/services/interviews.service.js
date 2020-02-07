@@ -3,6 +3,7 @@ import { archiveValidator, duplicateValidator } from '../../common/helpers';
 import l from '../../common/logger';
 import { shortenLink } from '../../common/rebrandly';
 import { byParam, deleteObject, insert, put } from './db.service';
+import InviteServices from './events.service';
 
 class InterviewsService {
   all(companyId) {
@@ -59,6 +60,19 @@ class InterviewsService {
   duplicate(data) {
     l.info(`${this.constructor.name}.duplicate(${data})`);
     return duplicateValidator(data, 'interviews');
+  }
+
+  invite(data, interviewId, createdBy, companyId) {
+    l.info(`${this.constructor.name}.invite(${JSON.stringify(data)}, ${createdBy}, ${companyId})`);
+    const event = { ...data, createdBy, interviewId: new ObjectId(interviewId), companyId: new ObjectId(companyId) };
+    insert(event, 'invites_log');
+    const { recipients } = data;
+    recipients.forEach(candidateData => {
+      const { email: candidateEmail, fullName: userName } = candidateData;
+      InviteServices.invited({ ...event, candidateEmail, userName });
+    });
+    const { messages } = data;
+    return put(interviewId, 'interviews', { messages }, true, false);
   }
 }
 

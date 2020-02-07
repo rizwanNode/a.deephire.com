@@ -333,6 +333,65 @@ definitions:
         - logins_count
         - app_metadata
 
+  CandidateInvitesBody:
+    type: object
+    title: The Root Schema
+    required:
+      - recipients
+    properties:
+      recipients:
+        $id: "#/properties/recipients"
+        type: array
+        title: The Recipients Schema
+        items:
+          $id: "#/properties/recipients/items"
+          type: object
+          title: The Items Schema
+          required:
+            - email
+            - fullName
+          properties:
+            email:
+              $id: "#/properties/recipients/items/properties/email"
+              type: string
+              title: The Email Schema
+              example: russell@deephire.com
+
+            fullName:
+              $id: "#/properties/recipients/items/properties/fullName"
+              type: string
+              title: The Fullname Schema
+              example: Russell Ratcliffe
+
+      deadline:
+        $id: "#/properties/deadline"
+        type: string
+        title: The Deadline Schema
+        example: 5/5/2021
+
+      messages:
+        $id: "#/properties/messages"
+        type: array
+        title: The Messages Schema
+        items:
+          $id: "#/properties/messages/items"
+          type: object
+          title: The Items Schema
+          required:
+            - followUp
+            - message
+          properties:
+            followUp:
+              $id: "#/properties/messages/items/properties/followUp"
+              type: integer
+              title: The Followup Schema
+              example: 2
+            message:
+              $id: "#/properties/messages/items/properties/message"
+              type: string
+              title: The Message Schema
+              example: Hey dude
+
 paths:
   /shortlists:
     get:
@@ -806,6 +865,33 @@ paths:
           description: Malformed ID, the ID has to be a 12 character string
         404:
           description: Interview with given ID did not exist
+
+  /interviews/{id}/invites:
+    post:
+      tags:
+        - Interviews
+      description: Invite to interview
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: interview ID
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: body
+          required: true
+          schema:
+            $ref: "#/definitions/CandidateInvitesBody"
+
+      responses:
+        200:
+          description: Invite Successful
 
   /interviews/archives:
     get:

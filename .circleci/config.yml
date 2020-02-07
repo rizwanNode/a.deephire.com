@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /app
     docker:
-      - image: docker:18.05.0-ce-git
+      - image: docker:19.03.5
     steps:
       - checkout
       - setup_remote_docker
@@ -15,7 +15,7 @@ jobs:
               bash
             pip install \
               'urllib3>=1.24.1,<1.25' \
-              awsebcli
+              -Iv awsebcli==3.14.3
       - run:
           name: Build application Docker image
           command: |

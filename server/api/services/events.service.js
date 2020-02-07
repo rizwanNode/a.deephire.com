@@ -50,6 +50,19 @@ class EventsService {
     insert({ event: 'completed', ...dataWithObjectIds }, 'events');
     return clockworkIntegration(dataWithObjectIds, true);
   }
+
+
+  clicked(data) {
+    l.info(`${this.constructor.name}.clicked(${JSON.stringify(data)})`);
+    const dataWithObjectIds = createObjectIds(data);
+    insert({ event: 'clicked', ...dataWithObjectIds }, 'events');
+  }
+
+
+  invited(data) {
+    l.info(`${this.constructor.name}.invited(${JSON.stringify(data)})`);
+    insert({ event: 'invited', ...data }, 'events');
+  }
 }
 
 export default new EventsService();

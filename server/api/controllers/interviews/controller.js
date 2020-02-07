@@ -49,3 +49,7 @@ export const put = (req, res) => {
 export const duplicate = (req, res) => {
   InterviewsService.duplicate(req.body).then(r => res.status(r).end());
 };
+
+export const invite = (req, res) => {
+  InterviewsService.invite(req.body, req.params.id, res.locals.email, res.locals.companyId).then(r => res.status(r).end());
+};
