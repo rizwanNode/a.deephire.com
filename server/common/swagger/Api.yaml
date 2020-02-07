@@ -891,7 +891,7 @@ paths:
 
       responses:
         200:
-          description: Invite Succesfull
+          description: Invite Successful
 
   /interviews/archives:
     get:
