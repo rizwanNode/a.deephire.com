@@ -1,9 +1,13 @@
 import { ObjectId } from 'mongodb';
+import fetch from 'node-fetch';
+
 import { archiveValidator, duplicateValidator } from '../../common/helpers';
 import l from '../../common/logger';
 import { shortenLink } from '../../common/rebrandly';
 import { byParam, deleteObject, insert, put } from './db.service';
-import InviteServices from './events.service';
+import InviteService from './events.service';
+import CompaniesService from './companies.service';
+
 
 class InterviewsService {
   all(companyId) {
@@ -62,15 +66,23 @@ class InterviewsService {
     return duplicateValidator(data, 'interviews');
   }
 
-  invite(data, interviewId, createdBy, companyId) {
+  async invite(data, interviewId, createdBy, companyId) {
     l.info(`${this.constructor.name}.invite(${JSON.stringify(data)}, ${createdBy}, ${companyId})`);
     const event = { ...data, createdBy, interviewId: new ObjectId(interviewId), companyId: new ObjectId(companyId) };
     insert(event, 'invites_log');
+    const { companyName } = await CompaniesService.byId(companyId);
     const { recipients } = data;
     recipients.forEach(candidateData => {
       const { email: candidateEmail, fullName: userName } = candidateData;
-      InviteServices.invited({ ...event, candidateEmail, userName });
+      const inviteData = { ...event, candidateEmail, userName, companyName };
+      InviteService.invited(inviteData);
+      fetch('https://rest.deephire.com/v1/invites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inviteData) });
     });
+
+
     const { messages } = data;
     return put(interviewId, 'interviews', { messages }, true, false);
   }
