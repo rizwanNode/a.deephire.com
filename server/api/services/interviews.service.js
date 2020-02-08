@@ -5,7 +5,7 @@ import { archiveValidator, duplicateValidator } from '../../common/helpers';
 import l from '../../common/logger';
 import { shortenLink } from '../../common/rebrandly';
 import { byParam, deleteObject, insert, put } from './db.service';
-import InviteService from './events.service';
+import EventsService from './events.service';
 import CompaniesService from './companies.service';
 
 
@@ -75,8 +75,8 @@ class InterviewsService {
     recipients.forEach(candidateData => {
       const { email: candidateEmail, fullName: userName } = candidateData;
       const inviteData = { ...event, candidateEmail, userName, companyName };
-      InviteService.invited(inviteData);
-      fetch('https://rest.deephire.com/v1/invites', {
+      EventsService.invited(inviteData);
+      fetch('https://rest.deephire.com/v1/invitations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(inviteData) });
