@@ -61,6 +61,8 @@ class EventsService {
 
   invited(data) {
     l.info(`${this.constructor.name}.invited(${JSON.stringify(data)})`);
+    // eslint-disable-next-line no-param-reassign
+    delete data._id;
     insert({ event: 'invited', ...data }, 'events');
   }
 }
