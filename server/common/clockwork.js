@@ -80,10 +80,13 @@ const createOrUpdateNote = async (idAndToken, data, victory = false) => {
 
 const clockworkIntegration = async (data, victory) => {
   const idAndToken = await getId(data);
-  const otherData = await createOrUpdateNote(idAndToken, data, victory);
-  const jsonData = await otherData.json();
-  insert({ ...idAndToken, ...jsonData }, 'clockwork');
-  return jsonData;
+  if (idAndToken) {
+    const otherData = await createOrUpdateNote(idAndToken, data, victory);
+    const jsonData = await otherData.json();
+    insert({ ...idAndToken, ...jsonData }, 'clockwork');
+    return jsonData;
+  }
+  return {};
 };
 
 export default clockworkIntegration;
