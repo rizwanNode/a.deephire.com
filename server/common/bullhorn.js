@@ -96,7 +96,10 @@ const updateCandidateStatus = async (eventData, event) => {
   const { candidateEmail, completeInterviewData, candidateUrl, userName } = eventData;
   const { companyData } = completeInterviewData || {};
   const { _id } = companyData || {};
-  if (_id === frontlineCompanyId) {
+
+  // IMPORTANT this does not work with ===
+  // eslint-disable-next-line eqeqeq
+  if (_id == frontlineCompanyId) {
     const candidateData = await findCandidateData(candidateEmail, userName);
     const { id: candidateId, customTextBlock3 } = candidateData;
 

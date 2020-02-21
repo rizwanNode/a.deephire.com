@@ -42,7 +42,7 @@ class EventsService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataWithObjectIds) });
     }
-    frontlineIntegration(data, 'started');
+    await frontlineIntegration(data, 'started');
 
     return clockworkIntegration(dataWithObjectIds);
   }
