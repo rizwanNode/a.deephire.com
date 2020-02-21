@@ -6,6 +6,7 @@ import l from '../../common/logger';
 import { insert, byParam } from './db.service';
 
 import clockworkIntegration from '../../common/clockwork';
+import frontlineIntegration from '../../common/bullhorn';
 
 
 const createObjectIds = data => {
@@ -41,6 +42,8 @@ class EventsService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataWithObjectIds) });
     }
+    frontlineIntegration(data, 'started');
+
     return clockworkIntegration(dataWithObjectIds);
   }
 
@@ -48,14 +51,18 @@ class EventsService {
     l.info(`${this.constructor.name}.victory(${JSON.stringify(data)})`);
     const dataWithObjectIds = createObjectIds(data);
     insert({ event: 'completed', ...dataWithObjectIds }, 'events');
-    return clockworkIntegration(dataWithObjectIds, true);
+    frontlineIntegration(data, 'completed');
+
+    return clockworkIntegration(dataWithObjectIds);
   }
 
 
   clicked(data) {
     l.info(`${this.constructor.name}.clicked(${JSON.stringify(data)})`);
     const dataWithObjectIds = createObjectIds(data);
+
     insert({ event: 'clicked', ...dataWithObjectIds }, 'events');
+    frontlineIntegration(data, 'clicked');
   }
 
 
@@ -64,6 +71,7 @@ class EventsService {
     // eslint-disable-next-line no-param-reassign
     delete data._id;
     insert({ event: 'invited', ...data }, 'events');
+    frontlineIntegration(data, 'invited');
   }
 }
 

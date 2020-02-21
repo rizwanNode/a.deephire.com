@@ -1,6 +1,7 @@
 import l from '../../common/logger';
 import { shortenLink } from '../../common/rebrandly';
 
+
 const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
 
@@ -9,7 +10,6 @@ const timestamp = () => new Date().toString();
 
 export const init = async () => {
   const uri = `mongodb://${process.env.MONGO_NAME}:${process.env.MONGO_PASS}@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
-
   try {
     const mongoClient = await MongoClient.connect(uri, {
       useNewUrlParser: true
