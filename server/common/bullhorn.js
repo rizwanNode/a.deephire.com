@@ -71,7 +71,7 @@ function getParameterByName(name, url) {
 
 
 const findCandidateData = async (email, userName) => {
-  const url = `https://rest40.bullhornstaffing.com/rest-services/q06u9/departmentCandidates?query=email:${email}&fields=customTextBlock3,id`;
+  const url = `https://rest40.bullhornstaffing.com/rest-services/q06u9/search/Candidate?query=email:${email}&fields=customTextBlock3,id`;
   const resp = await fetch(url, { headers: { BhRestToken } });
   if (resp.status === 401) {
     BhRestToken = await getRestToken();
