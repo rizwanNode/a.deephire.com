@@ -8,8 +8,55 @@ import {
   deleteObject,
   deleteSubDocument
 } from './db.service';
-import { archiveValidator } from '../../common/helpers';
+import shortlistsService from './shortlists.service';
 
+import { archiveValidator } from '../../common/helpers';
+import fetch from 'node-fetch';
+
+
+const deleteCameraTagVideos = async id => {
+  const videos = await new VideoService().byParam(id);
+  videos.forEach(video => {
+    const { responses } = video;
+    responses.forEach(response => {
+      const { uuid } = response;
+      const url = `https://cameratag.com/api/v13/assets/${uuid}.json?api_key=${process.env.CAMERATAG_API_KEY}`;
+      return fetch(url, { method: 'DELETE' });
+    });
+  });
+};
+
+
+const deletedCandidate = {
+  candidateEmail: 'Candidate Deleted',
+  interviewName: 'Candidate Deleted',
+
+  timestamp: new Date().toString(),
+  userId: 'Candidate Deleted',
+  userName: 'Candidate Deleted',
+  responses: [{}]
+};
+
+const deleteVideosFromShortlists = async (companyId, id) => {
+  const allShortlists = await shortlistsService.all(companyId);
+
+  allShortlists.forEach(shortlist => {
+    const { _id } = shortlist;
+    if (Array.isArray(shortlist?.interviews)) {
+      shortlist.interviews.forEach((interview, i) => {
+        let flag = false;
+        if (interview?._id === id) {
+          flag = true;
+          // eslint-disable-next-line no-param-reassign
+          shortlist.interviews[i] = deletedCandidate;
+        }
+        if (flag) {
+          shortlistsService.put(_id, shortlist);
+        }
+      });
+    }
+  });
+};
 const customEdit = archive => async (collection, doc, data) => {
   const index = Array.isArray(data) ? data[0] : data;
 
@@ -68,8 +115,12 @@ class VideoService {
     return byParam(id, 'videos', true);
   }
 
-  delete(id) {
+
+  async delete(companyId, id) {
     l.info(`${this.constructor.name}.delete(${id})`);
+
+    deleteVideosFromShortlists(companyId, id);
+    deleteCameraTagVideos(id);
     return deleteObject(id, 'videos');
   }
 

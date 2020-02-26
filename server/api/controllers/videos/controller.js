@@ -45,7 +45,7 @@ export class Controller {
   }
 
   delete(req, res) {
-    VideoService.delete(req.params.id).then(r => {
+    VideoService.delete(res.locals.companyId, req.params.id).then(r => {
       res.status(r).end();
     });
   }
