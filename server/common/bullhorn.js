@@ -60,17 +60,20 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-// const createCandidate = async (email, userName) => {
-//   const url = 'https://rest40.bullhornstaffing.com/rest-services/q06u9/entity/Candidate';
-//   const firstName = userName.split(' ').slice(0, -1).join(' ');
-//   const lastName = userName.split(' ').slice(-1).join(' ');
-//   const data = { email, firstName, lastName };
+const createCandidate = async (email, userName) => {
+  const url = 'https://rest40.bullhornstaffing.com/rest-services/q06u9/entity/Candidate';
+  const firstName = userName.split(' ').slice(0, -1).join(' ');
+  const lastName = userName.split(' ').slice(-1).join(' ');
+  const data = { email, firstName, lastName };
 
-//   await fetch(url, { method: 'PUT', body: JSON.stringify(data), headers: { BhRestToken } });
-// };
+  const completed = await fetch(url, { method: 'PUT', body: JSON.stringify(data), headers: { BhRestToken } });
+  // TODO make this better - it currently waits 15 seconds to make sure bullhorn actually creates the record
+  await new Promise(resolve => setTimeout(() => resolve(true), 15000));
+  return completed;
+};
 
 
-const findCandidateData = async (email, userName) => {
+const findCandidateData = async (email, userName, repeatRecall = false) => {
   const url = `https://rest40.bullhornstaffing.com/rest-services/q06u9/search/Candidate?query=email:${email}&fields=customTextBlock3,id`;
   const resp = await fetch(url, { headers: { BhRestToken } });
   if (resp.status === 401) {
@@ -81,10 +84,10 @@ const findCandidateData = async (email, userName) => {
   if (resp.ok) {
     const data = await resp.json();
     const candidateData = data.data[0];
-    if (!candidateData) {
-      // await createCandidate(email, userName);
-      // const candidateData = await findCandidateData(email, userName);
-      // return candidateData;
+    if (!candidateData && !repeatRecall) {
+      await createCandidate(email, userName);
+      const candidateData = await findCandidateData(email, userName, true);
+      return candidateData;
     }
     return candidateData;
   }
