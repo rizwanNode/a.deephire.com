@@ -66,6 +66,7 @@ class InterviewsService {
     return duplicateValidator(data, 'interviews');
   }
 
+
   async invite(data, interviewId, createdBy, companyId) {
     l.info(`${this.constructor.name}.invite(${JSON.stringify(data)}, ${createdBy}, ${companyId})`);
     const event = { ...data, createdBy, interviewId: new ObjectId(interviewId), companyId: new ObjectId(companyId) };
@@ -76,6 +77,14 @@ class InterviewsService {
       const { email: candidateEmail, fullName: userName } = candidateData;
       const inviteData = { ...event, candidateEmail, userName, companyName };
       EventsService.invited(inviteData);
+
+      // linebreaks are ignored by the email client, need to use <br> instead
+      inviteData.messages = inviteData.messages.map(singleMessage => {
+      // eslint-disable-next-line no-param-reassign
+        singleMessage.message = singleMessage.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        return singleMessage;
+      });
+
       fetch('https://rest.deephire.com/v1/invitations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
