@@ -72,7 +72,10 @@ class InterviewsService {
     const event = { ...data, createdBy, interviewId: new ObjectId(interviewId), companyId: new ObjectId(companyId) };
     insert(event, 'invites_log');
     const { companyName } = await CompaniesService.byId(companyId);
-    const { recipients } = data;
+    const { recipients, messages } = data;
+
+    await put(interviewId, 'interviews', { messages }, true, false);
+
     recipients.forEach(candidateData => {
       const { email: candidateEmail, fullName: userName } = candidateData;
       const inviteData = { ...event, candidateEmail, userName, companyName };
@@ -92,8 +95,7 @@ class InterviewsService {
     });
 
 
-    const { messages } = data;
-    return put(interviewId, 'interviews', { messages }, true, false);
+    return 200;
   }
 }
 
