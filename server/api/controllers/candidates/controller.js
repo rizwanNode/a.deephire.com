@@ -16,7 +16,7 @@ export class Controller {
   getDocuments(req, res) {
     CandidatesService.getDocuments(req.params.userId, req.params.id).then(r => {
       if (r && r.file) {
-        res.set('Content-Disposition', `filename=${r.fileName}`);
+        res.set('Content-Disposition', `filename=${encodeURI(r.fileName)}`);
         return r.file.pipe(res);
       }
       res.status(404).end();
