@@ -7,7 +7,6 @@ import EmailsService from './emails.service';
 
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
-
 const collection = 'companies';
 const bucket = 'deephire.data.public';
 
@@ -32,10 +31,30 @@ const getSubscriptionsFromStripe = async stripeCustomerId => {
   const { subscriptions } = customer;
   return subscriptions;
 };
+
+const createStripeTrialCustomer = async (email, companyName) => {
+  const customer = await stripe.customers.create(
+    {
+      email, name: companyName
+    }
+  ).catch(err => l.error(err));
+
+  stripe.subscriptions.create(
+    {
+      customer: customer.id,
+      items: [{ plan: 'basic-monthly-v1' }],
+      trial_period_days: 7
+    }).catch(err => l.error(err));
+
+  return customer.id;
+};
 class CompaniesService {
-  insert(data) {
+  async insert(data) {
     l.info(`${this.constructor.name}.insert(${JSON.stringify(data)})`);
-    return insert(data, collection).then(r => r._id);
+    const { owner, companyName } = data;
+    const stripeCustomerId = await createStripeTrialCustomer(owner, companyName);
+    const insertData = { ...data, stripeCustomerId };
+    return insert(insertData, collection).then(r => r._id);
   }
 
   byId(companyId) {
@@ -155,8 +174,8 @@ class CompaniesService {
     const { stripeCustomerId } = companyData;
     if (!stripeCustomerId) return 404;
     const subscriptions = await getSubscriptionsFromStripe(stripeCustomerId);
-    const { plan } = subscriptions?.data[0]?.items?.data[0];
-    const { product } = plan;
+    const { plan } = subscriptions?.data[0]?.items?.data[0] || {};
+    const { product } = plan || {};
     if (!product) return 404;
     const productData = await stripe.products.retrieve(
       product);
