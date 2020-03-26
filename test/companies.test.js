@@ -35,33 +35,34 @@ describe('Tests with an unpopulated Database', () => {
     });
   });
 
-  describe('POST companies', () => {
-    test('Add a valid company', async () => {
-      const companyData = {
-        owner: 'russell@deephire.com',
-        companyName: 'TestCompany',
-        _id: id1
-      };
-      const response = await request(Server)
-        .post('/v1/companies')
-        .send(companyData);
-      expect(response.statusCode).toBe(201);
-      expect(response.headers.location).toBe(`/v1/companies/${id1}`);
+  // TODO - Fix this so it doesn't create companies in Stripe
+  // describe('POST companies', () => {
+  //   test('Add a valid company', async () => {
+  //     const companyData = {
+  //       owner: 'russell@deephire.com',
+  //       companyName: 'TestCompany',
+  //       _id: id1
+  //     };
+  //     const response = await request(Server)
+  //       .post('/v1/companies')
+  //       .send(companyData);
+  //     expect(response.statusCode).toBe(201);
+  //     expect(response.headers.location).toBe(`/v1/companies/${id1}`);
 
-      const results = await companies.findOne(new ObjectId(id1));
-      delete results.timestamp;
-      const { owner, companyName } = results;
-      expect(owner).toBe(companyData.owner);
-      expect(companyName).toBe(companyData.companyName);
-    });
-    test('Send invalid company Data', async () => {
-      const companyData = { junk: 'wow' };
-      const response = await request(Server)
-        .post('/v1/companies')
-        .send(companyData);
-      expect(response.statusCode).toBe(400);
-    });
-  });
+  //     const results = await companies.findOne(new ObjectId(id1));
+  //     delete results.timestamp;
+  //     const { owner, companyName } = results;
+  //     expect(owner).toBe(companyData.owner);
+  //     expect(companyName).toBe(companyData.companyName);
+  //   });
+  //   test('Send invalid company Data', async () => {
+  //     const companyData = { junk: 'wow' };
+  //     const response = await request(Server)
+  //       .post('/v1/companies')
+  //       .send(companyData);
+  //     expect(response.statusCode).toBe(400);
+  //   });
+  // });
 });
 
 describe('Tests with an populated Database', () => {
