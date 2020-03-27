@@ -10,6 +10,8 @@ const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 const collection = 'companies';
 const bucket = 'deephire.data.public';
 
+const defaultPlan = 'basic-monthly-v1';
+
 const getStripeId = async companyId => {
   const companyData = await byId(companyId, collection);
   const { stripeCustomerId } = companyData;
@@ -42,7 +44,7 @@ const createStripeTrialCustomer = async (email, companyName) => {
   stripe.subscriptions.create(
     {
       customer: customer.id,
-      items: [{ plan: 'basic-monthly-v1' }],
+      items: [{ plan: defaultPlan }],
       trial_period_days: 7
     }).catch(err => l.error(err));
 
@@ -216,14 +218,21 @@ class CompaniesService {
     ).catch(err => l.error(err));
 
     const subscription = await getSubscriptionsFromStripe(stripeId);
-    const subscriptionId = subscription.data[0].id;
-    const updatedSubscription = stripe.subscriptions.update(
-      subscriptionId,
-      { default_payment_method: paymentMethodId }
-    ).catch(err => l.error(err));
 
+    if (subscription.data[0]) {
+      const subscriptionId = subscription.data[0].id;
+      const updatedSubscription = await stripe.subscriptions.update(
+        subscriptionId,
+        { default_payment_method: paymentMethodId }
+      ).catch(err => l.error(err));
+      return updatedSubscription;
+    }
 
-    return updatedSubscription;
+    return stripe.subscriptions.create(
+      {
+        customer: stripeId,
+        items: [{ plan: defaultPlan }],
+      }).catch(err => l.error(err));
   }
 }
 
