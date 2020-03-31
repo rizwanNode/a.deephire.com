@@ -166,7 +166,21 @@ definitions:
       userName:
         type: string
         example: Russell Ratcliffe
-
+  LiveBody:
+    type: object
+    title: live
+    properties:
+      candidateEmail:
+        type: string
+        example: pgate@gmail.com
+      candidateName:
+        type: string
+        example: Peter Gates
+      interviewTime:
+        type: array
+        items:
+          type: string
+        example: ["2020-03-30T14:00:00.533Z", "2020-03-30T15:00:00.374Z"]
   DocumentBody:
     type: object
     title: document
@@ -1499,3 +1513,84 @@ paths:
           description: returns profile info
         404:
           description: no profile exists
+
+  /live:
+    get:
+      tags:
+        - Live
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+      responses:
+        200:
+          description: all live interviews for that company
+        404:
+          description: no live interviews
+    post:
+      tags:
+        - Live
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Create a new interview
+          required: true
+          schema:
+            $ref: "#/definitions/LiveBody"
+      responses:
+        201:
+          description: Event Submitted
+        500:
+          description: Error!
+
+  /live/{liveInterviewId}:
+    get:
+      tags:
+        - Live
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: liveInterviewId
+          in: path
+          required: true
+          description: liveInterviewId to look up
+          type: string
+      responses:
+        200:
+          description: returns live interview info
+        404:
+          description: no live interview exists
+  /live/events:
+    post:
+      tags:
+        - Live
+      description: Handle Twilio Webhooks
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - in: formData
+          name: StatusCallbackEvent
+          type: string
+          description: The Twilio Callback Event
+        - in: formData
+          name: RoomSid
+          type: string
+          description: The Room Sid
+        - in: formData
+          name: CompositionSid
+          type: string
+          description: The Composition Sid
+
+      responses:
+        200:
+          description: Created file on S3
