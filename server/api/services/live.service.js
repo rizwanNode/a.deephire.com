@@ -8,13 +8,13 @@ import { byParam, byId, insert, putArrays, put } from './db.service';
 import { uploadS3Stream } from '../../common/aws';
 
 
-const API_KEY_SID = process.env.API_KEY_SID;
-const API_KEY_SECRET = process.env.API_KEY_SECRET;
-const ACCOUNT_SID = process.env.ACCOUNT_SID;
+const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
+const TWILIO_API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET;
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 
 const Twilio = require('twilio');
 
-const client = new Twilio(API_KEY_SID, API_KEY_SECRET, { accountSid: ACCOUNT_SID });
+const client = new Twilio(TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, { accountSid: TWILIO_ACCOUNT_SID });
 
 // const collection = 'live';
 const bucket = 'deephire.data.public';
