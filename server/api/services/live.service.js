@@ -32,7 +32,7 @@ const composeTwilioVideo = async (roomSid, roomName) => {
           video_sources: ['*']
         }
       },
-      statusCallback: 'https://recruiter.deephire.com/v1/live/events',
+      statusCallback: 'https://a.deephire.com/v1/live/events',
       format: 'mp4'
     }).catch(err => l.error(err));
   l.info(`Created Composition with SID=${composition.sid}`);
