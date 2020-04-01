@@ -64,16 +64,18 @@ const customEdit = archive => async (collection, doc, data) => {
   const addingTo = archive ? 'archivedResponses' : 'responses';
   if (!doc[deletingFrom]) return;
   const videoToArchive = doc[deletingFrom][index];
-  Array.isArray(doc[addingTo]);
+  if (videoToArchive) {
+    Array.isArray(doc[addingTo]);
 
-  if (Array.isArray(doc[addingTo])) {
-    doc[addingTo].push(videoToArchive);
-  } else {
+    if (Array.isArray(doc[addingTo])) {
+      doc[addingTo].push(videoToArchive);
+    } else {
     // eslint-disable-next-line no-param-reassign
-    doc[addingTo] = [videoToArchive];
+      doc[addingTo] = [videoToArchive];
+    }
+    doc[deletingFrom].splice(index, 1);
+    await collection.save(doc);
   }
-  doc[deletingFrom].splice(index, 1);
-  await collection.save(doc);
 };
 
 class VideoService {

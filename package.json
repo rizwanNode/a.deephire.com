@@ -32,7 +32,8 @@
     "node-fetch": "2.3.0",
     "pino": "^5.10.2",
     "stripe": "^7.15.0",
-    "swagger-express-middleware": "^2.0.0"
+    "swagger-express-middleware": "^2.0.0",
+    "twilio": "^3.41.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

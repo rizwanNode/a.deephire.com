@@ -10,8 +10,9 @@ class CandidatesService {
   async byParam(email) {
     l.info(`${this.constructor.name}.byParam(${email})`);
     const search = { email };
-    const [document] = await byParam(search, collection);
-    return document;
+    const document = await byParam(search, collection).catch(err => l.error(err));
+    const result = Array.isArray(document) ? document[0] : document;
+    return result;
   }
 
   put(email, data) {

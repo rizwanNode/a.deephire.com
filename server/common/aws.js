@@ -27,6 +27,14 @@ export const uploadS3 = async (bucket, key, fileUri, access = 'private') => {
   }).catch(err => l.error('putObject error', err));
 };
 
+
+export const uploadS3Stream = async (bucket, key, data, access = 'private') => new Promise((resolve, reject) => {
+  s3.putObject(
+    { ACL: access, Body: data, Bucket: bucket, Key: key },
+    (err, data) => (err ? reject(err) : resolve(data))
+  );
+}).catch(err => l.error('putObject error stream', err));
+
 export const downloadS3 = (bucket, key) => {
   const params = {
     Bucket: bucket,

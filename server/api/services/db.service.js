@@ -69,11 +69,9 @@ export const byId = async (id, col) => {
 
 export const update = (search, update, col, multi = true) => {
   const collection = db.collection(col);
-  return new Promise(resolve => {
-    collection.update(search, update, { multi }).then(allResultData => {
-      if (allResultData.result.nModified) resolve(200);
-      else resolve(404);
-    });
+  return collection.updateMany(search, update, { multi }).then(allResultData => {
+    if (allResultData.result.nModified) return 200;
+    return 404;
   });
 };
 
@@ -94,6 +92,23 @@ export const put = async (search, col, data, id = false, upsert = true) => {
         const { matchedCount } = result;
         if (!matchedCount && !upsert) resolve(404);
         if (!matchedCount && upsert) resolve(201);
+        else resolve(200);
+      } else resolve(400);
+    });
+  });
+};
+
+
+export const putArrays = async (search, col, data) => {
+  const collection = db.collection(col);
+
+
+  return new Promise(resolve => {
+    collection.updateOne(search, { $push: data }, (err, result) => {
+      if (err) throw err;
+      if (result) {
+        const { matchedCount } = result;
+        if (!matchedCount) resolve(404);
         else resolve(200);
       } else resolve(400);
     });
@@ -173,6 +188,7 @@ export const createUpdateVideo = async (search, data, col) => {
   const checkIfAnsweredBefore = await collection.findOne(search);
   if (checkIfAnsweredBefore && checkIfAnsweredBefore.responses) {
     newResponses = checkIfAnsweredBefore.responses.map(response => {
+      // eslint-disable-next-line eqeqeq
       if (response.question == responses.question) {
         flag = true;
         return responses;
