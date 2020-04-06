@@ -84,7 +84,7 @@ class LiveService {
     const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
     const randomDigits = Math.floor(Math.random() * 100000000);
     const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
-    const interviewLink = `https://video-app-1946-dev.twil.io?passcode=6945601946&room=${roomName}`;
+    const interviewLink = `https://video-app-1946-dev.twil.io?passcode=8920451946&room=${roomName}`;
     const data = { ...body, createdBy, companyId: new ObjectID(companyId), roomName, interviewLink };
     return insert(data, collection);
   }
