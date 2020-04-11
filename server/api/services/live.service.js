@@ -56,8 +56,10 @@ const handleS3Upload = compositionSid => {
       // For example, download the media to a local file
       // const file = fs.createWriteStream('myFile.mp4');
       const resource = await fetch(mediaLocation);
+      const stream = resource.body;
       // const buffer = await resource.buffer();
-      uploadS3Stream(bucket, key, resource.data, 'public-read');
+      const uploaded = await uploadS3Stream(bucket, key, stream, 'public-read');
+      l.info(uploaded);
     })
     .catch(error => {
       l.error(`Error fetching /Media resource ${error}`);
