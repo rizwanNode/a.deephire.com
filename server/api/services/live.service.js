@@ -6,6 +6,7 @@ import { ObjectID } from 'mongodb';
 import l from '../../common/logger';
 import { byParam, byId, insert, putArrays, put } from './db.service';
 import { uploadS3Stream } from '../../common/aws';
+import sendCalendarInvites from '../../common/google';
 
 
 const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
@@ -83,11 +84,16 @@ class LiveService {
     l.info(`${this.constructor.name}.byParam(${companyId}, ${createdBy}, ${JSON.stringify(body)})`);
     const companyData = await byId(companyId, 'companies');
     const { companyName } = companyData;
+
+
+    const { interviewTime, candidateEmail } = body;
+    const attendees = [{ email: candidateEmail }, { email: createdBy }];
     const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
     const randomDigits = Math.floor(Math.random() * 100000000);
     const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
     const interviewLink = `https://live.deephire.com/room/${roomName}`;
     const data = { ...body, createdBy, companyId: new ObjectID(companyId), roomName, interviewLink };
+    await sendCalendarInvites(interviewLink, companyName, attendees, interviewTime);
     return insert(data, collection);
   }
 
