@@ -1,18 +1,10 @@
-import l from './logger';
+import google from 'googleapis';
 
-const { google } = require('googleapis');
+import l from './logger';
 
 const clientEmail = process.env.GC_CLIENT_EMAIL;
 let privateKey = process.env.GC_PRIVATE_KEY;
 privateKey = privateKey.split('\\n').join('\n');
-
-
-// const companyName = 'Assisting Hands';
-// const attendees = [{ email: 'rratcliffe57@gmail.com' }];
-// const interviewLink = 'https://live.deephire.com/room/russell';
-// const startTime = '2020-04-25T19:35:26.575Z';
-// const endTime = '2020-04-25T20:35:26.575Z';
-
 
 const sendCalendarInvites = async (interviewLink, companyName, attendees, interviewTime) => {
   const [startTime, endTime] = interviewTime;
@@ -49,6 +41,5 @@ Join your video interview at ${interviewLink}`
   }).catch(e => l.err(e));
   l.info('Send Calendar Invites Status:', scheduledEvent.status);
 };
-
 
 export default sendCalendarInvites;
