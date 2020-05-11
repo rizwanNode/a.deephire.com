@@ -1,4 +1,3 @@
-// import { ObjectId } from 'mongodb';
 import fetch from 'node-fetch';
 import { ObjectID } from 'mongodb';
 
@@ -80,19 +79,21 @@ class LiveService {
     return documents;
   }
 
-  async insert(companyId, createdBy, body) {
-    l.info(`${this.constructor.name}.byParam(${companyId}, ${createdBy}, ${JSON.stringify(body)})`);
+  async insert(companyId, createdBy, userProfile, body) {
+    l.info(`${this.constructor.name}.byParam(${companyId}, ${createdBy}, ${userProfile}, ${JSON.stringify(body)})`);
+    const { name } = userProfile;
     const companyData = await byId(companyId, 'companies');
     const { companyName } = companyData;
 
 
     const { interviewTime, candidateEmail } = body;
     const attendees = [{ email: candidateEmail }, { email: createdBy }];
-    const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
-    const randomDigits = Math.floor(Math.random() * 100000000);
-    const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
-    const interviewLink = `https://live.deephire.com/room/${roomName}`;
-    const data = { ...body, createdBy, companyId: new ObjectID(companyId), roomName, interviewLink };
+    // const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
+    // const randomDigits = Math.floor(Math.random() * 100000000);
+    // const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
+    const liveId = new ObjectID();
+    const interviewLink = `https://live.deephire.com/room/${liveId}`;
+    const data = { ...body, createdBy, companyId: new ObjectID(companyId), roomName: liveId, interviewLink, companyName, recruiterName: name };
     await sendCalendarInvites(interviewLink, companyName, attendees, interviewTime);
     return insert(data, collection);
   }

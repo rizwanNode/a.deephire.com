@@ -9,7 +9,7 @@ const bucket = 'deephire.data';
 class CandidatesService {
   async byParam(email) {
     l.info(`${this.constructor.name}.byParam(${email})`);
-    const search = { email };
+    const search = { email: email.toLowerCase() };
     const document = await byParam(search, collection).catch(err => l.error(err));
     const result = Array.isArray(document) ? document[0] : document;
     return result;
@@ -17,14 +17,14 @@ class CandidatesService {
 
   put(email, data) {
     l.info(`${this.constructor.name}.put(${email},${JSON.stringify(data)})`);
-    const search = { email };
+    const search = { email: email.toLowerCase() };
     /* eslint-disable no-param-reassign */
     data.email = email;
     return put(search, collection, data);
   }
 
   async getDocuments(email, id) {
-    const search = { email };
+    const search = { email: email.toLowerCase() };
     const [document] = await byParam(search, collection);
     if (!document) return null;
 
@@ -37,7 +37,7 @@ class CandidatesService {
   }
 
   async deleteDocuments(email, uid) {
-    const search = { email };
+    const search = { email: email.toLowerCase() };
     if (!ObjectId.isValid(uid)) {
       return Promise.resolve(400);
     }
@@ -51,7 +51,7 @@ class CandidatesService {
     const { upfile } = files;
     const { path, originalname: originalName } = upfile;
     const key = `candidates/${email}/${originalName}`;
-    const search = { email };
+    const search = { email: email.toLowerCase() };
     const data = (await byParam(search, collection).then(r => r[0])) || {};
 
     const fileData = {

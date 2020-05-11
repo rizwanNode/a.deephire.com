@@ -19,7 +19,7 @@ export class Controller {
   }
 
   createLiveInterviews(req, res) {
-    LiveService.insert(res.locals.companyId, res.locals.email, req.body).then(r => {
+    LiveService.insert(res.locals.companyId, res.locals.email, res.locals.userProfile, req.body).then(r => {
       res.header('Access-Control-Expose-Headers', 'Location');
       return res
         .json(r)
