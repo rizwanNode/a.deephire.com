@@ -1555,11 +1555,11 @@ paths:
       tags:
         - Live
       parameters:
-        - name: authorization
-          in: header
-          description: Bearer <auth_token>
-          required: true
-          type: string
+        # - name: authorization
+        #   in: header
+        #   description: Bearer <auth_token>
+        #   required: true
+        #   type: string
         - name: liveInterviewId
           in: path
           required: true

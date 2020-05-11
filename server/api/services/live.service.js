@@ -91,9 +91,9 @@ class LiveService {
     // const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
     // const randomDigits = Math.floor(Math.random() * 100000000);
     // const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
-    const liveId = new ObjectID();
-    const interviewLink = `https://live.deephire.com/room/${liveId}`;
-    const data = { ...body, createdBy, companyId: new ObjectID(companyId), roomName: liveId, interviewLink, companyName, recruiterName: name };
+    const _id = new ObjectID();
+    const interviewLink = `https://live.deephire.com/room/${_id}`;
+    const data = { ...body, _id, createdBy, companyId: new ObjectID(companyId), roomName: _id, interviewLink, companyName, recruiterName: name };
     await sendCalendarInvites(interviewLink, companyName, attendees, interviewTime);
     return insert(data, collection);
   }
