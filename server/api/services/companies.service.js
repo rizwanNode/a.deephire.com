@@ -158,9 +158,9 @@ class CompaniesService {
     l.info(`${this.constructor.name}.resendInvite(${companyId}, ${inviteId})`);
     const invite = await this.getInviteById(inviteId);
     if (invite === 400 || invite === 404) return invite;
-    const { invitedEmail, role } = invite;
+    const { invitedEmail, role, team } = invite;
     deleteObject(inviteId, 'companies_invites', { companyId: new ObjectID(companyId) });
-    return this.sendInvites(companyId, userProfile, { invitedEmail, role });
+    return this.sendInvites(companyId, userProfile, { invitedEmail, role, team });
   }
 
 
