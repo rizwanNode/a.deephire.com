@@ -11,7 +11,7 @@ const sendCalendarInvites = async (interviewLink, companyName, attendees, interv
   const auth = new google.auth.JWT(clientEmail, null, privateKey, ['https://www.googleapis.com/auth/calendar'], 'interviews@deephire.com');
   const calendar = google.calendar({ version: 'v3', auth });
   const event = {
-    summary: `${companyName} Interview, ${candidateName} ${jobName ? `, ${jobName}` : ''} `,
+    summary: `${companyName} Interview, ${candidateName}${jobName ? `, ${jobName}` : ''} `,
     start: {
       dateTime: startTime
     },
