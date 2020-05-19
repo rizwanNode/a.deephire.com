@@ -6,12 +6,12 @@ const clientEmail = process.env.GC_CLIENT_EMAIL;
 let privateKey = process.env.GC_PRIVATE_KEY;
 privateKey = privateKey.split('\\n').join('\n');
 
-const sendCalendarInvites = async (interviewLink, companyName, attendees, interviewTime) => {
+const sendCalendarInvites = async (interviewLink, companyName, attendees, interviewTime, candidateName, jobName) => {
   const [startTime, endTime] = interviewTime;
   const auth = new google.auth.JWT(clientEmail, null, privateKey, ['https://www.googleapis.com/auth/calendar'], 'interviews@deephire.com');
   const calendar = google.calendar({ version: 'v3', auth });
   const event = {
-    summary: `${companyName} Interview`,
+    summary: `${companyName} Interview, ${candidateName} ${jobName ? `, ${jobName}` : ''} `,
     start: {
       dateTime: startTime
     },
