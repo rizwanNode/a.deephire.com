@@ -38,7 +38,7 @@ const composeTwilioVideo = async (roomSid, roomName) => {
   l.info(`Created Composition with SID=${composition.sid}`);
   const key = `live/${composition.sid}.mp4`;
   const data = { roomSid, compositionSid: composition.sid, recordingUrl: `https://s3.amazonaws.com/deephire.data.public/${key}` };
-  putArrays({ roomName }, collection, data);
+  putArrays({ _id: new ObjectID(roomName) }, collection, data);
 };
 
 
