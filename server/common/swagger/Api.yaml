@@ -347,6 +347,14 @@ definitions:
         - logins_count
         - app_metadata
 
+  BrowserInfo:
+    type: object
+    title: browserDetails
+
+    properties:
+      deviceInfo:
+        type: object
+
   CandidateInvitesBody:
     type: object
     title: The Root Schema
@@ -1568,6 +1576,26 @@ paths:
       responses:
         200:
           description: returns live interview info
+        404:
+          description: no live interview exists
+    put:
+      tags:
+        - Live
+      parameters:
+        - name: liveInterviewId
+          in: path
+          required: true
+          description: liveInterviewId to look up
+          type: string
+        - in: body
+          name: body
+          description: example body
+          required: true
+          schema:
+            $ref: "#/definitions/BrowserInfo"
+      responses:
+        200:
+          description: updated live interview
         404:
           description: no live interview exists
   /live/events:

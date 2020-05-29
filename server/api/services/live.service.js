@@ -3,7 +3,7 @@ import { ObjectID } from 'mongodb';
 
 
 import l from '../../common/logger';
-import { byParam, byId, insert, putArrays, put } from './db.service';
+import { byParam, byId, insert, putArrays, putArray, put } from './db.service';
 import { uploadS3Stream } from '../../common/aws';
 import sendCalendarInvites from '../../common/google';
 
@@ -120,8 +120,12 @@ class LiveService {
       put({ compositionSid: CompositionSid }, collection, { recordingStatus: StatusCallbackEvent }, false, false);
     }
 
-
     return 200;
+  }
+
+  put(id, data) {
+    l.info(`${this.constructor.name}.update(${id}, ${JSON.stringify(data)})`);
+    return putArray(id, 'live', data, true, false);
   }
 }
 

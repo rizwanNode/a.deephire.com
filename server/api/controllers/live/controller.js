@@ -36,6 +36,10 @@ export class Controller {
       else res.status(500).end();
     });
   }
+  putData(req, res) {
+    LiveService.put(req.params.liveInterviewId, req.body).then(r => res.status(r).end());
+  }
 }
+
 
 export default new Controller();
