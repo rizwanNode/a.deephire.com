@@ -99,6 +99,27 @@ export const put = async (search, col, data, id = false, upsert = true) => {
 };
 
 
+export const putArray = async (id, col, data) => {
+  const collection = db.collection(col);
+
+  if (!ObjectId.isValid(id)) {
+    return Promise.resolve(400);
+  }
+  const search = { _id: new ObjectId(id) };
+
+  return new Promise(resolve => {
+    collection.updateOne(search, { $push: data }, (err, result) => {
+      if (err) throw err;
+      if (result) {
+        const { matchedCount } = result;
+        if (!matchedCount) resolve(404);
+        else resolve(200);
+      } else resolve(400);
+    });
+  });
+};
+
+
 export const putArrays = async (search, col, data) => {
   const collection = db.collection(col);
 
