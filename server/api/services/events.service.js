@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
-import { ObjectId, ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
-import { insert, byParam } from './db.service';
+import { insert, byParam, newByParam } from './db.service';
 
 import clockworkIntegration from '../../common/clockwork';
 import frontlineIntegration from '../../common/bullhorn';
@@ -33,7 +33,7 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
     const { candidateEmail } = data;
     const { _id } = data?.completeInterviewData?.interviewData || {};
-    const search = { event: 'started', candidateEmail: candidateEmail.toLowerCase(), 'completeInterviewData.interviewData._id': new ObjectID(_id) };
+    const search = { event: 'started', candidateEmail: candidateEmail.toLowerCase(), 'completeInterviewData.interviewData._id': new ObjectId(_id) };
     await insert({ event: 'started', ...dataWithObjectIds }, 'events');
     const events = await byParam(search, 'events');
     if (events && events.length === 1) {
@@ -73,6 +73,26 @@ class EventsService {
     insert({ event: 'invited', ...data }, 'events');
     frontlineIntegration(data, 'invited');
   }
+
+  async getEvents(companyId) {
+    l.info(`${this.constructor.name}.clicked(${companyId})`);
+    const search = { 'completeInterviewData.companyData._id': new ObjectId(companyId) };
+    const events = await newByParam(search, 'events');
+    const resp = { events };
+    return resp;
+  }
+
+  async getEventsById(companyId, interviewID) {
+    if (!ObjectId.isValid(interviewID)) {
+      return 400;
+    }
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewID})`);
+    const search = { 'completeInterviewData.companyData._id': new ObjectId(companyId), 'completeInterviewData.interviewData._id': new ObjectId(interviewID) };
+    const events = await newByParam(search, 'events');
+    const resp = { events };
+    return resp;
+  }
 }
 
 export default new EventsService();
+

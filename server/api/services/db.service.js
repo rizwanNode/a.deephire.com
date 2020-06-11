@@ -304,3 +304,19 @@ export const duplicate = async (search, col) => {
   if (insert.insertedCount > 0) return 200;
   return 500;
 };
+
+
+// When this API was first created, there was a lot of errors in the overall structure.
+// The methods above this comment may not be following best practices.
+// The methods below will attempt to improve upon proper status codes, simplicity, and error handling.
+
+export const newByParam = async (search, col) => {
+  const collection = db.collection(col);
+  const curser = await collection.find(search);
+  const results = await curser.toArray().catch(err => {
+    l.error(err);
+    return err;
+  });
+  return results;
+};
+
