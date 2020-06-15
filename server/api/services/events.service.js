@@ -76,18 +76,29 @@ class EventsService {
 
   async getEvents(companyId) {
     l.info(`${this.constructor.name}.clicked(${companyId})`);
-    const search = { 'completeInterviewData.companyData._id': new ObjectId(companyId) };
+
+    const companyIdMongo = new ObjectId(companyId);
+
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
     const events = await newByParam(search, 'events');
     const resp = { events };
     return resp;
   }
 
-  async getEventsById(companyId, interviewID) {
-    if (!ObjectId.isValid(interviewID)) {
+  async getEventsById(companyId, interviewId) {
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
+
+    if (!ObjectId.isValid(interviewId)) {
       return 400;
     }
-    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewID})`);
-    const search = { 'completeInterviewData.companyData._id': new ObjectId(companyId), 'completeInterviewData.interviewData._id': new ObjectId(interviewID) };
+
+    const companyIdMongo = new ObjectId(companyId);
+    const interviewIdMongo = new ObjectId(interviewId);
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
     const events = await newByParam(search, 'events');
     const resp = { events };
     return resp;
