@@ -1524,7 +1524,22 @@ paths:
           description: Event Submitted
         500:
           description: Error!
-
+  /events/clicked:
+    post:
+      tags:
+        - Events
+      parameters:
+        - in: body
+          name: body
+          description: Interview Clicked Event
+          required: true
+          schema:
+            $ref: "#/definitions/EventBody"
+      responses:
+        201:
+          description: Event Submitted
+        500:
+          description: Error!
   /events/victory:
     post:
       tags:
