@@ -62,7 +62,7 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
 
     insert({ event: 'clicked', ...dataWithObjectIds }, 'events');
-    frontlineIntegration(data, 'clicked');
+    return frontlineIntegration(data, 'clicked');
   }
 
 
@@ -71,7 +71,7 @@ class EventsService {
     // eslint-disable-next-line no-param-reassign
     delete data._id;
     insert({ event: 'invited', ...data }, 'events');
-    frontlineIntegration(data, 'invited');
+    return frontlineIntegration(data, 'invited');
   }
 
   async getEvents(companyId) {
