@@ -71,7 +71,7 @@ class EventsService {
     // eslint-disable-next-line no-param-reassign
     delete data._id;
     insert({ event: 'invited', ...data }, 'events');
-    frontlineIntegration(data, 'invited');
+    return frontlineIntegration(data, 'invited');
   }
 
   async getEvents(companyId) {
