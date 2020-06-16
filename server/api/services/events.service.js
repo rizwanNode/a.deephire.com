@@ -62,7 +62,7 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
 
     insert({ event: 'clicked', ...dataWithObjectIds }, 'events');
-    frontlineIntegration(data, 'clicked');
+    return frontlineIntegration(data, 'clicked');
   }
 
 
