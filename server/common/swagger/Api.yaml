@@ -1669,6 +1669,14 @@ paths:
           name: CompositionSid
           type: string
           description: The Composition Sid
+        - in: formData
+          name: RoomName
+          type: string
+          description: The Room Name
+        - in: formData
+          name: ParticipantDuration
+          type: string
+          description: The ParticipantDuration
 
       responses:
         200:

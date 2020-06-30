@@ -1,11 +1,11 @@
 import fetch from 'node-fetch';
 import { ObjectID } from 'mongodb';
 
-
 import l from '../../common/logger';
 import { byParam, byId, insert, putArrays, putArray, put } from './db.service';
 import { uploadS3Stream } from '../../common/aws';
 import sendCalendarInvites from '../../common/google';
+import { stripeAddMinutes } from './stripe.service';
 
 
 const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
@@ -101,13 +101,20 @@ class LiveService {
 
   async handleTwilio(body) {
     l.info(`${this.constructor.name}.handleTwilio(${JSON.stringify(body)})`);
-    const { StatusCallbackEvent, RoomSid, CompositionSid, RoomName } = body;
+    const { StatusCallbackEvent, RoomSid, CompositionSid, RoomName, ParticipantDuration } = body;
     if (StatusCallbackEvent === 'room-ended') {
       await composeTwilioVideo(RoomSid, RoomName);
     }
 
     // if (StatusCallbackEvent === 'composition-started') {
     // }
+
+
+    if (StatusCallbackEvent === 'participant-disconnected') {
+      const { companyId } = await this.byId(RoomName);
+      return stripeAddMinutes(companyId, ParticipantDuration);
+    }
+
 
     if (StatusCallbackEvent === 'composition-progress') {
       // const { PercentageDone, SecondsRemaining } = body;
