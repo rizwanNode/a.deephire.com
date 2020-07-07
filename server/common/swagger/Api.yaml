@@ -24,7 +24,7 @@ definitions:
         type: string
         example: What do you think makes you a good fit for this role?
       time:
-        type: integer
+        type: number
         example: 8
   EmailBody:
     type: object
