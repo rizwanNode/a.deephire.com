@@ -20,7 +20,6 @@ definitions:
     properties:
       _id:
         type: string
-        example: 5eeb7e081c44e624af48ee26
       comment:
         type: string
         example: What do you think makes you a good fit for this role?
@@ -468,7 +467,7 @@ paths:
           description: The object id of the shortlist to fetch
           type: string
       responses:
-        204:
+        200:
           description: The shortlist with the specified ID was successfully fetched
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -631,7 +630,7 @@ paths:
           description: The id of the users interview document (_id)
           type: string
       responses:
-        204:
+        200:
           description: The candidate video interview with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -767,7 +766,7 @@ paths:
           description: The question id
           type: string
       responses:
-        204:
+        200:
           description: The candidate video question with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -888,7 +887,7 @@ paths:
           description: The object id of the interview to delete
           type: string
       responses:
-        204:
+        200:
           description: The interview with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -1302,7 +1301,7 @@ paths:
           description: teamMemberId of the team member to delete
           type: string
       responses:
-        204:
+        200:
           description: The team member with the specified ID was successfully deleted
         400:
           description: Malformed ID, this should be an auth0 user_id
@@ -1403,7 +1402,7 @@ paths:
           description: id of the invite to delete
           type: string
       responses:
-        204:
+        200:
           description: The invite with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -1716,7 +1715,7 @@ paths:
         400:
           description: invalid request (invalid objectId?)
 
-  /live/{liveId}/comments/commentId:
+  /live/{liveId}/comments/{commentId}:
     delete:
       tags:
         - Live
@@ -1732,6 +1731,7 @@ paths:
           description: _id for the live interview
           type: string
         - name: commentId
+          type: string
           in: path
           required: true
           description: _id of the comment to delete
