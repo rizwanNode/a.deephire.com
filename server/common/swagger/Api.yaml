@@ -11,15 +11,21 @@ produces:
   - application/json
 
 definitions:
-  ExampleBody:
+  Comment:
     type: object
-    title: example
+    title: Comment
     required:
-      - name
+      - comment
+      - time
     properties:
-      name:
+      _id:
         type: string
-        example: no_stress
+      comment:
+        type: string
+        example: What do you think makes you a good fit for this role?
+      time:
+        type: integer
+        example: 8
   EmailBody:
     type: object
     title: email
@@ -46,7 +52,7 @@ definitions:
 
   InviteBody:
     type: object
-    title: email
+    title: Invite
     required:
       - invitedEmail
       - role
@@ -461,7 +467,7 @@ paths:
           description: The object id of the shortlist to fetch
           type: string
       responses:
-        204:
+        200:
           description: The shortlist with the specified ID was successfully fetched
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -624,7 +630,7 @@ paths:
           description: The id of the users interview document (_id)
           type: string
       responses:
-        204:
+        200:
           description: The candidate video interview with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -760,7 +766,7 @@ paths:
           description: The question id
           type: string
       responses:
-        204:
+        200:
           description: The candidate video question with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -881,7 +887,7 @@ paths:
           description: The object id of the interview to delete
           type: string
       responses:
-        204:
+        200:
           description: The interview with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -1295,7 +1301,7 @@ paths:
           description: teamMemberId of the team member to delete
           type: string
       responses:
-        204:
+        200:
           description: The team member with the specified ID was successfully deleted
         400:
           description: Malformed ID, this should be an auth0 user_id
@@ -1396,7 +1402,7 @@ paths:
           description: id of the invite to delete
           type: string
       responses:
-        204:
+        200:
           description: The invite with the specified ID was successfully deleted
         400:
           description: Malformed ID, the ID has to be a 12 character string
@@ -1609,7 +1615,7 @@ paths:
         500:
           description: Error!
 
-  /live/{liveInterviewId}:
+  /live/{liveId}:
     get:
       tags:
         - Live
@@ -1619,10 +1625,10 @@ paths:
         #   description: Bearer <auth_token>
         #   required: true
         #   type: string
-        - name: liveInterviewId
+        - name: liveId
           in: path
           required: true
-          description: liveInterviewId to look up
+          description: liveId to look up
           type: string
       responses:
         200:
@@ -1633,10 +1639,10 @@ paths:
       tags:
         - Live
       parameters:
-        - name: liveInterviewId
+        - name: liveId
           in: path
           required: true
-          description: liveInterviewId to look up
+          description: liveId to look up
           type: string
         - in: body
           name: body
@@ -1681,3 +1687,56 @@ paths:
       responses:
         200:
           description: Created file on S3
+
+  /live/{liveId}/comments:
+    post:
+      tags:
+        - Live
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: liveId
+          in: path
+          required: true
+          description: _id for the live interview
+          type: string
+        - name: comment
+          in: body
+          description: A new comment on a live video
+          required: true
+          schema:
+            $ref: "#/definitions/Comment"
+      responses:
+        201:
+          description: Comment Added
+        400:
+          description: invalid request (invalid objectId?)
+
+  /live/{liveId}/comments/{commentId}:
+    delete:
+      tags:
+        - Live
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
+        - name: liveId
+          in: path
+          required: true
+          description: _id for the live interview
+          type: string
+        - name: commentId
+          type: string
+          in: path
+          required: true
+          description: _id of the comment to delete
+      responses:
+        200:
+          description: Comment Deleted
+        404:
+          description: Comment not found

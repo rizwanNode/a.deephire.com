@@ -5,8 +5,10 @@ import auth from '../../../common/auth';
 export default express
   .Router()
   .post('/events', controller.handleTwilioEvents)
-  .get('/:liveInterviewId', controller.byId)
-  .put('/:liveInterviewId', controller.putData)
+  .delete('/:liveId/comments/:commentId', auth, controller.deleteComment)
+  .post('/:liveId/comments', auth, controller.addComment)
+  .get('/:liveId', controller.byId)
+  .put('/:liveId', controller.putData)
   .get('/', auth, controller.byParam)
   .post('/', auth, controller.createLiveInterviews);
 
