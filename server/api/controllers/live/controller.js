@@ -11,7 +11,7 @@ export class Controller {
   }
 
   byId(req, res) {
-    LiveService.byId(req.params.liveInterviewId).then(r => {
+    LiveService.byId(req.params.liveId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) res.json(r);
       else res.status(500).end();
@@ -37,7 +37,7 @@ export class Controller {
     });
   }
   putData(req, res) {
-    LiveService.put(req.params.liveInterviewId, req.body).then(r => res.status(r).end());
+    LiveService.put(req.params.liveId, req.body).then(r => res.status(r).end());
   }
 }
 
