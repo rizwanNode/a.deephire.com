@@ -600,6 +600,21 @@ paths:
           description: "successful operation"
         400:
           description: "Invalid email value"
+  /videos/proxy/{id}:
+    get:
+      tags:
+        - Videos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the example to retrieve
+          type: string
+      responses:
+        200:
+          description: URL for the proxied video
+        404:
+          description: Example not found
   /videos/{id}:
     get:
       tags:
