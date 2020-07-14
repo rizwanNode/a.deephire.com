@@ -147,6 +147,11 @@ class VideoService {
     return archiveValidator(data, true, 'videos');
   }
 
+  async proxy(id) {
+    l.info(`${this.constructor.name}.proxy(${id})`);
+    const result = await fetch(`https://www.cameratag.com/assets/${id}/response.mp4`);
+    return result.url;
+  }
   unarchive(data) {
     l.info(`${this.constructor.name}.unarchive(${data})`);
     return archiveValidator(data, false, 'videos');
