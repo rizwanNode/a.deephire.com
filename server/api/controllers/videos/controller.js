@@ -19,10 +19,8 @@ export class Controller {
 
   proxy(req, res) {
     VideoService.proxy(req.params.id).then(r => {
-      if (r === 400 || r === 404) res.status(r).end();
-      else if (r) res.json(r);
-      else res.status(500).end();
-    });
+      r.body.pipe(res)
+    })
   }
 
   archives(req, res) {
