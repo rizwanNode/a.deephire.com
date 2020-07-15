@@ -1,5 +1,4 @@
 import VideoService from '../../services/videos.service';
-
 export class Controller {
   all(req, res) {
     VideoService.all(res.locals.companyId).then(r => {
@@ -18,8 +17,13 @@ export class Controller {
   }
 
   proxy(req, res) {
+    console.log("wow")
+
     VideoService.proxy(req.params.id).then(r => {
-      r.body.pipe(res)
+      const headers = r.headers.raw()
+      const newHeaders = {}
+      Object.keys(headers).forEach(headerKey => {(newHeaders[headerKey] = headers[headerKey][0] )})
+      r.body.pipe(res).set(newHeaders)
     })
   }
 
