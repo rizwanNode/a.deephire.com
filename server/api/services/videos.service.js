@@ -150,7 +150,7 @@ class VideoService {
   async proxy(id) {
     l.info(`${this.constructor.name}.proxy(${id})`);
     const result = await fetch(`https://www.cameratag.com/assets/${id}/response.mp4`);
-    return result.url;
+    return result;
   }
   unarchive(data) {
     l.info(`${this.constructor.name}.unarchive(${data})`);
