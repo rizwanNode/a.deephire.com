@@ -142,6 +142,11 @@ class LiveService {
       return stripeAddMinutes(companyId, ParticipantDuration);
     }
 
+    if (StatusCallbackEvent === 'composition-enqueued') {
+      // returns this just because its what the frontend expects.
+      // it should be changed to return a recording status of composition-enqued
+      put({ compositionSid: CompositionSid }, collection, { recordingStatus: 'composition-progress' }, false, false);
+    }
 
     if (StatusCallbackEvent === 'composition-progress') {
       // const { PercentageDone, SecondsRemaining } = body;
