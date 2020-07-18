@@ -26,5 +26,5 @@ export default function routes(app) {
   app.use('/v1/events', eventsRouter);
   app.use('/v1/profiles', profilesRouter);
   app.use('/v1/live', liveRouter);
-  app.get('/outreach', (req, res) => res.redirect(`https://sdr-dashboard-beta.vercel.app/form/basic-form?code=${req.query.code}`));
+  app.get('/outreach', (req, res) => res.redirect(`https://sdr.deephire.com/?code=${req.query.code}`));
 }
