@@ -28,7 +28,7 @@ export default function (app, routes) {
       },
       // Don't allow JSON content over 100kb (default is 1mb)
       json: {
-        limit: process.env.REQUEST_LIMIT,
+        limit: '1mb',
       },
     }));
 
