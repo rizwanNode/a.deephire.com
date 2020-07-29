@@ -53,3 +53,13 @@ export const duplicate = (req, res) => {
 export const invite = (req, res) => {
   InterviewsService.invite(req.body, req.params.id, res.locals.email, res.locals.companyId).then(r => res.status(r).end());
 };
+
+export const feedback = (req, res) => {
+  InterviewsService.feedback(req.body).then(r => {
+    res.header('Access-Control-Expose-Headers', 'Location')
+      .status(201)
+      .location(`/v1/interviews/coming-soon/feedback/${r._id}`)
+      .end();
+  });
+};
+

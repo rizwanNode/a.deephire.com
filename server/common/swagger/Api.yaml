@@ -26,6 +26,11 @@ definitions:
       time:
         type: number
         example: 8
+
+  Feedback:
+    type: object
+    title: Feedback
+
   EmailBody:
     type: object
     title: email
@@ -935,6 +940,27 @@ paths:
       responses:
         200:
           description: Invite Successful
+
+  /interviews/{id}/feedback:
+    post:
+      tags:
+        - Interviews
+      description: Feedback for Interview
+      parameters:
+        - name: id
+          in: path
+          description: interview ID
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: body
+          required: true
+          schema:
+            $ref: "#/definitions/Feedback"
+      responses:
+        200:
+          description: Feedback Successful
 
   /interviews/archives:
     get:
