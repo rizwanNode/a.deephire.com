@@ -35,6 +35,12 @@ class InterviewsService {
     return insert(shortList, 'interviews');
   }
 
+
+  async feedback(data) {
+    l.info(`${this.constructor.name}.insert(${JSON.stringify(data)})`);
+    return insert(data, 'feedback');
+  }
+
   byParam(id) {
     l.info(`${this.constructor.name}.byParam(${id})`);
     return byParam(id, 'interviews', true);
