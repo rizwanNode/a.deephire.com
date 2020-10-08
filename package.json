@@ -21,7 +21,7 @@
     "btoa": "^1.2.1",
     "cookie-parser": "^1.4.3",
     "dotenv": "^6.0.0",
-    "express": "^4.16.4",
+    "express": "4.17.1",
     "express-jwt": "^5.3.1",
     "express-jwt-authz": "^1.0.0",
     "googleapis": "^49.0.0",

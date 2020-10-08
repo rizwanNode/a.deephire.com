@@ -1,5 +1,4 @@
 import VideoService from '../../services/videos.service';
-
 export class Controller {
   all(req, res) {
     VideoService.all(res.locals.companyId).then(r => {
@@ -17,6 +16,17 @@ export class Controller {
     });
   }
 
+  proxy(req, res) {
+    console.log("wow")
+
+    VideoService.proxy(req.params.id).then(r => {
+      const headers = r.headers.raw()
+      const newHeaders = {}
+      Object.keys(headers).forEach(headerKey => {(newHeaders[headerKey] = headers[headerKey][0] )})
+      r.body.pipe(res).set(newHeaders)
+    })
+  }
+
   archives(req, res) {
     VideoService.archives(res.locals.companyId).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
@@ -28,8 +38,7 @@ export class Controller {
   insert(req, res) {
     // add auth for this endpoint, requires sending login from app
     VideoService.insert(req.body).then(id => {
-      res.header('Access-Control-Expose-Headers', 'Location');
-      return res
+      res.header('Access-Control-Expose-Headers', 'Location')
         .status(201)
         .location(`/v1/videos/${id}`)
         .end();

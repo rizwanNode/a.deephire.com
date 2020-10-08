@@ -1,11 +1,11 @@
 import fetch from 'node-fetch';
-import { ObjectID } from 'mongodb';
-
+import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
-import { byParam, byId, insert, putArrays, putArray, put } from './db.service';
+import { byParam, byId, insert, putArrays, deleteSubDocument, put } from './db.service';
 import { uploadS3Stream } from '../../common/aws';
 import sendCalendarInvites from '../../common/google';
+import { stripeAddMinutes } from './stripe.service';
 
 
 const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
@@ -38,7 +38,7 @@ const composeTwilioVideo = async (roomSid, roomName) => {
   l.info(`Created Composition with SID=${composition.sid}`);
   const key = `live/${composition.sid}.mp4`;
   const data = { roomSid, compositionSid: composition.sid, recordingUrl: `https://s3.amazonaws.com/deephire.data.public/${key}` };
-  putArrays({ _id: new ObjectID(roomName) }, collection, data);
+  putArrays({ _id: roomName }, collection, data);
 };
 
 
@@ -74,13 +74,40 @@ class LiveService {
   }
   async byParam(companyId) {
     l.info(`${this.constructor.name}.byParam(${companyId})`);
-    const search = { companyId: new ObjectID(companyId) };
+    const search = { companyId: new ObjectId(companyId) };
     const documents = await byParam(search, collection);
     return documents;
   }
 
+
+  async addComment(liveId, body) {
+    l.info(`${this.constructor.name}.addComment(${liveId}),${JSON.stringify(body)})`);
+
+    const commentId = ObjectId.isValid(body._id) ? new ObjectId(body._id) : new ObjectId();
+    const data = { comments: { ...body, _id: commentId } };
+    const addedComment = await putArrays({ _id: liveId }, collection, data);
+    if (addedComment === 200) {
+      return { _id: liveId, commentId };
+    }
+    return addedComment;
+  }
+
+  async deleteComment(liveId, commentId) {
+    l.info(`${this.constructor.name}.delete(${liveId}, ${commentId})`);
+
+    if (!ObjectId.isValid(commentId)) {
+      return Promise.resolve(400);
+    }
+
+    const search = { _id: liveId };
+    l.info(search);
+
+    const match = { comments: { _id: new ObjectId(commentId) } };
+    return deleteSubDocument(search, match, collection);
+  }
+
   async insert(companyId, createdBy, userProfile, body) {
-    l.info(`${this.constructor.name}.byParam(${companyId}, ${createdBy}, ${userProfile}, ${JSON.stringify(body)})`);
+    l.info(`${this.constructor.name}.insert(${companyId}, ${createdBy}, ${JSON.stringify(userProfile)}, ${JSON.stringify(body)})`);
     const { name } = userProfile;
     const companyData = await byId(companyId, 'companies');
     const { companyName } = companyData;
@@ -92,22 +119,34 @@ class LiveService {
     // const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
     // const randomDigits = Math.floor(Math.random() * 100000000);
     // const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
-    const _id = new ObjectID();
+    const _id = new ObjectId();
     const interviewLink = `https://live.deephire.com/room/${_id}`;
-    const data = { ...body, _id, createdBy, companyId: new ObjectID(companyId), roomName: _id, interviewLink, companyName, recruiterName: name };
+    const data = { ...body, _id, createdBy, companyId: new ObjectId(companyId), roomName: _id, interviewLink, companyName, recruiterName: name };
     await sendCalendarInvites(interviewLink, companyName, attendees, interviewTime, candidateName, jobName);
     return insert(data, collection);
   }
 
   async handleTwilio(body) {
     l.info(`${this.constructor.name}.handleTwilio(${JSON.stringify(body)})`);
-    const { StatusCallbackEvent, RoomSid, CompositionSid, RoomName } = body;
+    const { StatusCallbackEvent, RoomSid, CompositionSid, RoomName, ParticipantDuration } = body;
     if (StatusCallbackEvent === 'room-ended') {
       await composeTwilioVideo(RoomSid, RoomName);
     }
 
     // if (StatusCallbackEvent === 'composition-started') {
     // }
+
+
+    if (StatusCallbackEvent === 'participant-disconnected') {
+      const { companyId } = await this.byId(RoomName);
+      return stripeAddMinutes(companyId, ParticipantDuration);
+    }
+
+    if (StatusCallbackEvent === 'composition-enqueued') {
+      // returns this just because its what the frontend expects.
+      // it should be changed to return a recording status of composition-enqued
+      put({ compositionSid: CompositionSid }, collection, { recordingStatus: 'composition-progress' }, false, false);
+    }
 
     if (StatusCallbackEvent === 'composition-progress') {
       // const { PercentageDone, SecondsRemaining } = body;
@@ -123,9 +162,9 @@ class LiveService {
     return 200;
   }
 
-  put(id, data) {
-    l.info(`${this.constructor.name}.update(${id}, ${JSON.stringify(data)})`);
-    return putArray(id, 'live', data, true, false);
+  put(_id, data) {
+    l.info(`${this.constructor.name}.update(${_id}, ${JSON.stringify(data)})`);
+    return putArrays({ _id }, 'live', data);
   }
 }
 

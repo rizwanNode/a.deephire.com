@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
-import { ObjectId, ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
-import { insert, byParam } from './db.service';
+import { insert, byParam, newByParam } from './db.service';
 
 import clockworkIntegration from '../../common/clockwork';
 import frontlineIntegration from '../../common/bullhorn';
@@ -33,7 +33,7 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
     const { candidateEmail } = data;
     const { _id } = data?.completeInterviewData?.interviewData || {};
-    const search = { event: 'started', candidateEmail: candidateEmail.toLowerCase(), 'completeInterviewData.interviewData._id': new ObjectID(_id) };
+    const search = { event: 'started', candidateEmail: candidateEmail.toLowerCase(), 'completeInterviewData.interviewData._id': new ObjectId(_id) };
     await insert({ event: 'started', ...dataWithObjectIds }, 'events');
     const events = await byParam(search, 'events');
     if (events && events.length === 1) {
@@ -62,7 +62,7 @@ class EventsService {
     const dataWithObjectIds = createObjectIds(data);
 
     insert({ event: 'clicked', ...dataWithObjectIds }, 'events');
-    frontlineIntegration(data, 'clicked');
+    return frontlineIntegration(data, 'clicked');
   }
 
 
@@ -71,8 +71,39 @@ class EventsService {
     // eslint-disable-next-line no-param-reassign
     delete data._id;
     insert({ event: 'invited', ...data }, 'events');
-    frontlineIntegration(data, 'invited');
+    return frontlineIntegration(data, 'invited');
+  }
+
+  async getEvents(companyId) {
+    l.info(`${this.constructor.name}.clicked(${companyId})`);
+
+    const companyIdMongo = new ObjectId(companyId);
+
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
+    const events = await newByParam(search, 'events');
+    const resp = { events };
+    return resp;
+  }
+
+  async getEventsById(companyId, interviewId) {
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
+
+    if (!ObjectId.isValid(interviewId)) {
+      return 400;
+    }
+
+    const companyIdMongo = new ObjectId(companyId);
+    const interviewIdMongo = new ObjectId(interviewId);
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
+    const events = await newByParam(search, 'events');
+    const resp = { events };
+    return resp;
   }
 }
 
 export default new EventsService();
+

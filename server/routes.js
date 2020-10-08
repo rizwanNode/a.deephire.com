@@ -13,6 +13,7 @@ import liveRouter from './api/controllers/live/router';
 
 // import auth from './common/auth';
 
+
 export default function routes(app) {
   app.use('/v1/examples', examplesRouter);
   app.use('/v1/interviews', interviewsRouter);
@@ -25,4 +26,5 @@ export default function routes(app) {
   app.use('/v1/events', eventsRouter);
   app.use('/v1/profiles', profilesRouter);
   app.use('/v1/live', liveRouter);
+  app.get('/outreach', (req, res) => res.redirect(`https://sdr.deephire.com/auth?code=${req.query.code}`));
 }

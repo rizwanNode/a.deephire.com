@@ -5,56 +5,23 @@ import { uploadS3 } from '../../common/aws';
 import { auth0Managment } from '../../common/auth';
 import EmailsService from './emails.service';
 
+import { createStripeTrialCustomer, getSubscriptionsFromStripe, listCustomerAttribute, getStripeId } from './stripe.service';
+
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
+
 
 const collection = 'companies';
 const bucket = 'deephire.data.public';
 
 const defaultPlan = 'basic-monthly-v1';
+const defaultUsagePrice = 'price_1GzouDGOtDCPpPqjm25Gylfm';
 
-const getStripeId = async companyId => {
-  const companyData = await byId(companyId, collection);
-  const { stripeCustomerId } = companyData;
-  return stripeCustomerId;
-};
-const listCustomerAttribute = async (companyId, type, additionalParams = {}) => {
-  const stripeCustomerId = await getStripeId(companyId);
-  if (!stripeCustomerId) return 404;
-  return stripe[type].list(
-    { customer: stripeCustomerId, ...additionalParams }).catch(err => {
-    l.error(err);
-    return err;
-  });
-};
 
-const getSubscriptionsFromStripe = async stripeCustomerId => {
-  const customer = await stripe.customers.retrieve(
-    stripeCustomerId);
-  const { subscriptions } = customer;
-  return subscriptions;
-};
-
-const createStripeTrialCustomer = async (email, companyName) => {
-  const customer = await stripe.customers.create(
-    {
-      email, name: companyName
-    }
-  ).catch(err => l.error(err));
-
-  stripe.subscriptions.create(
-    {
-      customer: customer.id,
-      items: [{ plan: defaultPlan }],
-      trial_period_days: 7
-    }).catch(err => l.error(err));
-
-  return customer.id;
-};
 class CompaniesService {
   async insert(data) {
     l.info(`${this.constructor.name}.insert(${JSON.stringify(data)})`);
     const { owner, companyName } = data;
-    const stripeCustomerId = await createStripeTrialCustomer(owner, companyName);
+    const stripeCustomerId = await createStripeTrialCustomer(owner, companyName, defaultPlan, defaultUsagePrice);
     const insertData = { ...data, stripeCustomerId };
     return insert(insertData, collection).then(r => r._id);
   }
@@ -176,12 +143,17 @@ class CompaniesService {
     const { stripeCustomerId } = companyData;
     if (!stripeCustomerId) return 404;
     const subscriptions = await getSubscriptionsFromStripe(stripeCustomerId);
-    const { plan } = subscriptions?.data[0]?.items?.data[0] || {};
-    const { product } = plan || {};
-    if (!product) return 404;
-    const productData = await stripe.products.retrieve(
-      product);
-    return productData;
+    const subscriptionItems = subscriptions?.data[0]?.items?.data;
+    if (subscriptionItems) {
+      // eslint-disable-next-line camelcase
+      const licenceSi = subscriptionItems.find(si => si?.plan?.usage_type === 'licensed');
+      const product = licenceSi?.plan?.product;
+      if (!product) return 404;
+      const productData = await stripe.products.retrieve(
+        product);
+      return productData;
+    }
+    return 404;
   }
 
 

@@ -14,8 +14,7 @@ export class Controller {
   insert(req, res) {
     // add auth for this endpoint, requires sending login from app
     CompaniesService.insert(req.body).then(id => {
-      res.header('Access-Control-Expose-Headers', 'Location');
-      return res
+      res.header('Access-Control-Expose-Headers', 'Location')
         .status(201)
         .location(`/v1/companies/${id}`)
         .end();
@@ -61,8 +60,7 @@ export class Controller {
 
   sendInvites(req, res) {
     CompaniesService.sendInvites(res.locals.companyId, res.locals.userProfile, req.body).then(id => {
-      res.header('Access-Control-Expose-Headers', 'Location');
-      return res
+      res.header('Access-Control-Expose-Headers', 'Location')
         .status(201)
         .location(`/v1/companies/invites/${id}`)
         .end();
@@ -80,8 +78,7 @@ export class Controller {
   resendInvite(req, res) {
     CompaniesService.resendInvite(res.locals.companyId, res.locals.userProfile, req.params.inviteId).then(id => {
       if (id === 400 || id === 404) return res.status(id).end();
-      res.header('Access-Control-Expose-Headers', 'Location');
-      return res
+      res.header('Access-Control-Expose-Headers', 'Location')
         .status(201)
         .location(`/v1/companies/invites/${id}`)
         .end();

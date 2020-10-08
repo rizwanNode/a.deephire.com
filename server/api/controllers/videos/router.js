@@ -5,6 +5,7 @@ import auth from '../../../common/auth';
 export default express
   .Router()
   .get('/filter', auth, controller.filter)
+  .get('/proxy/:id', controller.proxy)
   .get('/archives', auth, controller.archives)
   .post('/archive', auth, controller.archive)
   .post('/unarchive', auth, controller.unarchive)

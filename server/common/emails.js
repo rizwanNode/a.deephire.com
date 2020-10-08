@@ -16,7 +16,7 @@ const getMessage = (
       subject: `${clientName} viewed your share link`,
       text: `A share link has been viewed!
 Name: ${clientName}
-View Anaytics: https://recruiter.deephire.com/shortlists/shortlistanalytics/?id=${id}
+View Anaytics: https://recruiter.deephire.com/sharelinks/analytics/?id=${id}
       `,
     },
     interviewCreated: {
@@ -33,7 +33,7 @@ Send this link to candidates for them to take your interview. Reply to this emai
       text: `Interview name: ${interviewName}
 Candidate name: ${candidateName}
 Candidate email: ${candidateEmail}
-Check them out on: https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
+Check them out on: https://recruiter.deephire.com/one-way/candidates/candidate/?id=${videosId}`,
     },
 
     jobSeekerCompleted: {

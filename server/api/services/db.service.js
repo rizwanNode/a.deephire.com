@@ -99,30 +99,15 @@ export const put = async (search, col, data, id = false, upsert = true) => {
 };
 
 
-export const putArray = async (id, col, data) => {
-  const collection = db.collection(col);
-
-  if (!ObjectId.isValid(id)) {
-    return Promise.resolve(400);
-  }
-  const search = { _id: new ObjectId(id) };
-
-  return new Promise(resolve => {
-    collection.updateOne(search, { $push: data }, (err, result) => {
-      if (err) throw err;
-      if (result) {
-        const { matchedCount } = result;
-        if (!matchedCount) resolve(404);
-        else resolve(200);
-      } else resolve(400);
-    });
-  });
-};
-
-
 export const putArrays = async (search, col, data) => {
   const collection = db.collection(col);
-
+  const { _id } = search;
+  if (_id) {
+    if (!ObjectId.isValid(_id)) {
+      return Promise.resolve(400);
+    }
+    search._id = new ObjectId(_id);
+  }
 
   return new Promise(resolve => {
     collection.updateOne(search, { $push: data }, (err, result) => {
@@ -135,6 +120,7 @@ export const putArrays = async (search, col, data) => {
     });
   });
 };
+
 
 export const insert = async (data, col) => {
   const collection = db.collection(col);
@@ -180,17 +166,25 @@ export const deleteObject = async (id, col, search = {}) => {
   return new Promise(resolve => {
     const objectId = new ObjectId(id);
     collection.deleteOne({ _id: objectId, ...search }).then(result => {
-      if (result.deletedCount) resolve(204);
+      if (result.deletedCount) resolve(200);
       else resolve(404);
     });
   });
 };
 
 export const deleteSubDocument = async (search, match, col) => {
+  const { _id } = search;
+  if (_id) {
+    if (!ObjectId.isValid(_id)) {
+      return Promise.resolve(400);
+    }
+    search._id = new ObjectId(_id);
+  }
+
   const collection = db.collection(col);
   return new Promise(resolve => {
     collection.update(search, { $pull: match }).then(allResultData => {
-      if (allResultData.result.nModified) resolve(204);
+      if (allResultData.result.nModified) resolve(200);
       else resolve(404);
     });
   });
@@ -304,3 +298,19 @@ export const duplicate = async (search, col) => {
   if (insert.insertedCount > 0) return 200;
   return 500;
 };
+
+
+// When this API was first created, there was a lot of errors in the overall structure.
+// The methods above this comment may not be following best practices.
+// The methods below will attempt to improve upon proper status codes, simplicity, and error handling.
+
+export const newByParam = async (search, col) => {
+  const collection = db.collection(col);
+  const curser = await collection.find(search);
+  const results = await curser.toArray().catch(err => {
+    l.error(err);
+    return err;
+  });
+  return results;
+};
+
