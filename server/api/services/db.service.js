@@ -78,12 +78,23 @@ export const update = (search, update, col, multi = true) => {
 export const put = async (search, col, data, id = false, upsert = true) => {
   const collection = db.collection(col);
 
+  // this should be all that's needed to verify the put
+  const { _id } = search;
+  if (_id) {
+    if (!ObjectId.isValid(_id)) {
+      return Promise.resolve(400);
+    }
+    search._id = new ObjectId(_id);
+  }
+
+  // TODO - refactor the method that call this this so this code doens't need to ever run.
   if (id) {
     if (!ObjectId.isValid(search)) {
       return Promise.resolve(400);
     }
     search = { _id: new ObjectId(search) };
   }
+
 
   return new Promise(resolve => {
     collection.updateOne(search, { $set: data }, { upsert }, (err, result) => {
