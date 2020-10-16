@@ -7,8 +7,9 @@ export default express
   .post('/events', controller.handleTwilioEvents)
   .delete('/:liveId/comments/:commentId', auth, controller.deleteComment)
   .post('/:liveId/comments', auth, controller.addComment)
+  .put('/:liveId/participants', controller.putParticipants)
   .get('/:liveId', controller.byId)
-  .put('/:liveId', controller.putData)
+  .put('/:liveId', auth, controller.putData)
   .get('/', auth, controller.byParam)
   .post('/', auth, controller.createLiveInterviews);
 
