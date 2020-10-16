@@ -16,7 +16,6 @@ const Twilio = require('twilio');
 
 const client = new Twilio(TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, { accountSid: TWILIO_ACCOUNT_SID });
 
-// const collection = 'live';
 const bucket = 'deephire.data.public';
 const collection = 'live';
 
@@ -163,9 +162,25 @@ class LiveService {
   }
 
   put(_id, data) {
-    l.info(`${this.constructor.name}.update(${_id}, ${JSON.stringify(data)})`);
-    return putArrays({ _id }, 'live', data);
+    l.info(`${this.constructor.name}.put(${_id}, ${JSON.stringify(data)})`);
+    return put({ _id }, 'live', data);
   }
+
+  putParticipant(_id, data) {
+    l.info(`${this.constructor.name}.putParticipant(${_id}, ${JSON.stringify(data)})`);
+    const { participantName } = data;
+    // eslint-disable-next-line no-param-reassign
+    delete data.participantName;
+    const nestedProperty = `participants.${participantName}`;
+    const updateData = {
+      [nestedProperty]: data
+    };
+    return put({ _id }, 'live', updateData);
+  }
+  // putDeviceInfo(_id, data) {
+  //   l.info(`${this.constructor.name}.update(${_id}, ${JSON.stringify(data)})`);
+  //   return putArrays({ _id }, 'live', data);
+  // }
 }
 
 

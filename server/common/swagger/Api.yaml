@@ -69,6 +69,24 @@ definitions:
         type: string
         example: admin
 
+  Participant:
+    type: object
+    title: Participant
+    required:
+      - participantName
+    properties:
+      participantName:
+        type: string
+        example: Kyle Trusler
+      role:
+        type: string
+        example: admin
+      feedback:
+        type: object
+      notes:
+        type: string
+        example: '<div>hey</div>'
+
   CompanyBody:
     type: object
     title: company
@@ -1680,6 +1698,11 @@ paths:
       tags:
         - Live
       parameters:
+        - name: authorization
+          in: header
+          description: Bearer <auth_token>
+          required: true
+          type: string
         - name: liveId
           in: path
           required: true
@@ -1690,7 +1713,29 @@ paths:
           description: example body
           required: true
           schema:
-            $ref: "#/definitions/BrowserInfo"
+            $ref: "#/definitions/LiveBody"
+      responses:
+        200:
+          description: updated live interview
+        404:
+          description: no live interview exists
+
+  /live/{liveId}/participants:
+    put:
+      tags:
+        - Live
+      parameters:
+        - name: liveId
+          in: path
+          required: true
+          description: liveId to look up
+          type: string
+        - in: body
+          name: body
+          description: Participant
+          required: true
+          schema:
+            $ref: "#/definitions/Participant"
       responses:
         200:
           description: updated live interview

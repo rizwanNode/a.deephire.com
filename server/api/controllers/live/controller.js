@@ -50,6 +50,9 @@ export class Controller {
   putData(req, res) {
     LiveService.put(req.params.liveId, req.body).then(r => res.status(r).end());
   }
+  putParticipants(req, res) {
+    LiveService.putParticipant(req.params.liveId, req.body).then(r => res.status(r).end());
+  }
 }
 
 
