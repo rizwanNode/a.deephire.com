@@ -82,7 +82,8 @@ definitions:
         type: string
         example: admin
       feedback:
-        type: object
+        type: number
+        example: 5
       notes:
         type: string
         example: '<div>hey</div>'
