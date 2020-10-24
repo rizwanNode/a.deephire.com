@@ -336,31 +336,11 @@
             "recruiterName": "Russell R",
             "timestamp": "Wed Oct 14 2020 13:04:31 GMT+0000 (Coordinated Universal Time)",
             "compositionSid": [
-              "CJeed49aa67e12e239c7ea966c733d6999",
-              "CJ69d51cad4db812332eeb1a7f155675df",
-              "CJac2555d6801ba4de42fe85109e5aeef6",
-              "CJ230ff7d71a93ea90f7463f4be8f6edd6",
-              "CJ033ab08fb0f41949144164ee9c3fc78e",
-              "CJ939be87927fd08b063ca3de3cd958dd1",
-              "CJ0428d5397bf416f31b0d9e18df34f4ed"
+              "CJf76cb9f50be5ba93d5eb2845008c601e"
             ],
-            "recordingUrl": [
-              "https://s3.amazonaws.com/deephire.data.public/live/CJeed49aa67e12e239c7ea966c733d6999.mp4",
-              "https://s3.amazonaws.com/deephire.data.public/live/CJ69d51cad4db812332eeb1a7f155675df.mp4",
-              "https://s3.amazonaws.com/deephire.data.public/live/CJac2555d6801ba4de42fe85109e5aeef6.mp4",
-              "https://s3.amazonaws.com/deephire.data.public/live/CJ230ff7d71a93ea90f7463f4be8f6edd6.mp4",
-              "https://s3.amazonaws.com/deephire.data.public/live/CJ033ab08fb0f41949144164ee9c3fc78e.mp4",
-              "https://s3.amazonaws.com/deephire.data.public/live/CJ939be87927fd08b063ca3de3cd958dd1.mp4",
-              "https://s3.amazonaws.com/deephire.data.public/live/CJ0428d5397bf416f31b0d9e18df34f4ed.mp4"
-            ],
+            "recordingUrl": ["https://s3.amazonaws.com/deephire.data.public/live/CJf76cb9f50be5ba93d5eb2845008c601e.mp4"],
             "roomSid": [
-              "RMbf4b5af7eff32eca15cda390be494429",
-              "RMc38763ba6df92a78699ad7d32b8ea70b",
-              "RM6577a212b31e9e9312578a7b25a6c332",
-              "RM547f4593222e22aa1857bc460c1060bd",
-              "RM1f32082c817b971504084a3181bb15b7",
-              "RMa1a934f87b0c64854ea16e1397c2b31b",
-              "RMc5106c6ea8c99c4fa34c6107e9749e02"
+              "RMc8fa0be454bfa436b898fddfd0ff44e6"
             ],
             "recordingStatus": "composition-available",
             "participants": {
