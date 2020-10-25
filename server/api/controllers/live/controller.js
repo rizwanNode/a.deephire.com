@@ -29,6 +29,14 @@ export class Controller {
     LiveService.deleteComment(req.params.liveId, req.params.commentId).then(r => res.status(r).end());
   }
 
+  delete(req, res) {
+    LiveService.delete(req.params.liveId).then(r => res.status(r).end());
+  }
+
+  deleteRecordings(req, res) {
+    LiveService.deleteRecordings(req.params.liveId).then(r => res.status(r).end());
+  }
+
   addComment(req, res) {
     LiveService.addComment(req.params.liveId, req.body).then(r => {
       if (r === 400) return res.status(r).end();

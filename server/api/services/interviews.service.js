@@ -25,13 +25,20 @@ class InterviewsService {
   async insert(data, createdBy, companyId) {
     l.info(`$this.constructor.name}.insert(${data},${createdBy}, ${companyId})`);
     const objId = ObjectId();
-    const longUrl = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
+    const url = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
+    const urls = {
+      longUrl: url,
+      candidateUrl: `${url}?role=candidate`,
+      clientUrl: `${url}?role=client`,
+      recruiterUrl: `${url}?role=recruiter`,
+    };
+
     const shortUrl = await shortenLink(
-      longUrl,
+      urls.longUrl,
       'interview.deephire.com',
       `${createdBy}'s interview ${data.interviewName}`,
     );
-    const shortList = { ...data, createdBy, _id: objId, shortUrl, companyId: new ObjectId(companyId) };
+    const shortList = { ...data, createdBy, _id: objId, shortUrl, companyId: new ObjectId(companyId), ...urls };
     return insert(shortList, 'interviews');
   }
 

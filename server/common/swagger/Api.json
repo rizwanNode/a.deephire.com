@@ -2743,8 +2743,76 @@
                   "description": "no live interview exists"
                }
             }
+         },
+         "delete": {
+            "tags": [
+               "Live"
+            ],
+            "parameters": [
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "name": "liveId",
+                  "in": "path",
+                  "required": true,
+                  "description": "liveId to look up",
+                  "type": "string"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Live Interview Deleted"
+               },
+               "400": {
+                  "description": "Invalid Request format"
+               },
+               "404": {
+                  "description": "no live interview exists"
+               }
+            }
          }
       },
+
+      
+      "/live/{liveId}/recordings": {
+      "delete": {
+         "tags": [
+            "Live"
+         ],
+         "parameters": [
+            {
+               "name": "authorization",
+               "in": "header",
+               "description": "Bearer <auth_token>",
+               "required": true,
+               "type": "string"
+            },
+            {
+               "name": "liveId",
+               "in": "path",
+               "required": true,
+               "description": "liveId to look up",
+               "type": "string"
+            }
+         ],
+         "responses": {
+            "200": {
+               "description": "Live Interview Deleted"
+            },
+            "400": {
+               "description": "Invalid Request format"
+            },
+            "404": {
+               "description": "no live interview exists"
+            }
+         }
+      }
+   },
       "/live/{liveId}/participants": {
          "put": {
             "tags": [
