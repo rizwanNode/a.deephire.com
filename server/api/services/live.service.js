@@ -162,7 +162,8 @@ class LiveService {
     let interviewLink = `https://live.deephire.com/room/${_id}`;
 
     // hardcoded for APPLEONE
-    if (userProfile?.userId === 'auth0|5f7f2546ec8f030075525516') {
+    // eslint-disable-next-line camelcase
+    if (userProfile?.user_id === 'auth0|5f7f2546ec8f030075525516') {
       interviewLink = `https://beta.live.deephire.com/room/${_id}`;
     }
     const urls = {
