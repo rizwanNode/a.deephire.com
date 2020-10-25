@@ -159,7 +159,12 @@ class LiveService {
     // const randomDigits = Math.floor(Math.random() * 100000000);
     // const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
     const _id = new ObjectId();
-    const interviewLink = `https://live.deephire.com/room/${_id}`;
+    let interviewLink = `https://live.deephire.com/room/${_id}`;
+
+    // hardcoded for APPLEONE
+    if (userProfile?.userId === 'auth0|5f7f2546ec8f030075525516') {
+      interviewLink = `https://beta.live.deephire.com/room/${_id}`;
+    }
     const urls = {
       interviewLink,
       recruiterUrl: `${interviewLink}?role=recruiter`,
