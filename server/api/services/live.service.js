@@ -2,8 +2,16 @@ import fetch from 'node-fetch';
 import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
-import { byParam, byId, insert, putArrays, deleteSubDocument, put } from './db.service';
-import { uploadS3Stream } from '../../common/aws';
+import {
+  byParam,
+  byId,
+  insert,
+  putArrays,
+  deleteSubDocument,
+  put,
+  deleteObject,
+} from './db.service';
+import { uploadS3Stream, deleteS3 } from '../../common/aws';
 import sendCalendarInvites from '../../common/google';
 import { stripeAddMinutes } from './stripe.service';
 
@@ -14,11 +22,22 @@ const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 
 const Twilio = require('twilio');
 
-const client = new Twilio(TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, { accountSid: TWILIO_ACCOUNT_SID });
+const client = new Twilio(TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
+  accountSid: TWILIO_ACCOUNT_SID,
+});
 
 const bucket = 'deephire.data.public';
 const collection = 'live';
 
+const deleteRecordings = async _id => {
+  const results = await new LiveService().byId(_id);
+  const { compositionSid } = results;
+  // eslint-disable-next-line no-unused-expressions
+  compositionSid?.forEach(id => {
+    // i was scared to use the variables here incase this accidently gets modified
+    deleteS3('deephire.data.public', `live/${id}.mp4`);
+  });
+};
 
 const composeTwilioVideo = async (roomSid, roomName) => {
   await new Promise(resolve => setTimeout(resolve, 20000));
@@ -28,27 +47,32 @@ const composeTwilioVideo = async (roomSid, roomName) => {
       audioSources: '*',
       videoLayout: {
         grid: {
-          video_sources: ['*']
-        }
+          video_sources: ['*'],
+        },
       },
       statusCallback: 'https://a.deephire.com/v1/live/events',
-      format: 'mp4'
-    }).catch(err => l.error(err));
+      format: 'mp4',
+    })
+    .catch(err => l.error(err));
   l.info(`Created Composition with SID=${composition.sid}`);
   const key = `live/${composition.sid}.mp4`;
-  const data = { roomSid, compositionSid: composition.sid, recordingUrl: `https://s3.amazonaws.com/deephire.data.public/${key}` };
+  const data = {
+    roomSid,
+    compositionSid: composition.sid,
+    recordingUrl: `https://s3.amazonaws.com/deephire.data.public/${key}`,
+  };
   putArrays({ _id: roomName }, collection, data);
 };
-
 
 const handleS3Upload = compositionSid => {
   const key = `live/${compositionSid}.mp4`;
   const uri = `https://video.twilio.com/v1/Compositions/${compositionSid}/Media?Ttl=3600`;
 
-  client.request({
-    method: 'GET',
-    uri
-  })
+  client
+    .request({
+      method: 'GET',
+      uri,
+    })
     .then(async response => {
       const mediaLocation = response.body.redirect_to;
 
@@ -65,7 +89,6 @@ const handleS3Upload = compositionSid => {
     });
 };
 
-
 class LiveService {
   async byId(liveInterviewId) {
     l.info(`${this.constructor.name}.byId(${liveInterviewId})`);
@@ -78,11 +101,14 @@ class LiveService {
     return documents;
   }
 
-
   async addComment(liveId, body) {
-    l.info(`${this.constructor.name}.addComment(${liveId}),${JSON.stringify(body)})`);
+    l.info(
+      `${this.constructor.name}.addComment(${liveId}),${JSON.stringify(body)})`
+    );
 
-    const commentId = ObjectId.isValid(body._id) ? new ObjectId(body._id) : new ObjectId();
+    const commentId = ObjectId.isValid(body._id)
+      ? new ObjectId(body._id)
+      : new ObjectId();
     const data = { comments: { ...body, _id: commentId } };
     const addedComment = await putArrays({ _id: liveId }, collection, data);
     if (addedComment === 200) {
@@ -106,35 +132,70 @@ class LiveService {
   }
 
   async insert(companyId, createdBy, userProfile, body) {
-    l.info(`${this.constructor.name}.insert(${companyId}, ${createdBy}, ${JSON.stringify(userProfile)}, ${JSON.stringify(body)})`);
+    l.info(
+      `${
+        this.constructor.name
+      }.insert(${companyId}, ${createdBy}, ${JSON.stringify(
+        userProfile
+      )}, ${JSON.stringify(body)})`
+    );
     const { name } = userProfile;
     const companyData = await byId(companyId, 'companies');
     const { companyName } = companyData;
 
-
-    const { interviewTime, candidateEmail, clientEmail, jobName, candidateName } = body;
-    const attendees = [{ email: candidateEmail }, { email: clientEmail || createdBy }];
+    const {
+      interviewTime,
+      candidateEmail,
+      clientEmail,
+      jobName,
+      candidateName,
+    } = body;
+    const attendees = [
+      { email: candidateEmail },
+      { email: clientEmail || createdBy },
+    ];
 
     // const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
     // const randomDigits = Math.floor(Math.random() * 100000000);
     // const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
     const _id = new ObjectId();
     const interviewLink = `https://live.deephire.com/room/${_id}`;
-    const data = { ...body, _id, createdBy, companyId: new ObjectId(companyId), roomName: _id, interviewLink, companyName, recruiterName: name };
-    await sendCalendarInvites(interviewLink, companyName, attendees, interviewTime, candidateName, jobName);
+    const data = {
+      ...body,
+      _id,
+      createdBy,
+      companyId: new ObjectId(companyId),
+      roomName: _id,
+      interviewLink,
+      companyName,
+      recruiterName: name,
+    };
+    await sendCalendarInvites(
+      interviewLink,
+      companyName,
+      attendees,
+      interviewTime,
+      candidateName,
+      jobName
+    );
     return insert(data, collection);
   }
 
   async handleTwilio(body) {
     l.info(`${this.constructor.name}.handleTwilio(${JSON.stringify(body)})`);
-    const { StatusCallbackEvent, RoomSid, CompositionSid, RoomName, ParticipantDuration } = body;
+    const {
+      StatusCallbackEvent,
+      RoomSid,
+      CompositionSid,
+      RoomName,
+      ParticipantDuration,
+    } = body;
     if (StatusCallbackEvent === 'room-ended') {
       await composeTwilioVideo(RoomSid, RoomName);
     }
 
     // if (StatusCallbackEvent === 'composition-started') {
     // }
-
 
     if (StatusCallbackEvent === 'participant-disconnected') {
       const { companyId } = await this.byId(RoomName);
@@ -144,18 +205,35 @@ class LiveService {
     if (StatusCallbackEvent === 'composition-enqueued') {
       // returns this just because its what the frontend expects.
       // it should be changed to return a recording status of composition-enqued
-      put({ compositionSid: CompositionSid }, collection, { recordingStatus: 'composition-progress' }, false, false);
+      put(
+        { compositionSid: CompositionSid },
+        collection,
+        { recordingStatus: 'composition-progress' },
+        false,
+        false
+      );
     }
 
     if (StatusCallbackEvent === 'composition-progress') {
       // const { PercentageDone, SecondsRemaining } = body;
-      put({ compositionSid: CompositionSid }, collection, { recordingStatus: StatusCallbackEvent }, false, false);
+      put(
+        { compositionSid: CompositionSid },
+        collection,
+        { recordingStatus: StatusCallbackEvent },
+        false,
+        false
+      );
     }
-
 
     if (StatusCallbackEvent === 'composition-available') {
       handleS3Upload(CompositionSid);
-      put({ compositionSid: CompositionSid }, collection, { recordingStatus: StatusCallbackEvent }, false, false);
+      put(
+        { compositionSid: CompositionSid },
+        collection,
+        { recordingStatus: StatusCallbackEvent },
+        false,
+        false
+      );
     }
 
     return 200;
@@ -166,14 +244,30 @@ class LiveService {
     return put({ _id }, 'live', data);
   }
 
+  async deleteRecordings(_id) {
+    l.info(`${this.constructor.name}.deleteRecordings(${_id})`);
+    await deleteRecordings(_id);
+    const data = { recordingUrl: [] };
+    return put({ _id }, collection, data);
+  }
+
+  async delete(_id) {
+    l.info(`${this.constructor.name}.delete(${_id}`);
+
+    await deleteRecordings(_id);
+    return deleteObject(_id, 'live');
+  }
+
   putParticipant(_id, data) {
-    l.info(`${this.constructor.name}.putParticipant(${_id}, ${JSON.stringify(data)})`);
+    l.info(
+      `${this.constructor.name}.putParticipant(${_id}, ${JSON.stringify(data)})`
+    );
     const { participantName } = data;
     // eslint-disable-next-line no-param-reassign
     delete data.participantName;
     const nestedProperty = `participants.${participantName}`;
     const updateData = {
-      [nestedProperty]: data
+      [nestedProperty]: data,
     };
     return put({ _id }, 'live', updateData);
   }
@@ -182,6 +276,5 @@ class LiveService {
   //   return putArrays({ _id }, 'live', data);
   // }
 }
-
 
 export default new LiveService();
