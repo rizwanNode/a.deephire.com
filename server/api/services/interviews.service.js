@@ -28,9 +28,6 @@ class InterviewsService {
     const url = `https://interviews.deephire.com/?id=${objId.valueOf()}`;
     const urls = {
       longUrl: url,
-      candidateUrl: `${url}?role=candidate`,
-      clientUrl: `${url}?role=client`,
-      recruiterUrl: `${url}?role=recruiter`,
     };
 
     const shortUrl = await shortenLink(
