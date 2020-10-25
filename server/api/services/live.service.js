@@ -160,13 +160,19 @@ class LiveService {
     // const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
     const _id = new ObjectId();
     const interviewLink = `https://live.deephire.com/room/${_id}`;
+    const urls = {
+      interviewLink,
+      recruiterUrl: `${interviewLink}?role=recruiter`,
+      candidateUrl: `${interviewLink}?role=candidate`,
+      clientUrl: `${interviewLink}?role=client`,
+    };
     const data = {
       ...body,
       _id,
       createdBy,
       companyId: new ObjectId(companyId),
       roomName: _id,
-      interviewLink,
+      ...urls,
       companyName,
       recruiterName: name,
     };
