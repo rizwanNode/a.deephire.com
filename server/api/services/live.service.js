@@ -10,6 +10,7 @@ import {
   deleteSubDocument,
   put,
   deleteObject,
+  findOne
 } from './db.service';
 import { uploadS3Stream, deleteS3 } from '../../common/aws';
 import sendCalendarInvites from '../../common/google';
@@ -93,6 +94,15 @@ class LiveService {
   async byId(liveInterviewId) {
     l.info(`${this.constructor.name}.byId(${liveInterviewId})`);
     return byId(liveInterviewId, collection);
+  }
+
+  async getTemplate(companyId) {
+    l.info(`${this.constructor.name}.getTemplates(${companyId})`);
+    if (!ObjectId.isValid(companyId)) {
+      return 400;
+    }
+    const search = { companyId: new ObjectId(companyId) };
+    return findOne(search, 'templates');
   }
   async byParam(companyId) {
     l.info(`${this.constructor.name}.byParam(${companyId})`);

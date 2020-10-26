@@ -10,6 +10,14 @@ export class Controller {
     });
   }
 
+  getTemplates(req, res) {
+    LiveService.getTemplate(res.locals.companyId).then(r => {
+      if (r === 400 || r === 404) return res.status(r).end();
+      else if (r) return res.json(r);
+      return res.status(500).end();
+    });
+  }
+
   byId(req, res) {
     LiveService.byId(req.params.liveId).then(r => {
       if (r === 400 || r === 404) return res.status(r).end();

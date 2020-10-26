@@ -2686,6 +2686,31 @@
             }
          }
       },
+
+      "/live/templates": {
+         "get": {
+            "tags": [
+               "Live"
+            ],
+            "parameters": [
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "live interview templates"
+               },
+               "404": {
+                  "description": "no templates"
+               }
+            }
+         }
+      },
       "/live/{liveId}": {
          "get": {
             "tags": [
