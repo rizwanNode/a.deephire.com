@@ -2740,13 +2740,6 @@
             ],
             "parameters": [
                {
-                  "name": "authorization",
-                  "in": "header",
-                  "description": "Bearer <auth_token>",
-                  "required": true,
-                  "type": "string"
-               },
-               {
                   "name": "liveId",
                   "in": "path",
                   "required": true,

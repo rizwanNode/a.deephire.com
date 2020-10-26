@@ -11,7 +11,7 @@ export default express
   .delete('/:liveId/recordings', auth, controller.deleteRecordings)
   .put('/:liveId/participants', controller.putParticipants)
   .get('/:liveId', controller.byId)
-  .put('/:liveId', auth, controller.putData)
+  .put('/:liveId', controller.putData)
   .delete('/:liveId', auth, controller.delete)
   .get('/', auth, controller.byParam)
   .post('/', auth, controller.createLiveInterviews);
