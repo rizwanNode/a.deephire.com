@@ -1,7 +1,6 @@
 import l from '../../common/logger';
 import { shortenLink } from '../../common/rebrandly';
 
-
 const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
 
@@ -12,11 +11,11 @@ export const init = async () => {
   const uri = `mongodb://${process.env.MONGO_NAME}:${process.env.MONGO_PASS}@mongo-db-production-shard-00-00-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-01-tjcvk.mongodb.net:27017,mongo-db-production-shard-00-02-tjcvk.mongodb.net:27017/test?ssl=true&replicaSet=Mongo-DB-Production-shard-0&authSource=admin`;
   try {
     const mongoClient = await MongoClient.connect(uri, {
-      useNewUrlParser: true
+      useNewUrlParser: true,
     });
     if (process.env.TESTING) {
       const connection = await MongoClient.connect(global.__MONGO_URI__, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
       });
       db = await connection.db(global.__MONGO_DB_NAME__);
       process.env.CONNECTED = 'true';
@@ -67,12 +66,15 @@ export const byId = async (id, col) => {
   return Promise.resolve(results || 404);
 };
 
+
 export const update = (search, update, col, multi = true) => {
   const collection = db.collection(col);
-  return collection.updateMany(search, update, { multi }).then(allResultData => {
-    if (allResultData.result.nModified) return 200;
-    return 404;
-  });
+  return collection
+    .updateMany(search, update, { multi })
+    .then(allResultData => {
+      if (allResultData.result.nModified) return 200;
+      return 404;
+    });
 };
 
 export const put = async (search, col, data, id = false, upsert = true) => {
@@ -95,7 +97,6 @@ export const put = async (search, col, data, id = false, upsert = true) => {
     search = { _id: new ObjectId(search) };
   }
 
-
   return new Promise(resolve => {
     collection.updateOne(search, { $set: data }, { upsert }, (err, result) => {
       if (err) throw err;
@@ -108,7 +109,6 @@ export const put = async (search, col, data, id = false, upsert = true) => {
     });
   });
 };
-
 
 export const putArrays = async (search, col, data) => {
   const collection = db.collection(col);
@@ -131,7 +131,6 @@ export const putArrays = async (search, col, data) => {
     });
   });
 };
-
 
 export const insert = async (data, col) => {
   const collection = db.collection(col);
@@ -224,7 +223,7 @@ export const createUpdateVideo = async (search, data, col) => {
   }
   if (flag) {
     result = await collection.findOneAndUpdate(search, {
-      $set: { responses: newResponses }
+      $set: { responses: newResponses },
     });
   } else {
     result = await collection.findOneAndUpdate(
@@ -254,17 +253,17 @@ export const getInterviews = async (
             from,
             localField: '_id',
             foreignField: 'interviewId',
-            as: 'interview'
-          }
+            as: 'interview',
+          },
         },
         { $unwind: { path: '$interview' } },
         { $project: { _id: false, interview: true } },
         {
           $sort: {
-            'interview.timestamp': -1
-          }
+            'interview.timestamp': -1,
+          },
         },
-        { $match: { 'interview.archives': { $exists: findarchives } } }
+        { $match: { 'interview.archives': { $exists: findarchives } } },
       ])
       .toArray(async (err, result) => {
         if (err) throw err;
@@ -310,7 +309,6 @@ export const duplicate = async (search, col) => {
   return 500;
 };
 
-
 // When this API was first created, there was a lot of errors in the overall structure.
 // The methods above this comment may not be following best practices.
 // The methods below will attempt to improve upon proper status codes, simplicity, and error handling.
@@ -325,3 +323,16 @@ export const newByParam = async (search, col) => {
   return results;
 };
 
+export const findOne = async (search, col) => {
+  const { _id } = search;
+
+  if (_id) {
+    if (!ObjectId.isValid(_id)) {
+      return 400;
+    }
+    search._id = new ObjectId(_id);
+  }
+  const collection = db.collection(col);
+  const result = await collection.findOne(search);
+  return result || 404;
+};
