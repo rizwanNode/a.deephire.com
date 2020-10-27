@@ -85,7 +85,7 @@ Please reach out if you have not recieved a link to the interview.`,
   const scheduledEvent = await calendar.events
     .insert({
       calendarId: 'primary',
-      resource: isAppleOne || apponeEvent,
+      resource: isAppleOne ? apponeEvent : event,
       sendNotifications: true,
       sendUpdates: 'all',
     })
