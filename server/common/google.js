@@ -74,9 +74,7 @@ Join your video interview at ${interviewLink}`,
       ],
     },
     attendees,
-    description: `Join your video interview at ${interviewLink}
-    
-This will be a live video interview. Make sure you have either a smartphone, or a computer with a working camera & microphone before the interview.
+    description: `This will be a live video interview. Make sure you have either a smartphone, or a computer with a working camera & microphone before the interview.
 
 This meeting will be automatically recorded for note-taking purposes. 
 
