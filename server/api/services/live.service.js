@@ -198,7 +198,8 @@ class LiveService {
       attendees,
       interviewTime,
       candidateName,
-      jobName
+      jobName,
+      companyId
     );
     return insert(data, collection);
   }
