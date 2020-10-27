@@ -110,6 +110,9 @@
            "clientName": {
              "type": "string"
            },
+           "recording": {
+            "type": "boolean"
+          },
            "clientEmail": {
              "type": "string"
            },
@@ -164,6 +167,7 @@
          "example": {
            "interviewType": "client",
            "candidateName": "Kyle Gates",
+           "recording": true,
            "candidateEmail": "kyle@deephire.com",
            "interviewTime": ["2020-10-31T23:00:33.623Z", "2020-10-31T23:30:33.623Z"],
            "clientName": "Peter Smith",
