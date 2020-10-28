@@ -53,7 +53,8 @@ Join your video interview at ${interviewLink}`,
 
 
   // HARDCODE
-  const isAppleOne = companyId === '5e95d7d3aed1120001480d69' || companyId === '5f7f25460d77330001bc9b91';
+  // const isAppleOne = companyId === '5e95d7d3aed1120001480d69' || companyId === '5f7f25460d77330001bc9b91';
+  const isAppleOne = false;
 
   // HARDCODE
   const apponeEvent = {
