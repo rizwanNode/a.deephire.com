@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
+import { roomEndedEvent, compositionAvailableEvent, recordingsDeletedEvent } from '../../common/webhooks';
 import {
   byParam,
   byId,
@@ -41,28 +42,35 @@ const deleteRecordings = async _id => {
 };
 
 const composeTwilioVideo = async (roomSid, roomName) => {
-  await new Promise(resolve => setTimeout(resolve, 20000));
-  const composition = await client.video.compositions
-    .create({
-      roomSid,
-      audioSources: '*',
-      videoLayout: {
-        grid: {
-          video_sources: ['*'],
+  // await new Promise(resolve => setTimeout(resolve, 20000));
+
+  try {
+    const composition = await client.video.compositions
+      .create({
+        roomSid,
+        audioSources: '*',
+        videoLayout: {
+          grid: {
+            video_sources: ['*'],
+          },
         },
-      },
-      statusCallback: 'https://a.deephire.com/v1/live/events',
-      format: 'mp4',
-    })
-    .catch(err => l.error(err));
-  l.info(`Created Composition with SID=${composition.sid}`);
-  const key = `live/${composition.sid}.mp4`;
-  const data = {
-    roomSid,
-    compositionSid: composition.sid,
-    recordingUrl: `https://s3.amazonaws.com/deephire.data.public/${key}`,
-  };
-  putArrays({ _id: roomName }, collection, data);
+        statusCallback: 'https://a.deephire.com/v1/live/events',
+        format: 'mp4',
+      });
+    l.info(`Created Composition with SID=${composition.sid}`);
+
+    roomEndedEvent(roomName, true);
+    const key = `live/${composition.sid}.mp4`;
+    const data = {
+      roomSid,
+      compositionSid: composition.sid,
+      recordingUrl: `https://s3.amazonaws.com/deephire.data.public/${key}`,
+    };
+    putArrays({ _id: roomName }, collection, data);
+  } catch (err) {
+    l.info(err);
+    roomEndedEvent(roomName, false);
+  }
 };
 
 const handleS3Upload = compositionSid => {
@@ -257,6 +265,7 @@ class LiveService {
         false,
         false
       );
+      await compositionAvailableEvent(CompositionSid);
     }
 
     return 200;
@@ -271,7 +280,9 @@ class LiveService {
     l.info(`${this.constructor.name}.deleteRecordings(${_id})`);
     await deleteRecordings(_id);
     const data = { recordingUrl: [] };
-    return put({ _id }, collection, data);
+    const resp = await put({ _id }, collection, data);
+    recordingsDeletedEvent(_id);
+    return resp;
   }
 
   async delete(_id) {
