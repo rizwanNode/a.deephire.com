@@ -2785,7 +2785,7 @@
                   "name": "liveId",
                   "in": "path",
                   "required": true,
-                  "description": "liveId to look up",
+                  "description": "liveId to delete recordings for",
                   "type": "string"
                }
             ],
