@@ -5,32 +5,63 @@ import { ObjectId } from 'mongodb';
 import { findOne } from '../api/services/db.service';
 
 const headers = { 'Content-Type': 'application/json' };
-const appleOneUrl = 'https://webhook.site/b2e9cfaf-046d-4d6a-992f-9754c7c810cc';
+const testUrl = 'https://webhook.site/b2e9cfaf-046d-4d6a-992f-9754c7c810cc';
 
-export const roomEndedEvent = (liveId, recording) => {
+const appleOneUrl = 'http://import.axtest.com/deephire/getlive.ashx';
+
+export const roomEndedEvent = async (liveId, recording) => {
   // temporary to make sure we don't send them the preflight requests
   if (!ObjectId.isValid(liveId)) {
     return;
   }
+  const search = { _id: liveId };
+  const { companyId } = await findOne(search, 'live');
+
   const data = { liveId, recording, statusCallBackEvent: 'room-ended' };
-  fetch(appleOneUrl, { method: 'POST', headers, body: JSON.stringify(data) });
+
+  fetch(testUrl, { method: 'POST', headers, body: JSON.stringify(data) });
+
+  if (companyId === '5f7f25460d77330001bc9b91') {
+    fetch(appleOneUrl, { method: 'POST', headers, body: JSON.stringify(data) });
+  }
 };
 
 export const compositionAvailableEvent = async compositionSid => {
   const search = { compositionSid };
-  const { _id } = await findOne(search, 'live');
-  const data = {
-    liveId: _id,
-    statusCallBackEvent: 'composition-available',
-  };
-  fetch(appleOneUrl, { method: 'POST', headers, body: JSON.stringify(data) });
+  const { _id, companyId } = await findOne(search, 'live');
+
+  if (_id) {
+    const data = {
+      liveId: _id,
+      statusCallBackEvent: 'composition-available',
+    };
+    await fetch(testUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data),
+    });
+
+    if (companyId === '5f7f25460d77330001bc9b91') {
+      return fetch(appleOneUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data),
+      });
+    }
+  }
+  console.log('no id');
+  return null;
 };
 
-
-export const recordingsDeletedEvent = liveId => {
+export const recordingsDeletedEvent = async liveId => {
   const data = {
     liveId,
     statusCallBackEvent: 'recordings-deleted',
   };
-  fetch(appleOneUrl, { method: 'POST', headers, body: JSON.stringify(data) });
+  fetch(testUrl, { method: 'POST', headers, body: JSON.stringify(data) });
+
+  const search = { _id: liveId };
+  const { companyId } = await findOne(search, 'live');
+
+  if (companyId === '5f7f25460d77330001bc9b91') { fetch(appleOneUrl, { method: 'POST', headers, body: JSON.stringify(data) }); }
 };
