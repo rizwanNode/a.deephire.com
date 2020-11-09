@@ -2,7 +2,11 @@ import fetch from 'node-fetch';
 import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
-import { roomEndedEvent, compositionAvailableEvent, recordingsDeletedEvent } from '../../common/webhooks';
+import {
+  roomEndedEvent,
+  compositionAvailableEvent,
+  recordingsDeletedEvent,
+} from '../../common/webhooks';
 import {
   byParam,
   byId,
@@ -11,12 +15,12 @@ import {
   deleteSubDocument,
   put,
   deleteObject,
-  findOne
+  findOne,
 } from './db.service';
 import { uploadS3Stream, deleteS3 } from '../../common/aws';
 import sendCalendarInvites from '../../common/google';
 import { stripeAddMinutes } from './stripe.service';
-
+import { get } from 'superagent';
 
 const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
 const TWILIO_API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET;
@@ -45,18 +49,17 @@ const composeTwilioVideo = async (roomSid, roomName) => {
   // await new Promise(resolve => setTimeout(resolve, 20000));
 
   try {
-    const composition = await client.video.compositions
-      .create({
-        roomSid,
-        audioSources: '*',
-        videoLayout: {
-          grid: {
-            video_sources: ['*'],
-          },
+    const composition = await client.video.compositions.create({
+      roomSid,
+      audioSources: '*',
+      videoLayout: {
+        grid: {
+          video_sources: ['*'],
         },
-        statusCallback: 'https://a.deephire.com/v1/live/events',
-        format: 'mp4',
-      });
+      },
+      statusCallback: 'https://a.deephire.com/v1/live/events',
+      format: 'mp4',
+    });
     l.info(`Created Composition with SID=${composition.sid}`);
 
     roomEndedEvent(roomName, true);
@@ -167,6 +170,7 @@ class LiveService {
       clientEmail,
       jobName,
       candidateName,
+      interviewType
     } = body;
     const attendees = [
       { email: candidateEmail },
@@ -181,7 +185,10 @@ class LiveService {
 
     // HARDCODED for APPLEONE
     // eslint-disable-next-line camelcase
-    if (userProfile?.user_id === 'auth0|5f7f2546ec8f030075525516' || companyId === '5f960ca1aaf3e97ca402a51d') {
+    if (
+      userProfile?.user_id === 'auth0|5f7f2546ec8f030075525516' ||
+      companyId === '5f960ca1aaf3e97ca402a51d'
+    ) {
       interviewLink = `https://beta.live.deephire.com/room/${_id}`;
     }
     const urls = {
@@ -189,8 +196,29 @@ class LiveService {
       recruiterUrl: `${interviewLink}?role=recruiter`,
       candidateUrl: `${interviewLink}?role=candidate`,
       clientUrl: `${interviewLink}?role=client`,
+      viewUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?liveid=${_id}`,
     };
+    let { recruiterTemplate, clientTemplate, candidateTemplate } = body;
+    const isClientTemplateExcluded =
+      interviewType === 'client' && (!clientTemplate || !candidateTemplate);
+    const isRecruiterTemplateExcluded =
+      interviewType === 'recruiter' && !recruiterTemplate;
+
+
+    if (isClientTemplateExcluded) {
+      const template = await this.getTemplate(companyId);
+      clientTemplate = template?.clientTemplates?.template1?.html;
+      candidateTemplate = template?.candidateTemplates?.template1?.html;
+    }
+
+    if (isRecruiterTemplateExcluded) {
+      const template = await this.getTemplate(companyId);
+      recruiterTemplate = template?.recruiterTemplates?.template1?.html;
+    }
     const data = {
+      clientTemplate,
+      candidateTemplate,
+      recruiterTemplate,
       ...body,
       _id,
       createdBy,
