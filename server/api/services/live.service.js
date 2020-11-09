@@ -20,7 +20,6 @@ import {
 import { uploadS3Stream, deleteS3 } from '../../common/aws';
 import sendCalendarInvites from '../../common/google';
 import { stripeAddMinutes } from './stripe.service';
-import { get } from 'superagent';
 
 const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
 const TWILIO_API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET;
