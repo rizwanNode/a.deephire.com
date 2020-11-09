@@ -189,6 +189,7 @@ class LiveService {
       recruiterUrl: `${interviewLink}?role=recruiter`,
       candidateUrl: `${interviewLink}?role=candidate`,
       clientUrl: `${interviewLink}?role=client`,
+      viewUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?liveid=${_id}`
     };
     const data = {
       ...body,
