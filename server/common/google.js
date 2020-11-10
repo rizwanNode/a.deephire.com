@@ -5,25 +5,42 @@ import l from './logger';
 const clientEmail = process.env.GC_CLIENT_EMAIL;
 let privateKey = process.env.GC_PRIVATE_KEY;
 privateKey = privateKey.split('\\n').join('\n');
+const auth = new google.auth.JWT(
+  clientEmail,
+  null,
+  privateKey,
+  ['https://www.googleapis.com/auth/calendar'],
+  'interviews@deephire.com'
+);
+const calendar = google.calendar({ version: 'v3', auth });
 
-const sendCalendarInvites = async (
+export async function handleCalendarInvite( 
+  attendee, 
   interviewLink,
   companyName,
-  attendees,
+  interviewTime,
+  candidateName,
+  jobName,
+  companyId
+) {
+  // TODO: Write the update calendar invite method. 
+  return (attendee.eventId) ? sendNewCalendarInvite(...arguments) : sendNewCalendarInvite(...arguments); 
+};
+
+// This method sends a calendar invite out to an attendee, then updates the attendee with the calendar invite's eventID
+const sendNewCalendarInvite = async ( 
+  attendee, 
+  interviewLink,
+  companyName,
   interviewTime,
   candidateName,
   jobName,
   companyId
 ) => {
+
   const [startTime, endTime] = interviewTime;
-  const auth = new google.auth.JWT(
-    clientEmail,
-    null,
-    privateKey,
-    ['https://www.googleapis.com/auth/calendar'],
-    'interviews@deephire.com'
-  );
-  const calendar = google.calendar({ version: 'v3', auth });
+  const roleSpecificInterviewLink = `${interviewLink}?role=${attendee.role}`;
+  
   const event = {
     summary: `${companyName} Interview, ${candidateName}${
       jobName ? `, ${jobName}` : ''
@@ -41,16 +58,15 @@ const sendCalendarInvites = async (
         { method: 'popup', minutes: 10 },
       ],
     },
-    attendees,
-    description: `Join your video interview at ${interviewLink}
-    
-This will be a live video interview. Make sure you have either a smartphone, or a computer with a working camera & microphone before the interview.
+    attendees: [{ email: attendee.email }], // Invite specifically for this one attendee 
+    description: `Join your video interview at ${roleSpecificInterviewLink}
+        
+    This will be a live video interview. Make sure you have either a smartphone, or a computer with a working camera & microphone before the interview.
 
-This meeting will be automatically recorded for note-taking purposes. 
+    This meeting will be automatically recorded for note-taking purposes. 
 
-Join your video interview at ${interviewLink}`,
+    Join your video interview at ${roleSpecificInterviewLink}`,
   };
-
 
   // HARDCODE
   // const isAppleOne = companyId === '5e95d7d3aed1120001480d69' || companyId === '5f7f25460d77330001bc9b91';
@@ -74,7 +90,7 @@ Join your video interview at ${interviewLink}`,
         { method: 'popup', minutes: 10 },
       ],
     },
-    attendees,
+    attendees: [{ email: attendee.email }],
     description: `This will be a live video interview. Make sure you have either a smartphone, or a computer with a working camera & microphone before the interview.
 
 This meeting will be automatically recorded for note-taking purposes. 
@@ -88,8 +104,13 @@ Please reach out if you have not recieved a link to the interview.`,
       sendNotifications: true,
       sendUpdates: 'all',
     })
-    .catch(e => l.err(e));
-  l.info('Send Calendar Invites Status:', scheduledEvent.status);
-};
+    .catch(e => {
+      l.err(e)
+    });
+    
+    l.info(`Status of calendar invite for ${attendee.role} ${attendee.email}:`, scheduledEvent.status);
+    
+    attendee.eventId = scheduledEvent.data.id; 
 
-export default sendCalendarInvites;
+    return attendee; 
+}

@@ -18,7 +18,7 @@ import {
   findOne,
 } from './db.service';
 import { uploadS3Stream, deleteS3 } from '../../common/aws';
-import sendCalendarInvites from '../../common/google';
+import { handleCalendarInvite } from '../../common/google';
 import { stripeAddMinutes } from './stripe.service';
 
 const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
@@ -169,18 +169,17 @@ class LiveService {
       clientEmail,
       jobName,
       candidateName,
-      interviewType
+      interviewType,
+      attendees
     } = body;
-    const attendees = [
-      { email: candidateEmail },
-      { email: clientEmail || createdBy },
-    ];
+
+    const _id = new ObjectId();
+    
+    let interviewLink = `https://live.deephire.com/room/${_id}`;
 
     // const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
     // const randomDigits = Math.floor(Math.random() * 100000000);
     // const roomName = `${lowerCaseUnderscoreCompanyName}-${randomDigits}`;
-    const _id = new ObjectId();
-    let interviewLink = `https://live.deephire.com/room/${_id}`;
 
     // HARDCODED for APPLEONE
     // eslint-disable-next-line camelcase
@@ -190,19 +189,16 @@ class LiveService {
     ) {
       interviewLink = `https://beta.live.deephire.com/room/${_id}`;
     }
-    const urls = {
-      interviewLink,
-      recruiterUrl: `${interviewLink}?role=recruiter`,
-      candidateUrl: `${interviewLink}?role=candidate`,
-      clientUrl: `${interviewLink}?role=client`,
-      viewUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?liveid=${_id}`,
-    };
-    let { recruiterTemplate, clientTemplate, candidateTemplate } = body;
+
+    let { 
+      recruiterTemplate, 
+      clientTemplate, 
+      candidateTemplate
+    } = body;
     const isClientTemplateExcluded =
       interviewType === 'client' && (!clientTemplate || !candidateTemplate);
     const isRecruiterTemplateExcluded =
       interviewType === 'recruiter' && !recruiterTemplate;
-
 
     if (isClientTemplateExcluded) {
       const template = await this.getTemplate(companyId);
@@ -214,6 +210,20 @@ class LiveService {
       const template = await this.getTemplate(companyId);
       recruiterTemplate = template?.recruiterTemplates?.template1?.html;
     }
+
+    const interviewAttendees = attendees || createLiveAttendeesList(candidateEmail, clientEmail, createdBy);
+    // Attendees with their eventIDs after being invited 
+    var invitedAttendees = await Promise.all(interviewAttendees.map(async (attendee) => 
+      await handleCalendarInvite(
+        attendee, 
+        interviewLink,
+        companyName,
+        interviewTime,
+        candidateName,
+        jobName,
+        companyId
+    )));
+
     const data = {
       clientTemplate,
       candidateTemplate,
@@ -223,20 +233,31 @@ class LiveService {
       createdBy,
       companyId: new ObjectId(companyId),
       roomName: _id,
-      ...urls,
       companyName,
       recruiterName: name,
+      attendees: invitedAttendees,
+      viewUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?liveid=${_id}`
     };
-    await sendCalendarInvites(
-      interviewLink,
-      companyName,
-      attendees,
-      interviewTime,
-      candidateName,
-      jobName,
-      companyId
-    );
+
     return insert(data, collection);
+
+    function createLiveAttendeesList(candidateEmail, clientEmail, recruiterEmail) {
+      var attendees = [{
+        role: 'candidate',
+        email: candidateEmail
+      },{
+        role: 'recruiter',
+        email: recruiterEmail
+      }];
+
+      if (clientEmail) { 
+        attendees.push({
+          role: 'client',
+          email: clientEmail
+        });
+      }
+      return attendees; 
+    }
   }
 
   async handleTwilio(body) {
