@@ -189,7 +189,13 @@ class LiveService {
     ) {
       interviewLink = `https://beta.live.deephire.com/room/${_id}`;
     }
-
+    const urls = {
+      interviewLink,
+      recruiterUrl: `${interviewLink}?role=recruiter`,
+      candidateUrl: `${interviewLink}?role=candidate`,
+      clientUrl: `${interviewLink}?role=client`,
+      viewUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?liveid=${_id}`,
+    };
     let { 
       recruiterTemplate, 
       clientTemplate, 
@@ -236,7 +242,7 @@ class LiveService {
       companyName,
       recruiterName: name,
       attendees: invitedAttendees,
-      viewUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?liveid=${_id}`
+      ...urls
     };
 
     return insert(data, collection);
