@@ -356,6 +356,8 @@ class LiveService {
       l.info(`Interview "${_id}" for company "${companyName}" was updated but times did not change. No email updates sent.`);
     }
 
+    // Do not allow changes to the _id (if it somehow gets through)
+    delete data._id; 
     // Do not allow changes to any of the emails.
     delete data.clientEmail;
     delete data.recruiterEmail;

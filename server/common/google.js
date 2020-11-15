@@ -36,13 +36,8 @@ const sendNewCalendarInvite = async (
   jobName,
   companyId
 ) => {
-  // HARDCODE
-  // const isAppleOne = companyId === '5e95d7d3aed1120001480d69' || companyId === '5f7f25460d77330001bc9b91';
-  const isAppleOne = false;
-  const eventTemplate = isAppleOne 
-    ? getAppleOneEvent(companyName, candidateName, jobName, interviewTime, attendee)
-    : getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee); 
-  
+
+  const eventTemplate = getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);   
   const scheduledEvent = await calendar.events
     .insert({
       calendarId: 'primary',
@@ -69,13 +64,8 @@ const updateCalendarInvite = async (
   jobName,
   companyId
 ) => {
-  // HARDCODE
-  // const isAppleOne = companyId === '5e95d7d3aed1120001480d69' || companyId === '5f7f25460d77330001bc9b91';
-  const isAppleOne = false;
-  const eventTemplate = isAppleOne 
-    ? getAppleOneEvent(companyName, candidateName, jobName, interviewTime, attendee)
-    : getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);
 
+  const eventTemplate = getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);
   const scheduledEvent = await calendar.events.update({
     calendarId: 'primary',
     resource: eventTemplate,
@@ -119,33 +109,4 @@ function getNormalEventTemplate(interviewLink, companyName, candidateName, jobNa
 
     Join your video interview at ${roleSpecificInterviewLink}`,
   };
-}
-
-function getAppleOneEvent(companyName, candidateName, jobName, interviewTime, attendee) {
-    const [startTime, endTime] = interviewTime;
-    // HARDCODE
-    return {
-      summary: `${companyName} Interview, ${candidateName}${
-        jobName ? `, ${jobName}` : ''
-      } `,
-      start: {
-        dateTime: startTime,
-      },
-      end: {
-        dateTime: endTime,
-      },
-      reminders: {
-        useDefault: false,
-        overrides: [
-          { method: 'email', minutes: 1 * 60 },
-          { method: 'popup', minutes: 10 },
-        ],
-      },
-      attendees: [{ email: attendee.email }],
-      description: `This will be a live video interview. Make sure you have either a smartphone, or a computer with a working camera & microphone before the interview.
-  
-  This meeting will be automatically recorded for note-taking purposes. 
-  
-  Please reach out if you have not received a link to the interview.`,
-    };
 }
