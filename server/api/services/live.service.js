@@ -170,11 +170,12 @@ class LiveService {
       jobName,
       candidateName,
       interviewType,
-      attendees
+      attendees,
+      prepRoomTime
     } = body;
 
     const _id = new ObjectId();
-    
+
     let interviewLink = `https://live.deephire.com/room/${_id}`;
 
     // const lowerCaseUnderscoreCompanyName = companyName.replace(/\s+/g, '-').toLowerCase();
@@ -196,9 +197,9 @@ class LiveService {
       clientUrl: `${interviewLink}?role=client`,
       viewUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?liveid=${_id}`,
     };
-    let { 
-      recruiterTemplate, 
-      clientTemplate, 
+    let {
+      recruiterTemplate,
+      clientTemplate,
       candidateTemplate
     } = body;
     const isClientTemplateExcluded =
@@ -218,17 +219,31 @@ class LiveService {
     }
 
     const interviewAttendees = attendees || createLiveAttendeesList(candidateEmail, clientEmail, createdBy);
-    // Attendees with their eventIDs after being invited 
-    var invitedAttendees = await Promise.all(interviewAttendees.map(async (attendee) => 
-      await handleCalendarInvite(
-        attendee, 
+    // Attendees with their eventIDs after being invited
+    const invitedAttendees = await Promise.all(interviewAttendees.map(async attendee => {
+      if (prepRoomTime) {
+        await handleCalendarInvite(
+          attendee,
+          interviewLink,
+          `${companyName} Prep`,
+          prepRoomTime,
+          candidateName,
+          jobName,
+          companyId);
+        // TODO - Make this better. This code was added to make sure the prep room invite is sent sepratly.
+        // there is a bug where attendee gets mutated by the handleCalendarInvite function and then the mutated value is sent below
+        delete attendee.eventId;
+      }
+      return handleCalendarInvite(
+        attendee,
         interviewLink,
         companyName,
         interviewTime,
         candidateName,
         jobName,
         companyId
-    )));
+      );
+    }));
 
     const data = {
       clientTemplate,
@@ -248,21 +263,21 @@ class LiveService {
     return insert(data, collection);
 
     function createLiveAttendeesList(candidateEmail, clientEmail, recruiterEmail) {
-      var attendees = [{
+      const attendees = [{
         role: 'candidate',
         email: candidateEmail
-      },{
+      }, {
         role: 'recruiter',
         email: recruiterEmail
       }];
 
-      if (clientEmail) { 
+      if (clientEmail) {
         attendees.push({
           role: 'client',
           email: clientEmail
         });
       }
-      return attendees; 
+      return attendees;
     }
   }
 
@@ -325,29 +340,29 @@ class LiveService {
     return 200;
   }
 
-  // For right now, we will not allow updates to any of the emails/attendees from the front end. 
+  // For right now, we will not allow updates to any of the emails/attendees from the front end.
   async put(_id, data) {
     l.info(`${this.constructor.name}.put(${_id}, ${JSON.stringify(data)})`);
-    // Check if interview time changed 
-    let newInterviewTime = data.interviewTime; 
-    let { interviewTime, 
-          attendees, 
-          interviewLink,
-          companyName,
-          candidateName,
-          jobName,
-          companyId 
-        } = await byId(_id, "live");
-      
+    // Check if interview time changed
+    const newInterviewTime = data.interviewTime;
+    const { interviewTime,
+      attendees,
+      interviewLink,
+      companyName,
+      candidateName,
+      jobName,
+      companyId
+    } = await byId(_id, 'live');
+
     if (haveInterviewTimesChanged(newInterviewTime, interviewTime)) {
       l.info(`Interview "${_id}" for company "${companyName}" times have changed. Attempting to update attendee invites.`);
-      // Update the events for all attendees 
-      await Promise.all(attendees.map(async (attendee) => 
+      // Update the events for all attendees
+      await Promise.all(attendees.map(async attendee =>
         await handleCalendarInvite(
-          attendee, 
+          attendee,
           interviewLink,
           companyName,
-          newInterviewTime, // Update the times... 
+          newInterviewTime, // Update the times...
           candidateName,
           jobName,
           companyId
@@ -357,17 +372,17 @@ class LiveService {
     }
 
     // Do not allow changes to the _id (if it somehow gets through)
-    delete data._id; 
+    delete data._id;
     // Do not allow changes to any of the emails.
     delete data.clientEmail;
     delete data.recruiterEmail;
-    delete data.candidateEmail; 
-    // Update the document 
+    delete data.candidateEmail;
+    // Update the document
     return put({ _id }, 'live', data);
 
     function haveInterviewTimesChanged(newInterview, oldInterview) {
-      let [newStart, newEnd] = newInterview; 
-      let [oldStart, oldEnd] = oldInterview; 
+      const [newStart, newEnd] = newInterview;
+      const [oldStart, oldEnd] = oldInterview;
       return (newStart != oldStart || newEnd != oldEnd);
     }
   }
