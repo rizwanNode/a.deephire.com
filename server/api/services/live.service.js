@@ -325,9 +325,51 @@ class LiveService {
     return 200;
   }
 
-  put(_id, data) {
+  // For right now, we will not allow updates to any of the emails/attendees from the front end. 
+  async put(_id, data) {
     l.info(`${this.constructor.name}.put(${_id}, ${JSON.stringify(data)})`);
+    // Check if interview time changed 
+    let newInterviewTime = data.interviewTime; 
+    let { interviewTime, 
+          attendees, 
+          interviewLink,
+          companyName,
+          candidateName,
+          jobName,
+          companyId 
+        } = await byId(_id, "live");
+      
+    if (haveInterviewTimesChanged(newInterviewTime, interviewTime)) {
+      l.info(`Interview "${_id}" for company "${companyName}" times have changed. Attempting to update attendee invites.`);
+      // Update the events for all attendees 
+      await Promise.all(attendees.map(async (attendee) => 
+        await handleCalendarInvite(
+          attendee, 
+          interviewLink,
+          companyName,
+          newInterviewTime, // Update the times... 
+          candidateName,
+          jobName,
+          companyId
+        )));
+    } else {
+      l.info(`Interview "${_id}" for company "${companyName}" was updated but times did not change. No email updates sent.`);
+    }
+
+    // Do not allow changes to the _id (if it somehow gets through)
+    delete data._id; 
+    // Do not allow changes to any of the emails.
+    delete data.clientEmail;
+    delete data.recruiterEmail;
+    delete data.candidateEmail; 
+    // Update the document 
     return put({ _id }, 'live', data);
+
+    function haveInterviewTimesChanged(newInterview, oldInterview) {
+      let [newStart, newEnd] = newInterview; 
+      let [oldStart, oldEnd] = oldInterview; 
+      return (newStart != oldStart || newEnd != oldEnd);
+    }
   }
 
   async deleteRecordings(_id) {
