@@ -14,9 +14,9 @@ const auth = new google.auth.JWT(
 );
 const calendar = google.calendar({ version: 'v3', auth });
 
-// Create or update calendar invites based on attendee's .eventId 
-export async function handleCalendarInvite( 
-  attendee, 
+// Create or update calendar invites based on attendee's .eventId
+export async function handleCalendarInvite(
+  attendee,
   interviewLink,
   companyName,
   interviewTime,
@@ -24,11 +24,11 @@ export async function handleCalendarInvite(
   jobName,
   companyId
 ) {
-  return (attendee.eventId) ? updateCalendarInvite(...arguments) : sendNewCalendarInvite(...arguments); 
-};
+  return (attendee.eventId) ? updateCalendarInvite(...arguments) : sendNewCalendarInvite(...arguments);
+}
 
-const sendNewCalendarInvite = async ( 
-  attendee, 
+const sendNewCalendarInvite = async (
+  attendee,
   interviewLink,
   companyName,
   interviewTime,
@@ -36,8 +36,7 @@ const sendNewCalendarInvite = async (
   jobName,
   companyId
 ) => {
-
-  const eventTemplate = getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);   
+  const eventTemplate = getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);
   const scheduledEvent = await calendar.events
     .insert({
       calendarId: 'primary',
@@ -46,17 +45,17 @@ const sendNewCalendarInvite = async (
       sendUpdates: 'all',
     })
     .catch(e => {
-      l.err(e)
+      l.err(e);
     });
-    
-    l.info(`Status of calendar invite for ${attendee.role} ${attendee.email}:`, scheduledEvent.status);
-    
-    attendee.eventId = scheduledEvent.data.id; 
-    return attendee; 
-}
 
-const updateCalendarInvite = async ( 
-  attendee, 
+  l.info(`Status of calendar invite for ${attendee.role} ${attendee.email}:`, scheduledEvent.status);
+
+  attendee.eventId = scheduledEvent.data.id;
+  return attendee;
+};
+
+const updateCalendarInvite = async (
+  attendee,
   interviewLink,
   companyName,
   interviewTime,
@@ -64,7 +63,6 @@ const updateCalendarInvite = async (
   jobName,
   companyId
 ) => {
-
   const eventTemplate = getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);
   const scheduledEvent = await calendar.events.update({
     calendarId: 'primary',
@@ -73,12 +71,12 @@ const updateCalendarInvite = async (
     sendUpdates: 'all',
     eventId: attendee.eventId
   })
-  .catch(e => {
-    l.err(e)
-  });
+    .catch(e => {
+      l.err(e);
+    });
 
   l.info(`Update status of calendar invite for ${attendee.role} ${attendee.email}:`, scheduledEvent.status);
-}
+};
 
 function getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee) {
   const [startTime, endTime] = interviewTime;
@@ -100,7 +98,7 @@ function getNormalEventTemplate(interviewLink, companyName, candidateName, jobNa
         { method: 'popup', minutes: 10 },
       ],
     },
-    attendees: [{ email: attendee.email }], // Invite specifically for this one attendee 
+    attendees: [{ email: attendee.email }], // Invite specifically for this one attendee
     description: `Join your video interview at ${roleSpecificInterviewLink}
         
     This will be a live video interview. Make sure you have either a smartphone, or a computer with a working camera & microphone before the interview.
