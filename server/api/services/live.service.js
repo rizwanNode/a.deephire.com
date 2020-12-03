@@ -186,7 +186,8 @@ class LiveService {
     // eslint-disable-next-line camelcase
     if (
       userProfile?.user_id === 'auth0|5f7f2546ec8f030075525516' ||
-      companyId === '5f960ca1aaf3e97ca402a51d'
+      companyId === '5f960ca1aaf3e97ca402a51d' ||
+      companyId === '5e95d7d3aed1120001480d69'
     ) {
       interviewLink = `https://beta.live.deephire.com/room/${_id}`;
     }
