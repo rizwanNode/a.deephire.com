@@ -46,12 +46,12 @@ async function getEmailandCompany(req, res, next) {
     }
 
     if (jwtDecode(accessToken).azp === 'Ay97b4Dqofn59Lwu9iTwwBbjke3als4D') {
-      userId = 'auth0|5f7f2546ec8f030075525516'; // 'appledev@deephire.com'
+      userId = 'auth0|5fc900265bddd2006e2f37d1'; // 'apple@deephire.com'
     }
 
-    // if (jwtDecode(accessToken).azp === 'HOii5rzDjw7zo0Vpjg55Aeo8Jqqy5GMM') {
-    //   userId = 'auth0|5fc900265bddd2006e2f37d1'; // 'apple@deephire.com'
-    // }
+    if (jwtDecode(accessToken).azp === 'HOii5rzDjw7zo0Vpjg55Aeo8Jqqy5GMM') {
+      userId = 'auth0|5f7f2546ec8f030075525516'; // 'appledev@deephire.com'
+    }
 
     if (jwtDecode(accessToken).azp === 'NjKEg91EJaEvdnNBOUb0IGaiDzA7Etuw') {
       userId = 'auth0|5fa17968d4c76b0072731f22'; // 'alliancedev@deephire.com'
