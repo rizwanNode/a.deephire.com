@@ -9,6 +9,7 @@ const testUrl = 'https://webhook.site/a1d488ad-490a-4f78-9601-332e5731cef7';
 
 const appleOneUrl = 'http://import.axtest.com/deephire/getlive.ashx';
 
+
 export const roomEndedEvent = async (liveId, recording) => {
   // temporary to make sure we don't send them the preflight requests
   if (!ObjectId.isValid(liveId)) {
@@ -17,12 +18,13 @@ export const roomEndedEvent = async (liveId, recording) => {
   const search = { _id: liveId };
   const { companyId } = await findOne(search, 'live');
 
+
   const data = { liveId, recording, statusCallBackEvent: 'room-ended' };
 
   fetch(testUrl, { method: 'POST', headers, body: JSON.stringify(data) });
 
 
-  if (companyId.toString() === '5f7f25460d77330001bc9b91') {
+  if (companyId.toString() === '5f7f25460d77330001bc9b91' || companyId.toString() === '5e95d7d3aed1120001480d69') {
     await fetch(testUrl, {
       method: 'POST',
       headers,
@@ -48,7 +50,7 @@ export const compositionAvailableEvent = async compositionSid => {
       body: JSON.stringify(data),
     });
 
-    if (companyId.toString() === '5f7f25460d77330001bc9b91') {
+    if (companyId.toString() === '5f7f25460d77330001bc9b91' || companyId.toString() === '5e95d7d3aed1120001480d69') {
       await fetch(testUrl, {
         method: 'POST',
         headers,
@@ -76,7 +78,7 @@ export const recordingsDeletedEvent = async liveId => {
   const search = { _id: liveId };
   const { companyId } = await findOne(search, 'live');
 
-  if (companyId.toString() === '5f7f25460d77330001bc9b91') {
+  if (companyId.toString() === '5f7f25460d77330001bc9b91' || companyId.toString() === '5e95d7d3aed1120001480d69') {
     await fetch(testUrl, {
       method: 'POST',
       headers,
