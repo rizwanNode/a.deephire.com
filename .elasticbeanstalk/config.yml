@@ -1,10 +1,10 @@
 branch-defaults:
   develop:
-    environment: Deephire-Node-Api-Prod
+    environment: Deephire-Node-Api-Prod-1
   master:
-    environment: Deephire-Node-Api-Prod
+    environment: Deephire-Node-Api-Prod-1
 environment-defaults:
-  Deephire-Node-Api-Prod:
+  Deephire-Node-Api-Prod-1:
     branch: null
     repository: null
 global:
