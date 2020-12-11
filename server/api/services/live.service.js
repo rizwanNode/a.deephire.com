@@ -223,7 +223,7 @@ class LiveService {
     // Attendees with their eventIDs after being invited
     const invitedAttendees = await Promise.all(interviewAttendees.map(async attendee => {
       // clients should NEVER receive prep room invites
-      if (prepRoomTime && attendee.role !== client) {
+      if (prepRoomTime && attendee.role !== 'client') {
         await handleCalendarInvite(
           attendee,
           interviewLink,
