@@ -156,6 +156,9 @@
            },
            "createdByTeam": {
              "type": "string"
+           },
+           "sendCalendarInvites": {
+             "type": "boolean"
            }
          },
          "required": [

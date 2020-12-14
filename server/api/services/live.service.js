@@ -171,7 +171,8 @@ class LiveService {
       candidateName,
       interviewType,
       attendees,
-      prepRoomTime
+      prepRoomTime,
+      sendCalendarInvites
     } = body;
 
     const _id = new ObjectId();
@@ -220,32 +221,37 @@ class LiveService {
     }
 
     const interviewAttendees = attendees || createLiveAttendeesList(candidateEmail, clientEmail, createdBy);
+
+
     // Attendees with their eventIDs after being invited
-    const invitedAttendees = await Promise.all(interviewAttendees.map(async attendee => {
+    let invitedAttendees = [];
+    if (sendCalendarInvites) {
+      invitedAttendees = await Promise.all(interviewAttendees.map(async attendee => {
       // clients should NEVER receive prep room invites
-      if (prepRoomTime && attendee.role !== 'client') {
-        await handleCalendarInvite(
+        if (prepRoomTime && attendee.role !== 'client') {
+          await handleCalendarInvite(
+            attendee,
+            interviewLink,
+            `${companyName} Prep`,
+            prepRoomTime,
+            candidateName,
+            jobName,
+            companyId);
+          // TODO - Make this better. This code was added to make sure the prep room invite is sent sepratly.
+          // there is a bug where attendee gets mutated by the handleCalendarInvite function and then the mutated value is sent below
+          delete attendee.eventId;
+        }
+        return handleCalendarInvite(
           attendee,
           interviewLink,
-          `${companyName} Prep`,
-          prepRoomTime,
+          companyName,
+          interviewTime,
           candidateName,
           jobName,
-          companyId);
-        // TODO - Make this better. This code was added to make sure the prep room invite is sent sepratly.
-        // there is a bug where attendee gets mutated by the handleCalendarInvite function and then the mutated value is sent below
-        delete attendee.eventId;
-      }
-      return handleCalendarInvite(
-        attendee,
-        interviewLink,
-        companyName,
-        interviewTime,
-        candidateName,
-        jobName,
-        companyId
-      );
-    }));
+          companyId
+        );
+      }));
+    }
 
     const data = {
       clientTemplate,
@@ -353,14 +359,15 @@ class LiveService {
       companyName,
       candidateName,
       jobName,
-      companyId
+      companyId,
+      sendCalendarInvites
     } = await byId(_id, 'live');
 
-    if (haveInterviewTimesChanged(newInterviewTime, interviewTime)) {
+    if (haveInterviewTimesChanged(newInterviewTime, interviewTime) && sendCalendarInvites) {
       l.info(`Interview "${_id}" for company "${companyName}" times have changed. Attempting to update attendee invites.`);
       // Update the events for all attendees
       await Promise.all(attendees.map(async attendee =>
-        await handleCalendarInvite(
+        handleCalendarInvite(
           attendee,
           interviewLink,
           companyName,
