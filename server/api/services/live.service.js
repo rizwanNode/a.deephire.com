@@ -345,7 +345,7 @@ class LiveService {
       await compositionAvailableEvent(CompositionSid);
     }
 
-    return 200;
+    return Promise.resolve(200);
   }
 
   // For right now, we will not allow updates to any of the emails/attendees from the front end.

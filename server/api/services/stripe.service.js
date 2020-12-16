@@ -47,6 +47,10 @@ export const createStripeTrialCustomer = async (email, companyName, plan, price)
 
 export const stripeAddMinutes = async (companyId, quantity) => {
   const stripeId = await getStripeId(companyId);
+  if (!stripeId) {
+    l.info(`No plan found for ${companyId}`);
+    return 'No StripeID found for that company';
+  }
   const subscriptions = await getSubscriptionsFromStripe(stripeId);
   const subscriptionItems = subscriptions?.data[0]?.items?.data;
   if (subscriptionItems) {
