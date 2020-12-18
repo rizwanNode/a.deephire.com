@@ -161,7 +161,8 @@ class LiveService {
     );
     const { name } = userProfile;
     const companyData = await byId(companyId, 'companies');
-    const { companyName } = companyData;
+    const { companyName, brands } = companyData;
+
 
     const {
       interviewTime,
@@ -172,7 +173,9 @@ class LiveService {
       interviewType,
       attendees,
       prepRoomTime,
-      sendCalendarInvites
+      sendCalendarInvites,
+      recruiterCompany = '',
+      recruiterCompanyCountry = ''
     } = body;
 
     const _id = new ObjectId();
@@ -190,7 +193,11 @@ class LiveService {
       companyId === '5f960ca1aaf3e97ca402a51d' || companyId === '5e95d7d3aed1120001480d69' ||
       companyId === '5f7f25460d77330001bc9b91' // appleoneTest company ID
     ) {
-      interviewLink = `https://beta.live.deephire.com/room/${_id}`;
+      const generalUrl = brands?.[recruiterCompany]?.url;
+      const countryUrl = brands?.[recruiterCompany]?.[recruiterCompanyCountry]?.url;
+
+      interviewLink = countryUrl || generalUrl || 'https://interviews.appleone.com';
+      interviewLink += `/room/${_id}`;
     }
     const urls = {
       interviewLink,
