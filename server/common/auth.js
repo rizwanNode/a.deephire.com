@@ -57,6 +57,10 @@ async function getEmailandCompany(req, res, next) {
       userId = 'auth0|5fa17968d4c76b0072731f22'; // 'alliancedev@deephire.com'
     }
 
+    if (jwtDecode(accessToken).azp === 'xuR0ynu7oPzklMzGer0w22uNCkHFOuPu') {
+      userId = 'auth0|5ff34bd87e3d490075921c86'; // 'allianceabroad@deephire.com'
+    }
+
 
     // END CUSTOM CODE FOR LINKING .Jobs accounts
 
