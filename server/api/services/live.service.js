@@ -397,6 +397,7 @@ class LiveService {
     return put({ _id }, 'live', data);
 
     function haveInterviewTimesChanged(newInterview, oldInterview) {
+      if (!newInterview || !oldInterview) return false;
       const [newStart, newEnd] = newInterview;
       const [oldStart, oldEnd] = oldInterview;
       return (newStart != oldStart || newEnd != oldEnd);
