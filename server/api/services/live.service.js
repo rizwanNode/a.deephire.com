@@ -151,11 +151,11 @@ class LiveService {
     return deleteSubDocument(search, match, collection);
   }
 
-  async insert(companyId, createdBy, userProfile, body) {
+  async insert(companyId, email, userProfile, body) {
     l.info(
       `${
         this.constructor.name
-      }.insert(${companyId}, ${createdBy}, ${JSON.stringify(
+      }.insert(${companyId}, ${email}, ${JSON.stringify(
         userProfile
       )}, ${JSON.stringify(body)})`
     );
@@ -165,6 +165,7 @@ class LiveService {
 
 
     const {
+      createdBy = email,
       interviewTime,
       candidateEmail,
       clientEmail,
