@@ -157,6 +157,9 @@
            "createdByTeam": {
              "type": "string"
            },
+           "createdBy": {
+            "type": "string"
+          },
            "sendCalendarInvites": {
              "type": "boolean"
            }
