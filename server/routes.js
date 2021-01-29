@@ -26,5 +26,6 @@ export default function routes(app) {
   app.use('/v1/events', eventsRouter);
   app.use('/v1/profiles', profilesRouter);
   app.use('/v1/live', liveRouter);
+  app.use('/health', (req, res) => res.status(200).end());
   app.get('/outreach', (req, res) => res.redirect(`https://sdr.deephire.com/auth?code=${req.query.code}`));
 }
