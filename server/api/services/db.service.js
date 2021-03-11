@@ -313,9 +313,9 @@ export const duplicate = async (search, col) => {
 // The methods above this comment may not be following best practices.
 // The methods below will attempt to improve upon proper status codes, simplicity, and error handling.
 
-export const newByParam = async (search, col) => {
+export const newByParam = async (query, col, options = null) => {
   const collection = db.collection(col);
-  const curser = await collection.find(search);
+  const curser = await collection.find(query, options);
   const results = await curser.toArray().catch(err => {
     l.error(err);
     return err;

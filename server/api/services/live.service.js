@@ -8,7 +8,7 @@ import {
   recordingsDeletedEvent,
 } from '../../common/webhooks';
 import {
-  byParam,
+  newByParam,
   byId,
   insert,
   putArrays,
@@ -117,7 +117,9 @@ class LiveService {
   async byParam(companyId) {
     l.info(`${this.constructor.name}.byParam(${companyId})`);
     const search = { companyId: new ObjectId(companyId) };
-    const documents = await byParam(search, collection);
+    // require just the bare minimum info needed.
+    const options = { projection: { interviewTime: true, createdBy: true, candidateName: true, candidateEmail: true, createdByTeam: true, recording: true, } };
+    const documents = await newByParam(search, collection, options);
     return documents;
   }
 
