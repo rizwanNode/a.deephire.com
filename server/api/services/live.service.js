@@ -118,7 +118,7 @@ class LiveService {
     l.info(`${this.constructor.name}.byParam(${companyId})`);
     const search = { companyId: new ObjectId(companyId) };
     // require just the bare minimum info needed.
-    const options = { projection: { interviewTime: true, createdBy: true, candidateName: true, candidateEmail: true, createdByTeam: true, recording: true, } };
+    const options = { projection: { interviewTime: true, createdBy: true, candidateName: true, candidateEmail: true, createdByTeam: true, recording: true, interviewLink: true } };
     const documents = await newByParam(search, collection, options);
     return documents;
   }
