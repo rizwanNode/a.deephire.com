@@ -24,8 +24,26 @@ export async function handleCalendarInvite(
   jobName,
   companyId
 ) {
-  return (attendee.eventId) ? updateCalendarInvite(...arguments) : sendNewCalendarInvite(...arguments);
+  return attendee.eventId
+    ? updateCalendarInvite(...arguments)
+    : sendNewCalendarInvite(...arguments);
 }
+
+const retryConfig = {
+  // The amount of time to initially delay the retry
+  retryDelay: 100,
+  retry: 10,
+
+  // The HTTP Methods that will be automatically retried.
+  httpMethodsToRetry: ['GET', 'PUT', 'HEAD', 'POST', 'OPTIONS', 'DELETE'],
+
+  // The HTTP response status codes that will automatically be retried.
+  statusCodesToRetry: [
+    [100, 199],
+    [402, 403],
+    [500, 599],
+  ],
+};
 
 const sendNewCalendarInvite = async (
   attendee,
@@ -36,21 +54,34 @@ const sendNewCalendarInvite = async (
   jobName,
   companyId
 ) => {
-  const eventTemplate = getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);
+  const eventTemplate = getNormalEventTemplate(
+    interviewLink,
+    companyName,
+    candidateName,
+    jobName,
+    interviewTime,
+    attendee
+  );
   const scheduledEvent = await calendar.events
-    .insert({
-      calendarId: 'primary',
-      resource: eventTemplate,
-      sendNotifications: true,
-      sendUpdates: 'all',
-    })
-    .catch(e => {
+    .insert(
+      {
+        calendarId: 'primary',
+        resource: eventTemplate,
+        sendNotifications: true,
+        sendUpdates: 'all',
+      },
+      { retryConfig }
+    )
+    .catch((e) => {
       console.log(e);
     });
 
-  l.info(`Status of calendar invite for ${attendee.role} ${attendee.email}:`, scheduledEvent.status);
+  l.info(
+    `Status of calendar invite for ${attendee.role} ${attendee.email}:`,
+    scheduledEvent?.status
+  );
 
-  attendee.eventId = scheduledEvent.data.id;
+  attendee.eventId = scheduledEvent?.data?.id;
   return attendee;
 };
 
@@ -63,28 +94,47 @@ const updateCalendarInvite = async (
   jobName,
   companyId
 ) => {
-  const eventTemplate = getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee);
-  const scheduledEvent = await calendar.events.update({
-    calendarId: 'primary',
-    resource: eventTemplate,
-    sendNotifications: true,
-    sendUpdates: 'all',
-    eventId: attendee.eventId
-  })
-    .catch(e => {
+  const eventTemplate = getNormalEventTemplate(
+    interviewLink,
+    companyName,
+    candidateName,
+    jobName,
+    interviewTime,
+    attendee
+  );
+  const scheduledEvent = await calendar.events
+    .update(
+      {
+        calendarId: 'primary',
+        resource: eventTemplate,
+        sendNotifications: true,
+        sendUpdates: 'all',
+        eventId: attendee.eventId,
+      },
+      { retryConfig }
+    )
+    .catch((e) => {
       l.err(e);
     });
 
-  l.info(`Update status of calendar invite for ${attendee.role} ${attendee.email}:`, scheduledEvent.status);
+  l.info(
+    `Update status of calendar invite for ${attendee.role} ${attendee.email}:`,
+    scheduledEvent?.status
+  );
 };
 
-function getNormalEventTemplate(interviewLink, companyName, candidateName, jobName, interviewTime, attendee) {
+function getNormalEventTemplate(
+  interviewLink,
+  companyName,
+  candidateName,
+  jobName,
+  interviewTime,
+  attendee
+) {
   const [startTime, endTime] = interviewTime;
   const roleSpecificInterviewLink = `${interviewLink}?role=${attendee.role}`;
   return {
-    summary: `${companyName} Interview, ${candidateName}${
-      jobName ? `, ${jobName}` : ''
-    } `,
+    summary: `${companyName} Interview, ${candidateName}${jobName ? `, ${jobName}` : ''} `,
     start: {
       dateTime: startTime,
     },
