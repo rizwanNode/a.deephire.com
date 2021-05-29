@@ -471,6 +471,30 @@
             }
          }
       },
+      "AppMetaDataBody": {
+         "type": "object",
+         "title": "appMetadata",
+         "properties": {
+            "companyId": {
+               "type": "string",
+               "example": "5d9671ad0d4e9c0c312d10f9"
+            },
+            "role": {
+               "type": "string",
+               "example": "user"
+            },
+            "team": {
+               "type": "array",
+               "items": {
+                  "type": "string"
+               },
+               "example": [
+                  "Test Team 1",
+                  "Test Team 2"
+               ]
+            }
+         }
+      },
       "ArchiveBody": {
          "type": "array",
          "items": {
@@ -2623,6 +2647,46 @@
                   "description": "Bearer <auth_token>",
                   "required": true,
                   "type": "string"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "returns profile info"
+               },
+               "404": {
+                  "description": "no profile exists"
+               }
+            }
+         }
+      },
+      "/profiles/{teamMemberId}": {
+         "put": {
+            "tags": [
+               "Profiles"
+            ],
+            "parameters": [
+               {
+                  "name": "teamMemberId",
+                  "in": "path",
+                  "required": true,
+                  "description": "auth0 id of the team member that we want to update app_metadata for",
+                  "type": "string"
+               },
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "in": "body",
+                  "name": "body",
+                  "description": "New app_metadata to set",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/AppMetaDataBody"
+                  }
                }
             ],
             "responses": {
