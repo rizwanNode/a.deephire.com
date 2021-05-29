@@ -12,7 +12,7 @@ const mixpanel = Mixpanel.init(process.env.MIXPANEL_API, {
 
 const jwtDecode = require('jwt-decode');
 
-const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 240 });
+export const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 240 });
 
 export const auth0Managment = new ManagementClient({
   domain: 'deephire2.auth0.com',
