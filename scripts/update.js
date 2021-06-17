@@ -33,7 +33,7 @@ const init = async () => {
 
     return true;
   } catch (error) {
-    l.error(error);
+    console.log(error);
     return false;
   }
 };

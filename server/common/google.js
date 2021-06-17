@@ -72,8 +72,8 @@ const sendNewCalendarInvite = async (
       },
       { retryConfig }
     )
-    .catch((e) => {
-      console.log(e);
+    .catch(e => {
+      l.error(e);
     });
 
   l.info(

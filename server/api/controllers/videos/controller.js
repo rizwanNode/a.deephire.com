@@ -17,7 +17,7 @@ export class Controller {
   }
 
   proxy(req, res) {
-    console.log("wow")
+    // console.log("wow")
 
     VideoService.proxy(req.params.id).then(r => {
       const headers = r.headers.raw()
