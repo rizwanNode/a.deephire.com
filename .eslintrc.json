@@ -12,7 +12,7 @@
     "no-underscore-dangle": 0,
     "comma-dangle": 0,
     "no-shadow": 0,
-
+    "linebreak-style": "off", // git handles this
     "class-methods-use-this": ["off"],
     "no-use-before-define": [
       "error",
