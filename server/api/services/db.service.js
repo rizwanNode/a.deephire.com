@@ -79,7 +79,7 @@ export const update = (search, update, col, multi = true) => {
 
 export const put = async (search, col, data, id = false, upsert = true) => {
   const collection = db.collection(col);
-  console.log(data);
+  l.info(data);
   // this should be all that's needed to verify the put
   const { _id } = search;
   if (_id) {

@@ -1,4 +1,5 @@
-// import l from '../server/common/logger';
+import l from '../server/common/logger';
+
 const { ManagementClient } = require('auth0');
 
 const { MongoClient } = require('mongodb');

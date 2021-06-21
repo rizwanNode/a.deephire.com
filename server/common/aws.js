@@ -66,7 +66,7 @@ export const deleteS3 = (bucket, key) => {
   return s3
     .deleteObject(params, (err, data) => {
       // eslint-disable-next-line no-console
-      console.log(`deleted ${bucket}/${key}`, err, data);
+      l.info(`deleted ${bucket}/${key}`, err, data);
     })
     .createReadStream();
 };
