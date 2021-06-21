@@ -1,4 +1,5 @@
-// import l from '../server/common/logger';
+import l from '../server/common/logger';
+
 const { ManagementClient } = require('auth0');
 
 const { MongoClient } = require('mongodb');
@@ -33,7 +34,7 @@ const init = async () => {
 
     return true;
   } catch (error) {
-    console.log(error);
+    l.error(error);
     return false;
   }
 };
