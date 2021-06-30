@@ -123,6 +123,23 @@ const updateCalendarInvite = async (
   );
 };
 
+// based on https://stackoverflow.com/a/36961725/5178731
+export const deleteCalendarInvite = async attendee => {
+  const params = {
+    eventId: attendee.eventId,
+    calendarId: 'primary'
+  };
+
+  calendar.events.delete(params, err => {
+    if (err) {
+      l.info(`The calendar API returned an error: ${err}`);
+      return;
+    }
+
+    l.info(`Calendar event for ${attendee.role} ${attendee.email} deleted.`);
+  });
+};
+
 function getNormalEventTemplate(
   interviewLink,
   companyName,
