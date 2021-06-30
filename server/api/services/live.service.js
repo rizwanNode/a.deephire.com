@@ -18,7 +18,7 @@ import {
   findOne,
 } from './db.service';
 import { uploadS3Stream, deleteS3 } from '../../common/aws';
-import { handleCalendarInvite } from '../../common/google';
+import { deleteCalendarInvite, handleCalendarInvite } from '../../common/google';
 import { stripeAddMinutes } from './stripe.service';
 
 const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
@@ -418,6 +418,16 @@ class LiveService {
 
   async delete(_id) {
     l.info(`${this.constructor.name}.delete(${_id}`);
+    const { attendees } = await byId(_id, 'live');
+
+    if (attendees) {
+      // Map is used so that Promise.all can be used.
+      // The array actually has no other use.
+      Promise.all(attendees.map(async attendee => {
+        await deleteCalendarInvite(attendee);
+        return attendee;
+      }));
+    }
 
     await deleteRecordings(_id);
     return deleteObject(_id, 'live');
