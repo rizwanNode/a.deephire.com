@@ -431,7 +431,7 @@ class LiveService {
     }
 
     await deleteRecordings(_id);
-    interviewDeletedEvent(_id)
+    await interviewDeletedEvent(_id);
     return deleteObject(_id, 'live');
   }
 
