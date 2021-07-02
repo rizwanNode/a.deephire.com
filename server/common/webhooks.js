@@ -10,6 +10,8 @@ const testUrl = 'https://webhook.site/a1d488ad-490a-4f78-9601-332e5731cef7';
 const appleOneUrl = 'http://import.axtest.com/deephire/getlive.ashx';
 const appleOneProdUrl = 'https://import.appleone.com/deephire/getlive.ashx';
 
+const appleOneCompanyIdProd = '5e95d7d3aed1120001480d69';
+const appleOneCompanyIdDev = '5f7f25460d77330001bc9b91';
 
 export const roomEndedEvent = async (liveId, recording) => {
   // temporary to make sure we don't send them the preflight requests
@@ -19,13 +21,11 @@ export const roomEndedEvent = async (liveId, recording) => {
   const search = { _id: liveId };
   const { companyId } = await findOne(search, 'live');
 
-
   const data = { liveId, recording, statusCallBackEvent: 'room-ended' };
 
   fetch(testUrl, { method: 'POST', headers, body: JSON.stringify(data) });
 
-
-  if (companyId.toString() === '5f7f25460d77330001bc9b91') {
+  if (companyId.toString() === appleOneCompanyIdDev) {
     await fetch(testUrl, {
       method: 'POST',
       headers,
@@ -35,7 +35,7 @@ export const roomEndedEvent = async (liveId, recording) => {
     fetch(appleOneUrl, { method: 'POST', headers, body: JSON.stringify(data) });
   }
 
-  if (companyId.toString() === '5e95d7d3aed1120001480d69') {
+  if (companyId.toString() === appleOneCompanyIdProd) {
     await fetch(testUrl, {
       method: 'POST',
       headers,
@@ -61,13 +61,12 @@ export const compositionAvailableEvent = async compositionSid => {
       body: JSON.stringify(data),
     });
 
-    if (companyId.toString() === '5f7f25460d77330001bc9b91') {
+    if (companyId.toString() === appleOneCompanyIdDev) {
       await fetch(testUrl, {
         method: 'POST',
         headers,
         body: JSON.stringify({ ...data, webhook: appleOneUrl }),
       });
-
 
       return fetch(appleOneUrl, {
         method: 'POST',
@@ -76,7 +75,7 @@ export const compositionAvailableEvent = async compositionSid => {
       });
     }
 
-    if (companyId.toString() === '5e95d7d3aed1120001480d69') {
+    if (companyId.toString() === appleOneCompanyIdProd) {
       await fetch(testUrl, {
         method: 'POST',
         headers,
@@ -85,6 +84,49 @@ export const compositionAvailableEvent = async compositionSid => {
 
       fetch(appleOneProdUrl, { method: 'POST', headers, body: JSON.stringify(data) });
     }
+  }
+  return null;
+};
+
+export const interviewDeletedEvent = async liveId => {
+  if (!ObjectId.isValid(liveId)) {
+    return null;
+  }
+  const search = { _id: liveId };
+  const { companyId } = await findOne(search, 'live');
+  const data = {
+    liveId,
+    statusCallBackEvent: 'interview-deleted',
+  };
+
+  await fetch(testUrl, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  if (companyId.toString() === appleOneCompanyIdDev) {
+    await fetch(testUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ ...data, webhook: appleOneUrl }),
+    });
+
+    return fetch(appleOneUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data),
+    });
+  }
+
+  if (companyId.toString() === appleOneCompanyIdProd) {
+    await fetch(testUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ ...data, webhook: appleOneProdUrl }),
+    });
+
+    fetch(appleOneProdUrl, { method: 'POST', headers, body: JSON.stringify(data) });
   }
   return null;
 };
@@ -99,7 +141,7 @@ export const recordingsDeletedEvent = async liveId => {
   const search = { _id: liveId };
   const { companyId } = await findOne(search, 'live');
 
-  if (companyId.toString() === '5f7f25460d77330001bc9b91') {
+  if (companyId.toString() === appleOneCompanyIdDev) {
     await fetch(testUrl, {
       method: 'POST',
       headers,
@@ -109,8 +151,7 @@ export const recordingsDeletedEvent = async liveId => {
     fetch(appleOneUrl, { method: 'POST', headers, body: JSON.stringify(data) });
   }
 
-
-  if (companyId.toString() === '5e95d7d3aed1120001480d69') {
+  if (companyId.toString() === appleOneCompanyIdProd) {
     await fetch(testUrl, {
       method: 'POST',
       headers,
