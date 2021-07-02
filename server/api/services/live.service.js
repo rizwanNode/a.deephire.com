@@ -6,6 +6,7 @@ import {
   roomEndedEvent,
   compositionAvailableEvent,
   recordingsDeletedEvent,
+  interviewDeletedEvent,
 } from '../../common/webhooks';
 import {
   newByParam,
@@ -430,6 +431,7 @@ class LiveService {
     }
 
     await deleteRecordings(_id);
+    await interviewDeletedEvent(_id);
     return deleteObject(_id, 'live');
   }
 
