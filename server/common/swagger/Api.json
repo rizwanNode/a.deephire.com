@@ -2619,6 +2619,54 @@
             }
          }
       },
+      "/events/{interviewId}/date/{startDate}/{endDate}": {
+         "get": {
+            "tags": [
+               "Events"
+            ],
+            "parameters": [
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "name": "interviewId",
+                  "in": "path",
+                  "required": true,
+                  "description": "The ID of the interview to get events for",
+                  "type": "string"
+               },
+               {
+                  "name": "startDate",
+                  "in": "path",
+                  "required": true,
+                  "description": "Start date as Unix Epoch in ms",
+                  "type": "number"
+               },
+               {
+                  "name": "endDate",
+                  "in": "path",
+                  "required": true,
+                  "description": "End date as Unix Epoch in ms",
+                  "type": "number"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Event Submitted"
+               },
+               "400": {
+                  "description": "interviewId is not a valid objectId"
+               },
+               "500": {
+                  "description": "Server Error!"
+               }
+            }
+         }
+      },
       "/events/started": {
          "post": {
             "tags": [

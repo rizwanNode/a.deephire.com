@@ -54,5 +54,17 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  getEventsDateRange(req, res) {
+    const startDate = parseInt(req.params.startDate);
+    const endDate = parseInt(req.params.endDate);
+    EventsService.getEventsDateRange(res.locals.companyId, req.params.interviewId, startDate, endDate)
+    .then(r => {
+      if (r instanceof Error) res.status(500).end();
+      if (r === 400) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 }
 export default new Controller();

@@ -165,6 +165,47 @@ class EventsService {
     return result;
     
   }
+
+  async getEventsDateRange(companyId, interviewId, startDate, endDate) {
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
+
+    if (!ObjectId.isValid(interviewId)) {
+      return 400;
+    }
+
+    console.log({startDate, endDate});
+
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    console.log({startDateObj, endDateObj});
+
+    const companyIdMongo = new ObjectId(companyId);
+    const interviewIdMongo = new ObjectId(interviewId);
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
+    const search = {
+      // this didn't work because it wasn't in ISO time
+      // 'timestamp': {
+      //   $gte: new Date(startDate), 
+      //   $lte: new Date(endDate)
+      // }, 
+      $or: [completeInterviewSearch, invitedEventSearch] 
+    };
+    const events = await newByParam(search, 'events');
+
+    const inRange = events.filter(element => {
+      if (element?.timestamp) {
+        const date = new Date(element.timestamp);
+        return date >= startDateObj && date <= endDateObj;
+      }
+
+      return false;
+    });
+
+    return { events: inRange, n: inRange.length };
+
+  }
 }
 
 

@@ -9,5 +9,6 @@ export default express
   .post('/clicked', controller.clicked)
   .get('/', auth, controller.getEvents)
   .get('/:interviewId', auth, controller.getEventsById)
+  .get('/:interviewId/date/:startDate/:endDate', auth, controller.getEventsDateRange)
   .get('/:interviewId/sort/:page/:n/:sortItem/:sortOrder', auth, controller.getEventsPaginatedById);
 
