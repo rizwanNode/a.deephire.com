@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
-import { insert, byParam, newByParam } from './db.service';
+import { insert, byParam, newByParam, ByParamSort } from './db.service';
 
 import clockworkIntegration from '../../common/clockwork';
 import frontlineIntegration from '../../common/bullhorn';
@@ -103,7 +103,70 @@ class EventsService {
     const resp = { events };
     return resp;
   }
+
+  async getEventsSummaryById(companyId, interviewId) {
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
+
+    if (!ObjectId.isValid(interviewId)) {
+      return 400;
+    }
+
+    const companyIdMongo = new ObjectId(companyId);
+    const interviewIdMongo = new ObjectId(interviewId);
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
+    const events = await newByParam(search, 'events');
+
+    let started = 0;
+    let complete = 0;
+    let clicked = 0;
+    
+    for (e in events) {
+      if (e?.event) {
+        if (e.event === "started") {
+          started++;
+          continue;
+        }
+        if (e.event === "completed") {
+          complete++;
+          continue;
+        }
+        if (e.event === "clicked") {
+          clicked++;
+        }
+      }
+    }
+
+    const completionRate = complete/started;
+
+    return { started, complete, completionRate, clicked };
+
+  }
+
+  async getEventsPageByID(companyId, interviewId, page=1, n=100, sort={"timestamp": 1}) {
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
+
+    if (!ObjectId.isValid(interviewId)) {
+      return 400;
+    }
+
+    const companyIdMongo = new ObjectId(companyId);
+    const interviewIdMongo = new ObjectId(interviewId);
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
+    const events = await ByParamSort(search, 'events', sort);
+    const start = (page - 1) * n;
+    const end = (page * n);
+    const res_events = events.slice(start, end)
+    const result = {events: res_events, n: res_events.length}
+
+    return result;
+    
+  }
 }
+
 
 export default new EventsService();
 

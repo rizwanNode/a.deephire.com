@@ -8,5 +8,6 @@ export default express
   .post('/started', controller.started)
   .post('/clicked', controller.clicked)
   .get('/', auth, controller.getEvents)
-  .get('/:interviewId', auth, controller.getEventsById);
+  .get('/:interviewId', auth, controller.getEventsById)
+  .get('/:interviewId/sort/:page/:n/:sortItem/:sortOrder', auth, controller.getEventsPaginatedById);
 

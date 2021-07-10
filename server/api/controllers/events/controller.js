@@ -42,5 +42,17 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  getEventsPaginatedById(req, res) {
+    const sort = {}
+    sort[req.params.sortItem] = parseInt(req.params.sortOrder);
+    EventsService.getEventsPageByID(res.locals.companyId, req.params.interviewId, req.params.page, req.params.n, sort)
+    .then(r => {
+      if (r instanceof Error) res.status(500).end();
+      if (r === 400) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 }
 export default new Controller();
