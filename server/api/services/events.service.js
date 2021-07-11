@@ -122,21 +122,19 @@ class EventsService {
     let complete = 0;
     let clicked = 0;
     
-    for (e in events) {
-      if (e?.event) {
-        if (e.event === "started") {
-          started++;
-          continue;
-        }
-        if (e.event === "completed") {
-          complete++;
-          continue;
-        }
-        if (e.event === "clicked") {
-          clicked++;
-        }
+    events.forEach(e => {
+      if (e?.event === "started") {
+        started++;
+        continue;
       }
-    }
+      if (e?.event === "completed") {
+        complete++;
+        continue;
+      }
+      if (e?.event === "clicked") {
+        clicked++;
+      }
+    });
 
     const completionRate = complete/started;
 
