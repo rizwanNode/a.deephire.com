@@ -45,8 +45,14 @@ export class Controller {
 
   getEventsPaginatedById(req, res) {
     const sort = {}
-    sort[req.params.sortItem] = parseInt(req.params.sortOrder);
-    EventsService.getEventsPageByID(res.locals.companyId, req.params.interviewId, req.params.page, req.params.n, sort)
+    if (req.query?.sortItem && req.query?.sortOrder) {
+      sort[req.query.sortItem] = parseInt(req.query.sortOrder);
+    }
+    if (!req.query?.page || !req.query?.limit) {
+      res.status(400).end();
+      return;
+    }
+    EventsService.getEventsPageByID(res.locals.companyId, req.params.interviewId, req.query.page, req.query.limit, sort)
     .then(r => {
       if (r instanceof Error) res.status(500).end();
       if (r === 400) res.status(r).end();
@@ -56,8 +62,12 @@ export class Controller {
   }
 
   getEventsDateRange(req, res) {
-    const startDate = parseInt(req.params.startDate);
-    const endDate = parseInt(req.params.endDate);
+    if (!req.query.startDate || !req.query.endDate) {
+      res.status(400).end();
+      return;
+    }
+    const startDate = parseInt(req.query.startDate);
+    const endDate = parseInt(req.query.endDate);
     EventsService.getEventsDateRange(res.locals.companyId, req.params.interviewId, startDate, endDate)
     .then(r => {
       if (r instanceof Error) res.status(500).end();

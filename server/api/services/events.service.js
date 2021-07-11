@@ -125,11 +125,9 @@ class EventsService {
     events.forEach(e => {
       if (e?.event === "started") {
         started++;
-        continue;
       }
       if (e?.event === "completed") {
         complete++;
-        continue;
       }
       if (e?.event === "clicked") {
         clicked++;
@@ -183,11 +181,6 @@ class EventsService {
     const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
     const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
     const search = {
-      // this didn't work because it wasn't in ISO time
-      // 'timestamp': {
-      //   $gte: new Date(startDate), 
-      //   $lte: new Date(endDate)
-      // }, 
       $or: [completeInterviewSearch, invitedEventSearch] 
     };
     const events = await newByParam(search, 'events');

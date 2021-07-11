@@ -2557,7 +2557,7 @@
             }
          }
       },
-      "/events/{interviewId}/sort/{page}/{n}/{sortItem}/{sortOrder}": {
+      "/events/{interviewId}/sort": {
          "get": {
             "tags": [
                "Events"
@@ -2579,28 +2579,28 @@
                },
                {
                   "name": "page",
-                  "in": "path",
+                  "in": "query",
                   "required": true,
                   "description": "Page number of request",
                   "type": "number"
                },
                {
-                  "name": "n",
-                  "in": "path",
+                  "name": "limit",
+                  "in": "query",
                   "required": true,
                   "description": "Page number of request",
                   "type": "number"
                },
                {
                   "name": "sortItem",
-                  "in": "path",
+                  "in": "query",
                   "required": true,
                   "description": "Item JSON key to sort by",
                   "type": "string"
                },
                {
                   "name": "sortOrder",
-                  "in": "path",
+                  "in": "query",
                   "required": true,
                   "description": "Sort order",
                   "type": "number"
@@ -2619,7 +2619,7 @@
             }
          }
       },
-      "/events/{interviewId}/date/{startDate}/{endDate}": {
+      "/events/{interviewId}/date": {
          "get": {
             "tags": [
                "Events"
@@ -2641,14 +2641,14 @@
                },
                {
                   "name": "startDate",
-                  "in": "path",
+                  "in": "query",
                   "required": true,
                   "description": "Start date as Unix Epoch in ms",
                   "type": "number"
                },
                {
                   "name": "endDate",
-                  "in": "path",
+                  "in": "query",
                   "required": true,
                   "description": "End date as Unix Epoch in ms",
                   "type": "number"
