@@ -2557,6 +2557,54 @@
             }
          }
       },
+      "/events/{interviewId}/summary": {
+         "get": {
+            "tags": [
+               "Events"
+            ],
+            "parameters": [
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "name": "interviewId",
+                  "in": "path",
+                  "required": true,
+                  "description": "The ID of the interview to get events for",
+                  "type": "string"
+               },
+               {
+                  "name": "startDate",
+                  "in": "query",
+                  "description": "Start date in epoch ms",
+                  "required": false,
+                  "type": "number"
+               },
+               {
+                  "name": "endDate",
+                  "in": "query",
+                  "description": "End date in epoch ms",
+                  "required": false,
+                  "type": "number"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Event Submitted"
+               },
+               "400": {
+                  "description": "interviewId is not a valid objectId"
+               },
+               "500": {
+                  "description": "Server Error!"
+               }
+            }
+         }
+      },
       "/events/{interviewId}/sort": {
          "get": {
             "tags": [
@@ -2594,14 +2642,14 @@
                {
                   "name": "sortItem",
                   "in": "query",
-                  "required": true,
+                  "required": false,
                   "description": "Item JSON key to sort by",
                   "type": "string"
                },
                {
                   "name": "sortOrder",
                   "in": "query",
-                  "required": true,
+                  "required": false,
                   "description": "Sort order",
                   "type": "number"
                }

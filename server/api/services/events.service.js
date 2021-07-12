@@ -104,12 +104,15 @@ class EventsService {
     return resp;
   }
 
-  async getEventsSummaryById(companyId, interviewId) {
+  async getEventsSummaryById(companyId, interviewId, startDate, endDate) {
     l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
 
     if (!ObjectId.isValid(interviewId)) {
       return 400;
     }
+
+    const startDateObj = startDate ? new Date(startDate) : new Date(0);
+    const endDateObj = endDate ? new Date(endDate) : new Date(Date.now());
 
     const companyIdMongo = new ObjectId(companyId);
     const interviewIdMongo = new ObjectId(interviewId);
@@ -118,11 +121,20 @@ class EventsService {
     const search = { $or: [completeInterviewSearch, invitedEventSearch] };
     const events = await newByParam(search, 'events');
 
+    const inRange = events.filter(element => {
+      if (element?.timestamp) {
+        const date = new Date(element.timestamp);
+        return date >= startDateObj && date <= endDateObj;
+      }
+
+      return false;
+    });
+
     let started = 0;
     let complete = 0;
     let clicked = 0;
     
-    events.forEach(e => {
+    inRange.forEach(e => {
       if (e?.event === "started") {
         started++;
       }
