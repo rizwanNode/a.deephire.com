@@ -10,6 +10,5 @@ export default express
   .get('/', auth, controller.getEvents)
   .get('/:interviewId', auth, controller.getEventsById)
   .get('/:interviewId/summary', auth, controller.getEventSummaryById)
-  .get('/:interviewId/date/', auth, controller.getEventsDateRange)
   .get('/:interviewId/sort/', auth, controller.getEventsPaginatedById);
 

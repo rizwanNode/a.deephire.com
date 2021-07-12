@@ -152,12 +152,15 @@ class EventsService {
 
   }
 
-  async getEventsPageByID(companyId, interviewId, page=1, n=100, sort={"timestamp": 1}) {
+  async getEventsPageByID(companyId, interviewId, page=1, n=100, sort = {"timestamp": 1}, startDate = 0, endDate = Date.now()) {
     l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
 
     if (!ObjectId.isValid(interviewId)) {
       return 400;
     }
+
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
 
     const companyIdMongo = new ObjectId(companyId);
     const interviewIdMongo = new ObjectId(interviewId);
@@ -165,39 +168,12 @@ class EventsService {
     const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
     const search = { $or: [completeInterviewSearch, invitedEventSearch] };
     const events = await ByParamSort(search, 'events', sort);
+
     const start = (page - 1) * n;
     const end = (page * n);
-    const res_events = events.slice(start, end)
-    const result = {events: res_events, n: res_events.length}
-
-    return result;
+    const res_events = events.slice(start, end);
     
-  }
-
-  async getEventsDateRange(companyId, interviewId, startDate, endDate) {
-    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
-
-    if (!ObjectId.isValid(interviewId)) {
-      return 400;
-    }
-
-    console.log({startDate, endDate});
-
-    const startDateObj = new Date(startDate);
-    const endDateObj = new Date(endDate);
-
-    console.log({startDateObj, endDateObj});
-
-    const companyIdMongo = new ObjectId(companyId);
-    const interviewIdMongo = new ObjectId(interviewId);
-    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
-    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
-    const search = {
-      $or: [completeInterviewSearch, invitedEventSearch] 
-    };
-    const events = await newByParam(search, 'events');
-
-    const inRange = events.filter(element => {
+    const inRange = res_events.filter(element => {
       if (element?.timestamp) {
         const date = new Date(element.timestamp);
         return date >= startDateObj && date <= endDateObj;
@@ -206,9 +182,12 @@ class EventsService {
       return false;
     });
 
-    return { events: inRange, n: inRange.length };
+    const result = {events: inRange, n: inRange.length}
 
+    return result;
+    
   }
+
 }
 
 
