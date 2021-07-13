@@ -133,26 +133,26 @@ class EventsService {
     let started = 0;
     let complete = 0;
     let clicked = 0;
-    
+
     inRange.forEach(e => {
-      if (e?.event === "started") {
-        started++;
+      if (e?.event === 'started') {
+        started += 1;
       }
-      if (e?.event === "completed") {
-        complete++;
+      if (e?.event === 'completed') {
+        complete += 1;
       }
-      if (e?.event === "clicked") {
-        clicked++;
+      if (e?.event === 'clicked') {
+        clicked += 1;
       }
     });
 
-    const completionRate = complete/started;
+    const completionRate = complete / inRange.length;
 
     return { started, complete, completionRate, clicked };
-
   }
 
-  async getEventsPageByID(companyId, interviewId, page=1, n=100, sort = {"timestamp": 1}, startDate = 0, endDate = Date.now()) {
+  async getEventsPageByID(companyId,
+    interviewId, page = 1, n = 100, sort = { timestamp: 1 }, startDate = 0, endDate = Date.now()) {
     l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
 
     if (!ObjectId.isValid(interviewId)) {
@@ -171,9 +171,9 @@ class EventsService {
 
     const start = (page - 1) * n;
     const end = (page * n);
-    const res_events = events.slice(start, end);
-    
-    const inRange = res_events.filter(element => {
+    const resEvents = events.slice(start, end);
+
+    const inRange = resEvents.filter(element => {
       if (element?.timestamp) {
         const date = new Date(element.timestamp);
         return date >= startDateObj && date <= endDateObj;
@@ -182,12 +182,10 @@ class EventsService {
       return false;
     });
 
-    const result = {events: inRange, n: inRange.length}
+    const result = { events: inRange, n: inRange.length };
 
     return result;
-    
   }
-
 }
 
 
