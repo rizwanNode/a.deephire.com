@@ -104,6 +104,55 @@ class EventsService {
     return resp;
   }
 
+  async getEventSummary(companyId, startDate, endDate) {
+    l.info(`${this.constructor.name}.clicked(${companyId})`);
+
+    const startDateObj = startDate ? new Date(startDate) : new Date(0);
+    const endDateObj = endDate ? new Date(endDate) : new Date(Date.now());
+
+    const companyIdMongo = new ObjectId(companyId);
+
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
+    const events = await newByParam(search, 'events');
+
+    const inRange = events.filter(element => {
+      if (element?.timestamp) {
+        const date = new Date(element.timestamp);
+        return date >= startDateObj && date <= endDateObj;
+      }
+
+      return false;
+    });
+
+    const reduced = inRange.reduce(
+      (result, item) => {
+        // eslint-disable-next-line no-param-reassign
+        result[item.event][item.candidateEmail] = item;
+        return result;
+      },
+      { started: {}, clicked: {}, invited: {}, completed: {} }
+    );
+
+    const { invited, started, clicked, completed } = reduced;
+
+    const complete = Object.keys(completed).length;
+    const starts = Object.keys(started).length;
+    const invites = Object.keys(invited).length;
+    const clicks = Object.keys(clicked).length;
+
+    const completionRate = complete / starts;
+
+    return {
+      started: starts,
+      completed: complete,
+      completionRate,
+      clicked: clicks + starts,
+      invited: invites + starts,
+    };
+  }
+
   async getEventsSummaryById(companyId, interviewId, startDate, endDate) {
     l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
 
@@ -130,25 +179,31 @@ class EventsService {
       return false;
     });
 
-    let started = 0;
-    let complete = 0;
-    let clicked = 0;
+    const reduced = inRange.reduce(
+      (result, item) => {
+        // eslint-disable-next-line no-param-reassign
+        result[item.event][item.candidateEmail] = item;
+        return result;
+      },
+      { started: {}, clicked: {}, invited: {}, completed: {} }
+    );
 
-    inRange.forEach(e => {
-      if (e?.event === 'started') {
-        started += 1;
-      }
-      if (e?.event === 'completed') {
-        complete += 1;
-      }
-      if (e?.event === 'clicked') {
-        clicked += 1;
-      }
-    });
+    const { invited, started, clicked, completed } = reduced;
 
-    const completionRate = complete / inRange.length;
+    const complete = Object.keys(completed).length;
+    const starts = Object.keys(started).length;
+    const invites = Object.keys(invited).length;
+    const clicks = Object.keys(clicked).length;
 
-    return { started, complete, completionRate, clicked };
+    const completionRate = complete / starts;
+
+    return {
+      started: starts,
+      completed: complete,
+      completionRate,
+      clicked: clicks + starts,
+      invited: invites + starts,
+    };
   }
 
   async getEventsPageByID(companyId,

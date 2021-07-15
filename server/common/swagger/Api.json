@@ -2557,6 +2557,47 @@
             }
          }
       },
+      "/events/summary": {
+         "get": {
+            "tags": [
+               "Events"
+            ],
+            "parameters": [
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "name": "startDate",
+                  "in": "query",
+                  "description": "Start date in epoch ms",
+                  "required": false,
+                  "type": "number"
+               },
+               {
+                  "name": "endDate",
+                  "in": "query",
+                  "description": "End date in epoch ms",
+                  "required": false,
+                  "type": "number"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Event Submitted"
+               },
+               "400": {
+                  "description": "interviewId is not a valid objectId"
+               },
+               "500": {
+                  "description": "Server Error!"
+               }
+            }
+         }
+      },
       "/events/{interviewId}/summary": {
          "get": {
             "tags": [
