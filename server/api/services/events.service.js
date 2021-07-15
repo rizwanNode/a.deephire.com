@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { ObjectId } from 'mongodb';
 
 import l from '../../common/logger';
-import { insert, byParam, newByParam } from './db.service';
+import { insert, byParam, newByParam, ByParamSort } from './db.service';
 
 import clockworkIntegration from '../../common/clockwork';
 import frontlineIntegration from '../../common/bullhorn';
@@ -103,7 +103,91 @@ class EventsService {
     const resp = { events };
     return resp;
   }
+
+  async getEventsSummaryById(companyId, interviewId, startDate, endDate) {
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
+
+    if (!ObjectId.isValid(interviewId)) {
+      return 400;
+    }
+
+    const startDateObj = startDate ? new Date(startDate) : new Date(0);
+    const endDateObj = endDate ? new Date(endDate) : new Date(Date.now());
+
+    const companyIdMongo = new ObjectId(companyId);
+    const interviewIdMongo = new ObjectId(interviewId);
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
+    const events = await newByParam(search, 'events');
+
+    const inRange = events.filter(element => {
+      if (element?.timestamp) {
+        const date = new Date(element.timestamp);
+        return date >= startDateObj && date <= endDateObj;
+      }
+
+      return false;
+    });
+
+    let started = 0;
+    let complete = 0;
+    let clicked = 0;
+
+    inRange.forEach(e => {
+      if (e?.event === 'started') {
+        started += 1;
+      }
+      if (e?.event === 'completed') {
+        complete += 1;
+      }
+      if (e?.event === 'clicked') {
+        clicked += 1;
+      }
+    });
+
+    const completionRate = complete / inRange.length;
+
+    return { started, complete, completionRate, clicked };
+  }
+
+  async getEventsPageByID(companyId,
+    interviewId, page = 1, n = 100, sort = { timestamp: 1 }, startDate = 0, endDate = Date.now()) {
+    l.info(`${this.constructor.name}.clicked(${companyId}, ${interviewId})`);
+
+    if (!ObjectId.isValid(interviewId)) {
+      return 400;
+    }
+
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    const companyIdMongo = new ObjectId(companyId);
+    const interviewIdMongo = new ObjectId(interviewId);
+    const completeInterviewSearch = { 'completeInterviewData.companyData._id': companyIdMongo, 'completeInterviewData.interviewData._id': interviewIdMongo };
+    const invitedEventSearch = { companyId: companyIdMongo, interviewId: interviewIdMongo };
+    const search = { $or: [completeInterviewSearch, invitedEventSearch] };
+    const events = await ByParamSort(search, 'events', sort);
+
+    const start = (page - 1) * n;
+    const end = (page * n);
+    const resEvents = events.slice(start, end);
+
+    const inRange = resEvents.filter(element => {
+      if (element?.timestamp) {
+        const date = new Date(element.timestamp);
+        return date >= startDateObj && date <= endDateObj;
+      }
+
+      return false;
+    });
+
+    const result = { events: inRange, n: inRange.length };
+
+    return result;
+  }
 }
+
 
 export default new EventsService();
 

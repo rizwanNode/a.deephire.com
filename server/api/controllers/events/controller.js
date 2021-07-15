@@ -42,5 +42,41 @@ export class Controller {
       else res.status(500).end();
     });
   }
+
+  getEventSummaryById(req, res) {
+    const startDate = parseInt(req.query.startDate);
+    const endDate = parseInt(req.query.endDate);
+    EventsService.getEventsSummaryById(res.locals.companyId, req.params.interviewId, startDate, endDate).then(r => {
+      if (r instanceof Error) res.status(500).end();
+      if (r === 400) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
+
+  getEventsPaginatedById(req, res) {
+
+    const sort = {}
+    if (req.query?.sortItem && req.query?.sortOrder) {
+      sort[req.query.sortItem] = parseInt(req.query.sortOrder);
+    }
+
+    if (!req.query?.page || !req.query?.limit) {
+      res.status(400).end();
+      return;
+    }
+
+    const startDate = req.query?.startDate ? parseInt(req.query.startDate) : 0;
+    const endDate = req.query?.endDate ? parseInt(req.query.endDate) : Date.now();
+
+    EventsService.getEventsPageByID(res.locals.companyId, req.params.interviewId, req.query.page, req.query.limit, sort, startDate, endDate)
+    .then(r => {
+      if (r instanceof Error) res.status(500).end();
+      if (r === 400) res.status(r).end();
+      else if (r) res.json(r);
+      else res.status(500).end();
+    });
+  }
 }
+
 export default new Controller();

@@ -31,6 +31,7 @@ export const init = async () => {
 };
 
 /* eslint-disable no-param-reassign */
+// search is a mongoDB id as a string
 export const byParam = async (
   search,
   col,
@@ -317,6 +318,16 @@ export const newByParam = async (query, col, options = null) => {
   const collection = db.collection(col);
   const curser = await collection.find(query, options);
   const results = await curser.toArray().catch(err => {
+    l.error(err);
+    return err;
+  });
+  return results;
+};
+
+export const ByParamSort = async (query, col, sort = {}, options = null) => {
+  const collection = db.collection(col);
+  const cursor = await collection.find(query, options).sort(sort);
+  const results = await cursor.toArray().catch(err => {
     l.error(err);
     return err;
   });
