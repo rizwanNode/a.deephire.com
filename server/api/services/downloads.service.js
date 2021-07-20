@@ -44,7 +44,8 @@ class DownloadService {
       'Recruiter Email',
       'Job Name',
       'Candidates Invited',
-      'Last Started',
+      'Created',
+      'Last Event',
     ];
 
     const rows = [];
@@ -64,7 +65,7 @@ class DownloadService {
         );
         if (lastEventTime) {
           interviews[i].summary = {
-            lastEventTime: new Date(lastEventTime),
+            lastEventTime,
             started,
             invited
           };
@@ -78,16 +79,18 @@ class DownloadService {
     interviews.forEach(interview => {
       if (interview?.timestamp && interview?.summary) {
         const date = new Date(interview.timestamp);
-        let lastEventTime = '';
-        if (interview.summary.lastEventTime !== new Date(0)) {
-          lastEventTime = interview.summary.lastEventTime.toISOString();
+        let lastEventTime = new Date(interview.summary.lastEventTime);
+        const created = new Date(interview.timestamp);
+        if (lastEventTime.getTime() === 0) {
+          lastEventTime = created;
         }
         if (date > startDateObj && date <= endDateObj) {
           rows.push([
             interview.createdBy,
             interview.interviewName,
             interview.summary.started + interview.summary.invited,
-            lastEventTime
+            created.toISOString(),
+            lastEventTime.toISOString()
           ]);
         }
       }
