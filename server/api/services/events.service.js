@@ -188,6 +188,17 @@ class EventsService {
       { started: {}, clicked: {}, invited: {}, completed: {} }
     );
 
+    let lastEventTime = new Date(0);
+
+    reduced.forEach(element => {
+      if (element?.timestamp) {
+        const date = new Date(element.timestamp);
+        if (lastEventTime < date) {
+          lastEventTime = date;
+        }
+      }
+    });
+
     const { invited, started, clicked, completed } = reduced;
 
     const complete = Object.keys(completed).length;
@@ -203,6 +214,7 @@ class EventsService {
       completionRate,
       clicked: clicks + starts,
       invited: invites + starts,
+      lastEventTime: lastEventTime.toISOString()
     };
   }
 
