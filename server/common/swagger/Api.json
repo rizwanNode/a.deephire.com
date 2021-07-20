@@ -879,6 +879,28 @@
       }
    },
    "paths": {
+      "/downloads/users.csv": {
+         "get": {
+            "parameters": [
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               }
+            ],
+            "tags": [
+               "Downloads"
+            ],
+            "description": "Get a CSV file of all user info.",
+            "responses": {
+               "200": {
+                  "description": "CSV File"
+               }
+            }
+         }
+      },
       "/shortlists": {
          "get": {
             "parameters": [
