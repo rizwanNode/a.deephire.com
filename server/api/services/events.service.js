@@ -179,6 +179,17 @@ class EventsService {
       return false;
     });
 
+    let lastEventTime = new Date(0);
+
+    inRange.forEach(element => {
+      if (element?.timestamp) {
+        const date = new Date(element.timestamp);
+        if (lastEventTime < date) {
+          lastEventTime = date;
+        }
+      }
+    });
+
     const reduced = inRange.reduce(
       (result, item) => {
         // eslint-disable-next-line no-param-reassign
@@ -187,17 +198,6 @@ class EventsService {
       },
       { started: {}, clicked: {}, invited: {}, completed: {} }
     );
-
-    let lastEventTime = new Date(0);
-
-    reduced.forEach(element => {
-      if (element?.timestamp) {
-        const date = new Date(element.timestamp);
-        if (lastEventTime < date) {
-          lastEventTime = date;
-        }
-      }
-    });
 
     const { invited, started, clicked, completed } = reduced;
 

@@ -1,7 +1,7 @@
 
 import CompaniesService from './companies.service';
-// import InterviewsService from './interviews.service';
-// import EventsService from './events.service';
+import InterviewsService from './interviews.service';
+import EventsService from './events.service';
 
 import toCSV from '../../common/csv';
 
@@ -39,46 +39,62 @@ class DownloadService {
   }
 
   // Worksheet 2
-  // async downloadJobs(companyId, startDate, endDate) {
-  //   const header = [
-  //     'Recruiter Email',
-  //     'Recruiter Team',
-  //     'Job Name',
-  //     'Candidates Invited',
-  //     'Last Started',
-  //   ];
+  async downloadJobs(companyId, startDate, endDate) {
+    const header = [
+      'Recruiter Email',
+      'Job Name',
+      'Candidates Invited',
+      'Last Started',
+    ];
 
-  //   const rows = [];
+    const rows = [];
 
-  //   const interviews = await InterviewsService.all(companyId);
+    const interviews = await InterviewsService.all(companyId);
 
-  //   // this was done because .forEach doesn't allow for awaits.
-  //   for (let i = 0; i < interviews.length; i += 1) {
-  //     const interview = interviews[i];
-  //     if (interview?._id) {
-  //       // eslint-disable-next-line no-await-in-loop
-  //       const { lastEventTime, started, invited } = await EventsService.getEventsSummaryById(
-  //         companyId,
-  //         interview._id,
-  //         0,
-  //         Date.now()
-  //       );
-  //       if (lastEventTime) {
-  //         interviews[i].summary = {
-  //           lastEventTime: new Date(lastEventTime),
-  //           started,
-  //           invited
-  //         };
-  //       }
-  //     }
-  //   }
+    // this was done because .forEach doesn't allow for awaits.
+    for (let i = 0; i < interviews.length; i += 1) {
+      const interview = interviews[i];
+      if (interview?._id) {
+        // eslint-disable-next-line no-await-in-loop
+        const { lastEventTime, started, invited } = await EventsService.getEventsSummaryById(
+          companyId,
+          interview._id,
+          0,
+          Date.now()
+        );
+        if (lastEventTime) {
+          interviews[i].summary = {
+            lastEventTime: new Date(lastEventTime),
+            started,
+            invited
+          };
+        }
+      }
+    }
 
-  //   interviews.forEach(interview => {
-  //     rows.push([
-  //       // interview.
-  //     ]);
-  //   });
-  // }
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    interviews.forEach(interview => {
+      if (interview?.timestamp && interview?.summary) {
+        const date = new Date(interview.timestamp);
+        let lastEventTime = '';
+        if (interview.summary.lastEventTime !== new Date(0)) {
+          lastEventTime = interview.summary.lastEventTime.toISOString();
+        }
+        if (date > startDateObj && date <= endDateObj) {
+          rows.push([
+            interview.createdBy,
+            interview.interviewName,
+            interview.summary.started + interview.summary.invited,
+            lastEventTime
+          ]);
+        }
+      }
+    });
+
+    return toCSV(header, rows);
+  }
 }
 
 export default new DownloadService();
