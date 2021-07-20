@@ -3,7 +3,7 @@ import CompaniesService from './companies.service';
 // import InterviewsService from './interviews.service';
 // import EventsService from './events.service';
 
-import { toCSV } from '../../common/csv';
+import toCSV from '../../common/csv';
 
 class DownloadService {
   // Worksheet 1
