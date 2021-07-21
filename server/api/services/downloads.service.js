@@ -250,6 +250,19 @@ class DownloadService {
 
     return toCSV(headers, rows);
   }
+
+  // async clientCandidate(companyId, startDate, endDate) {
+  //   const headers = [
+  //     'Recruiter Email',
+  //     'Candidate Name',
+  //     'Client Name',
+  //     'Candidate Prep',
+  //     'Candidate Debrief',
+  //     'Client Debrief',
+  //     'Client Rating',
+  //     'Candidate Rating'
+  //   ];
+  // }
 }
 
 export default new DownloadService();
