@@ -4,6 +4,7 @@ import CompaniesService from './companies.service';
 import InterviewsService from './interviews.service';
 import EventsService from './events.service';
 import VideosService from './videos.service';
+import LiveService from './live.service';
 import { byParam } from './db.service';
 
 import toCSV from '../../common/csv';
@@ -203,6 +204,51 @@ class DownloadService {
     });
 
     return toCSV(header, filtered);
+  }
+
+  async youCandidate(companyId, startDate, endDate) {
+    const headers = [
+      'Recruiter Email',
+      'Completed?',
+      'Scheduled Completion Date'
+    ];
+
+    const liveInterviews = await LiveService.byParam(companyId);
+
+    const interviews = await Promise.all(liveInterviews.map(async interview => {
+      const { _id: id, createdBy } = interview;
+
+      let complete = false;
+      let finishTime = null;
+
+      const interviewData = await LiveService.byId(id);
+
+      if (interviewData?.interviewType === 'recruiter') {
+        if (interviewData?.interviewTime[1]) {
+          finishTime = new Date(interviewData.interviewTime[1]);
+          const now = new Date(Date.now());
+          if (finishTime.getTime() < now.getTime()) {
+            complete = true;
+          }
+        }
+      }
+
+      return [
+        createdBy,
+        complete ? 'yes' : 'no',
+        finishTime
+      ];
+    }));
+
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    // eslint-disable-next-line arrow-body-style
+    const rows = interviews.filter(interview => {
+      return interview[2] > startDateObj && interview[2] <= endDateObj && interview[0];
+    });
+
+    return toCSV(headers, rows);
   }
 }
 
