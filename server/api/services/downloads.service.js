@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 import CompaniesService from './companies.service';
 import InterviewsService from './interviews.service';
 import EventsService from './events.service';
@@ -121,7 +123,7 @@ class DownloadService {
     const rows = await Promise.all(
       candidates.map(async candidate => {
         const search = {
-          companyId,
+          companyId: new ObjectId(companyId),
           interviews: {
             $elemMatch: {
               $or: [
@@ -136,16 +138,18 @@ class DownloadService {
 
         const data = await byParam(search, 'shortlists');
 
-        const { createdBy, clicks, interviews } = data;
+        if (!data.length) {
+          return [];
+        }
 
-        let interviewId = '';
+        const { createdBy, clicks, interviews } = data[0];
+
         let avgRating = -1;
         let interviewTime = new Date(0);
 
         interviews.every(interview => {
           if (interview?.liveInterviewData) {
             if (interview.liveInterviewData?.candidateEmail === candidate.candidateEmail) {
-              interviewId = interview.liveInterviewData._id;
               if (interview.liveInterviewData?.timestamp) {
                 interviewTime = new Date(interview.liveInterviewData.timestamp);
               }
@@ -157,11 +161,14 @@ class DownloadService {
                   count += 1;
                 });
                 avgRating = total / count;
-                return false;
               }
+              return false;
             }
-          } else if (interview?.candidateEmail === candidate.candidateEmail) {
-            interviewId = interview._id;
+          }
+          if (interview?.candidateEmail === candidate.candidateEmail) {
+            if (interview?.timestamp) {
+              interviewTime = new Date(interview.timestamp);
+            }
             if (interview?.fb) {
               let total = 0;
               let count = 0;
@@ -170,41 +177,32 @@ class DownloadService {
                 count += 1;
               });
               avgRating = total / count;
-              return false;
             }
-          }
-          return true;
-        });
-
-        const interviewData = await EventsService.getEventsById(companyId, interviewId);
-
-        let candidateName = '';
-
-        interviewData.every(e => {
-          if (e?.userName && e?.candidateEmail === candidate.candidateEmail) {
-            candidateName = e.userName;
             return false;
           }
           return true;
         });
 
+        const candidateName = candidate?.userName ? candidate.userName : '';
+
         return [
           createdBy,
           candidateName,
           candidate.candidateEmail,
-          clicks.length,
-          avgRating,
+          clicks ? clicks.length : 0,
+          avgRating === -1 ? '' : avgRating,
           interviewTime
         ];
       })
     );
 
-    rows.filter(row => {
+    const filtered = rows.filter(row => {
       const activity = row[5];
-      return activity >= startDateObj && activity <= endDateObj;
+      const name = row[1];
+      return activity >= startDateObj && activity <= endDateObj && name;
     });
 
-    return toCSV(header, rows);
+    return toCSV(header, filtered);
   }
 }
 

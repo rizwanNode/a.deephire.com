@@ -937,6 +937,42 @@
             }
          }
       },
+      "/downloads/candidates.csv": {
+         "get": {
+            "parameters": [
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "Bearer <auth_token>",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "name": "startDate",
+                  "in": "query",
+                  "description": "Start date in epoch ms",
+                  "required": false,
+                  "type": "number"
+               },
+               {
+                  "name": "endDate",
+                  "in": "query",
+                  "description": "End date in epoch ms",
+                  "required": false,
+                  "type": "number"
+               }
+            ],
+            "tags": [
+               "Downloads"
+            ],
+            "description": "Get a CSV file of all candidate info.",
+            "responses": {
+               "200": {
+                  "description": "CSV File"
+               }
+            }
+         }
+      },
       "/shortlists": {
          "get": {
             "parameters": [
