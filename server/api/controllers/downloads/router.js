@@ -7,4 +7,5 @@ export default express
   .get('/users.csv', auth, controller.users)
   .get('/jobs.csv', auth, controller.jobs)
   .get('/candidates.csv', auth, controller.candidates)
-  .get('/branch.csv', auth, controller.liveBranch);
+  .get('/branch.csv', auth, controller.liveBranch)
+  .get('/client.csv', auth, controller.liveClient);

@@ -251,18 +251,70 @@ class DownloadService {
     return toCSV(headers, rows);
   }
 
-  // async clientCandidate(companyId, startDate, endDate) {
-  //   const headers = [
-  //     'Recruiter Email',
-  //     'Candidate Name',
-  //     'Client Name',
-  //     'Candidate Prep',
-  //     'Candidate Debrief',
-  //     'Client Debrief',
-  //     'Client Rating',
-  //     'Candidate Rating'
-  //   ];
-  // }
+  async clientCandidate(companyId, startDate, endDate) {
+    const headers = [
+      'Recruiter Email',
+      'Candidate Name',
+      'Client Name',
+      'Candidate Prep',
+      'Candidate Debrief',
+      'Client Debrief',
+      'Completion Time'
+      // 'Client Rating',
+      // 'Candidate Rating'
+    ];
+
+    const liveInterviews = await LiveService.byParam(companyId);
+
+    const interviews = await Promise.all(liveInterviews.map(async interview => {
+      const { _id: id, createdBy, candidateName } = interview;
+
+      let clientName = '';
+      let prepTime = null;
+      let clientDebrief = null;
+      let candidateDebrief = null;
+      let finishTime = null;
+
+      const interviewData = await LiveService.byId(id);
+      if (interviewData?.interviewTime[1]) {
+        finishTime = new Date(interviewData.interviewTime[1]);
+      }
+      if (interviewData?.interviewType === 'client') {
+        if (interviewData?.prepRoomTime) {
+          prepTime = new Date(interviewData.prepRoomTime[0]);
+        }
+        if (interviewData?.candidateDebriefTime) {
+          candidateDebrief = new Date(interviewData.candidateDebriefTime);
+        }
+        if (interviewData?.clientDebriefTime) {
+          clientDebrief = new Date(interviewData.clientDebriefTime);
+        }
+        if (interviewData?.clientName) {
+          clientName = interviewData.clientName;
+        }
+      }
+
+      return [
+        createdBy,
+        candidateName,
+        clientName,
+        prepTime || 'no',
+        candidateDebrief || 'no',
+        clientDebrief || 'no',
+        finishTime
+      ];
+    }));
+
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    // eslint-disable-next-line arrow-body-style
+    const rows = interviews.filter(interview => {
+      return interview[6] > startDateObj && interview[6] <= endDateObj;
+    });
+
+    return toCSV(headers, rows);
+  }
 }
 
 export default new DownloadService();
