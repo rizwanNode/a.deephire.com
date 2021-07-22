@@ -883,9 +883,9 @@
          "get": {
             "parameters": [
                {
-                  "name": "authorization",
-                  "in": "header",
-                  "description": "Bearer <auth_token>",
+                  "name": "id",
+                  "in": "query",
+                  "description": "Company ID",
                   "required": true,
                   "type": "string"
                }
@@ -905,9 +905,9 @@
          "get": {
             "parameters": [
                {
-                  "name": "authorization",
-                  "in": "header",
-                  "description": "Bearer <auth_token>",
+                  "name": "id",
+                  "in": "query",
+                  "description": "Company ID",
                   "required": true,
                   "type": "string"
                },
@@ -941,9 +941,9 @@
          "get": {
             "parameters": [
                {
-                  "name": "authorization",
-                  "in": "header",
-                  "description": "Bearer <auth_token>",
+                  "name": "id",
+                  "in": "query",
+                  "description": "Company ID",
                   "required": true,
                   "type": "string"
                },
@@ -977,9 +977,9 @@
          "get": {
             "parameters": [
                {
-                  "name": "authorization",
-                  "in": "header",
-                  "description": "Bearer <auth_token>",
+                  "name": "id",
+                  "in": "query",
+                  "description": "Company ID",
                   "required": true,
                   "type": "string"
                },
@@ -1013,9 +1013,9 @@
          "get": {
             "parameters": [
                {
-                  "name": "authorization",
-                  "in": "header",
-                  "description": "Bearer <auth_token>",
+                  "name": "id",
+                  "in": "query",
+                  "description": "Company ID",
                   "required": true,
                   "type": "string"
                },

@@ -2,7 +2,7 @@ import DownloadsService from '../../services/downloads.service';
 
 export class Controller {
   users(req, res) {
-    DownloadsService.downloadUsers(res.locals.companyId).then(r => {
+    DownloadsService.downloadUsers(req.query.id).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) {
         res.set('Content-Type', 'application/vnd.ms-excel');
@@ -14,7 +14,7 @@ export class Controller {
   jobs(req, res) {
     const startDate = req.query?.startDate ? parseInt(req.query.startDate, 10) : 0;
     const endDate = req.query?.endDate ? parseInt(req.query.endDate, 10) : Date.now();
-    DownloadsService.downloadJobs(res.locals.companyId, startDate, endDate).then(r => {
+    DownloadsService.downloadJobs(req.query.id, startDate, endDate).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) {
         res.set('Content-Type', 'application/vnd.ms-excel');
@@ -26,7 +26,7 @@ export class Controller {
   candidates(req, res) {
     const startDate = req.query?.startDate ? parseInt(req.query.startDate, 10) : 0;
     const endDate = req.query?.endDate ? parseInt(req.query.endDate, 10) : Date.now();
-    DownloadsService.getCandidates(res.locals.companyId, startDate, endDate).then(r => {
+    DownloadsService.getCandidates(req.query.id, startDate, endDate).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) {
         res.set('Content-Type', 'application/vnd.ms-excel');
@@ -38,7 +38,7 @@ export class Controller {
   liveBranch(req, res) {
     const startDate = req.query?.startDate ? parseInt(req.query.startDate, 10) : 0;
     const endDate = req.query?.endDate ? parseInt(req.query.endDate, 10) : Date.now();
-    DownloadsService.youCandidate(res.locals.companyId, startDate, endDate).then(r => {
+    DownloadsService.youCandidate(req.query.id, startDate, endDate).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) {
         res.set('Content-Type', 'application/vnd.ms-excel');
@@ -50,7 +50,7 @@ export class Controller {
   liveClient(req, res) {
     const startDate = req.query?.startDate ? parseInt(req.query.startDate, 10) : 0;
     const endDate = req.query?.endDate ? parseInt(req.query.endDate, 10) : Date.now();
-    DownloadsService.clientCandidate(res.locals.companyId, startDate, endDate).then(r => {
+    DownloadsService.clientCandidate(req.query.id, startDate, endDate).then(r => {
       if (r === 400 || r === 404) res.status(r).end();
       else if (r) {
         res.set('Content-Type', 'application/vnd.ms-excel');
