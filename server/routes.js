@@ -9,6 +9,7 @@ import filesRouter from './api/controllers/files/router';
 import eventsRouter from './api/controllers/events/router';
 import profilesRouter from './api/controllers/profiles/router';
 import liveRouter from './api/controllers/live/router';
+import downloadsRouter from './api/controllers/downloads/router';
 
 
 // import auth from './common/auth';
@@ -26,6 +27,7 @@ export default function routes(app) {
   app.use('/v1/events', eventsRouter);
   app.use('/v1/profiles', profilesRouter);
   app.use('/v1/live', liveRouter);
+  app.use('/v1/downloads', downloadsRouter);
   app.use('/health', (req, res) => res.status(200).end());
   app.get('/outreach', (req, res) => res.redirect(`https://sdr.deephire.com/auth?code=${req.query.code}`));
 }
