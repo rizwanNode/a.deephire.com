@@ -13,7 +13,7 @@ export const listCustomerAttribute = async (companyId, type, additionalParams = 
   const stripeCustomerId = await getStripeId(companyId);
   if (!stripeCustomerId) return 404;
   return stripe[type].list(
-    { customer: stripeCustomerId, ...additionalParams }).catch(err => {
+    { customer: stripeCustomerId, limit: 100, ...additionalParams }).catch(err => {
     l.error(err);
     return err;
   });
